@@ -1,0 +1,155 @@
+﻿
+@{
+    ViewBag.Title = "AngularMaps";
+}
+
+<h2>AngularMaps</h2>
+
+<script src="~/Scripts/custom/lodash.js"></script>
+<script src="~/Scripts/angular.js"></script>
+<script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
+<script src="~/Scripts/custom/angular-google-maps.min.js"></script>
+
+<script src="~/Scripts/angular-resource.min.js"></script>
+<script src="~/Scripts/angular-route.min.js"></script>
+
+<script type="text/javascript">
+
+    angular.module('myApp', ['uiGmapgoogle-maps'])
+.config(function (uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.20', //defaults to latest 3.X anyhow
+        libraries: 'weather,geometry,visualization'
+    });
+})
+.controller('AppCtrl', function ($scope, uiGmapGoogleMapApi) {
+    // Do stuff with your $scope.
+    // Note: Some of the directives require at least something to be defined originally!
+    // e.g. $scope.markers = []
+
+    // uiGmapGoogleMapApi is a promise.
+    // The "then" callback function provides the google.maps object.
+    uiGmapGoogleMapApi.then(function (maps) {
+
+        $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 2 };
+
+        $scope.polyPath = [];
+        $scope.randomMarkers = [];
+        //var route = {
+        //    name : "USA",
+        //    marker: {
+        //        id: 0,
+        //        coords: {
+        //            latitude: 45,
+        //            longitude: -73
+        //        },
+        //        options: { draggable: true }
+        //    }
+        //};
+
+        $scope.counter = 0;
+        $scope.addMarker = function () {
+            
+            $scope.randomMarkers.push(
+            {
+                id: 3,
+                stuff: "stuff",
+                coords: {
+                    latitude: 13,
+                    longitude: -13
+                },
+                options: { draggable: true }
+            });
+
+            $scope.polyPath.push(
+            {
+                id: 5,
+                path: [{
+                    latitude: 13,
+                    longitude: -13
+                }],
+                stroke: {
+                    color: '#000000',
+                    weight: 3
+                },
+                visible: true
+            });
+        };
+
+        //$scope.marker = route.marker;
+        $scope.randomMarkers.push(
+        {
+            id: "first",
+            stuff: "stuff",
+            coords: {
+                latitude: 37.3694868,
+                longitude: -5.9803275
+            },
+            options: { draggable: true }
+        },
+        {
+            id: "second",
+            stuff: "stuff",
+            coords: {
+                latitude: 45,
+                longitude: -73
+            },
+            options: { draggable: true }
+        });
+        
+        $scope.polyPath.push(
+            {
+                id: 1,
+                path: [{
+                    latitude: 45,
+                    longitude: -73
+                },
+                {
+                    latitude: 37.3694868,
+                    longitude: -5.9803275
+                }],
+                stroke: {
+                    color: '#000000',
+                    weight: 3
+                },
+                visible: true
+            },
+            {
+                id: 2,
+                path: [{
+                    latitude: 78,
+                    longitude: -73
+                },
+                {
+                    latitude: 15.3694868,
+                    longitude: -15.9803275
+                }],
+                stroke: {
+                    color: '#000000',
+                    weight: 3
+                },
+                visible: true
+            });
+    });
+});
+
+</script>
+<style>
+    .angular-google-map-container { height: 400px; }
+</style>
+<div ng-app="myApp" ng-controller="AppCtrl" class="angular-google-map-container">
+
+    @*<ui-gmap-google-map center='map.center' zoom='map.zoom'>*@
+        @*<ui-gmap-marker coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id">
+        </ui-gmap-marker>
+     </ui-gmap-google-map>*@
+
+    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+        <ui-gmap-markers models="randomMarkers" coords="'coords'"></ui-gmap-markers>
+        <ui-gmap-polylines models="polyPath" path="'path'" stroke="'stroke'" visible="'visible'"></ui-gmap-polylines>
+    </ui-gmap-google-map>
+    
+    <button type="button" ng-click="addMarker()">Click me</button>
+
+</div>

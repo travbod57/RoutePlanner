@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@section scripts {
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    @*<script src="http://maps.googleapis.com/maps/api/js"></script>*@
+<script src="~/Scripts/custom/lodash.js"></script>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/angular-resource.min.js"></script>
+    <script src="~/Scripts/angular-route.min.js"></script>
+    <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>
+    <script src="~/Scripts/custom/app.js"></script>
+    <script src="~/Scripts/custom/controller.js"></script>
+    <script src="~/Scripts/custom/directive.js"></script>
+    @*<script src="~/Scripts/custom/google-maps.js"></script>*@
+
+    
+    <script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
+    <script src="~/Scripts/custom/angular-google-maps.min.js"></script>
+
+
+}
+<style>
+    .angular-google-map-container {
+        height: 400px;
+    }
+</style>
+
+<div ng-app="routePlanner" ng-controller="routePlannerCtrl">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="angular-google-map-container">
+                <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+                    <ui-gmap-markers models="route" coords="'coords'"></ui-gmap-markers>
+                    <ui-gmap-polylines models="polyPath" path="'path'" stroke="'stroke'" visible="'visible'"></ui-gmap-polylines>
+                </ui-gmap-google-map>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <p class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="{{format}}" placeholder="Enter the start date of your trip ..." ng-model="startDate" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                                   ng-required="true" close-text="Close" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+
+                        <input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">
+                        <button id="destinationSelector" type="button" class="btn btn-primary" ng-click="Choose()">Choose</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="label label-primary">{{ getNumberOfStops() }} stops</span>
+                    <span class="label label-primary">{{ getTripLength() }} days</span>
+                </div>
+            </div>
+            <div><button ng-click="Switch()">Switch</button></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped" style="width: 750px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">stop</th>
+                                <th style="width: 200px;">destination</th>
+                                <th style="width: 100px;">days</th>
+                                <th style="width: 100px;">daily cost</th>
+                                <th style="width: 200px;">total cost</th>
+                                <th style="width: 100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="sortable" dnd-list="route">
+                            <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
+                                <td style="width: 50px;">{{ item.stop }}:</td>
+                                <td style="width: 200px;">{{item.destination.Name}}</td>
+                                <td style="width: 100px;">
+                                    <input type="number" ng-model="item.days" min="0" max="99" />
+                                </td>
+                                <td style="width: 100px;">{{ item.destination.DailyCost | currency }}</td>
+                                <td style="width: 200px;">{{item.totalCost | currency }}</td>
+                                <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="alert alert-warning" ng-hide="HasRoute()">
+                        No destinations added
+                    </div>
+                    <div class="alert alert-success" role="alert" ng-show="ShowReturnDate()">
+                        Return date: {{ ReturnDate() }}
+                    </div>
+                    <div class="alert alert-success">
+                        Total Cost: {{ getTotalRouteCost() | currency }}
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" ng-click="save()">Save</button><button class="btn btn-primary">Email Route</button>
+            <br />
+            <br />{{ route | json}}
+
+        </div>
+    </div>
+</div>

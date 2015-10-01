@@ -41,6 +41,9 @@ app.directive('dndList', function () {
                     // start renumber from lowest positioned item in list, either start position or final position
                     var indexToRenumberFrom = (startIndex < newIndex) ? startIndex : newIndex;
                     scope.UpdateStopNumbering(indexToRenumberFrom);
+                    
+                    // change the Route lines
+                    scope.SwitchRoute(startIndex, newIndex);
 
                     // we move items in the array, if we want
                     // to trigger an update in angular use $apply()

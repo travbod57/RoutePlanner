@@ -3,7 +3,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     uiGmapGoogleMapApi.then(function (maps) {
 
-        $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+        $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 2 };
         var route = {
             name: "USA",
             marker: {
@@ -141,10 +141,14 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         }
     }
 
-    $scope.Switch = function () {
-        var temp = $scope.polyPath[0].path[1];
-        $scope.polyPath[0].path[1] = $scope.polyPath[0].path[0];
-        $scope.polyPath[0].path[0] = temp;
+    function arraymove(arr, fromIndex, toIndex) {
+        var element = arr[fromIndex];
+        arr.splice(fromIndex, 1);
+        arr.splice(toIndex, 0, element);
+    }
+
+    $scope.SwitchRoute = function (fromIndex, toIndex) {
+        arraymove($scope.polyPath[0].path, fromIndex, toIndex);
     }
 
     $scope.Choose = function () {
@@ -164,7 +168,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             $scope.polyPath[0].path.push({
                 latitude: $scope.ChosenDestination.Latitude,
                 longitude: $scope.ChosenDestination.Longitude
-            })
+            });
             
 
             $scope.UpdateStopNumbering($scope.route.length - 1);

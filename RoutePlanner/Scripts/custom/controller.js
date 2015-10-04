@@ -1,13 +1,11 @@
 ﻿
-app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, myHttpService) {
+app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, myHttpService, PolyPathService) {
 
     uiGmapGoogleMapApi.then(function (maps) {
 
         $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 2 };
 
     });
-
-
 
     $scope.init = function () {
 
@@ -129,7 +127,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     $scope.SwitchRoute = function (fromIndex, toIndex) {
         arraymove($scope.polyPath, fromIndex, toIndex);
     }
-
+    var polyLineCount = 0;
     $scope.Choose = function () {
 
         if ($scope.ChosenDestination !== undefined) {
@@ -141,38 +139,88 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
                     longitude: $scope.ChosenDestination.Longitude
                 },
                 days: 0,
-                transport: 'Land',
+                transport: 'Air',
                 get totalCost() { return this.destination.DailyCost * this.days; },
             });
 
 
-            if ($scope.polyPath.length > 0)
+            if ($scope.route.length > 1)
             {
-                $scope.polyPath[0].path.push(
-                {
-                    latitude: $scope.ChosenDestination.Latitude,
-                    longitude: $scope.ChosenDestination.Longitude
-                });
-            }
-            else
-            {
-                $scope.polyPath.push({
-                    id: 1,
-                    path: [
-                        {
-                            latitude: $scope.ChosenDestination.Latitude,
-                            longitude: $scope.ChosenDestination.Longitude
-                        }
-                    ],
-                    stroke: {
-                        color: '#6060FB',
-                        weight: 3
+                var prevRoute = $scope.route[$scope.route.length - 2];
+              
+                var stroke;
+
+                if (prevRoute.transport == "Air")
+                    stroke = { color: '#6060FB', weight: 3 };
+                else if (prevRoute.transport == "Land")
+                    stroke = { color: '#000000', weight: 3 };
+                else if (prevRoute.transport == "Sea")
+                    stroke = { color: '#F6F6F6', weight: 3 };
+
+                var polyLineNumber = ++polyLineCount;
+                var polyLine = {
+                    id: "polyPath" + polyLineNumber,
+                    path: [{
+                        latitude: prevRoute.coords.latitude,
+                        longitude: prevRoute.coords.longitude
                     },
+                    {
+                        latitude: $scope.ChosenDestination.Latitude,
+                        longitude: $scope.ChosenDestination.Longitude
+                    }],
+                    stroke: stroke,
                     editable: true,
                     draggable: true,
                     geodesic: true,
                     visible: true
-                });
+                };
+
+
+                $scope.polyPath.push(polyLine);
+
+
+
+                //var newPolyLine = PolyPathService.CreateNewPolyLine($scope.polyPath, prevRoute.transport);
+                
+                //newPolyLine.path.push();
+                
+                //newPolyLine.path.push({
+                //    latitude: $scope.ChosenDestination.Latitude,
+                //    longitude: $scope.ChosenDestination.Longitude
+                //});
+
+                //$scope.polyPath[0].path.push(
+                //{
+                //    latitude: $scope.ChosenDestination.Latitude,
+                //    longitude: $scope.ChosenDestination.Longitude
+                //});
+            }
+            else
+            {
+                //var newPolyLine = PolyPathService.CreateNewPolyLine($scope.polyPath, 'Air');
+
+                //newPolyLine.path.push({
+                //    latitude: $scope.ChosenDestination.Latitude,
+                //    longitude: $scope.ChosenDestination.Longitude
+                //});
+
+                //$scope.polyPath.push({
+                //    id: 1,
+                //    path: [
+                //        {
+                //            latitude: $scope.ChosenDestination.Latitude,
+                //            longitude: $scope.ChosenDestination.Longitude
+                //        }
+                //    ],
+                //    stroke: {
+                //        color: '#6060FB',
+                //        weight: 3
+                //    },
+                //    editable: true,
+                //    draggable: true,
+                //    geodesic: true,
+                //    visible: true
+                //});
             }
 
             $scope.UpdateStopNumbering($scope.route.length - 1);

@@ -14,6 +14,7 @@
     @*<script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>*@
 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
     <script src="~/Scripts/custom/app.js"></script>
+<script src="~/Scripts/custom/PolyPathService.js"></script>
     <script src="~/Scripts/custom/controller.js"></script>
     <script src="~/Scripts/custom/directive.js"></script>
     @*<script src="~/Scripts/custom/google-maps.js"></script>*@
@@ -39,11 +40,14 @@
 
                     <ui-gmap-marker ng-repeat="marker in route" coords="marker.coords" idkey="'marker.id'">
                         <ui-gmap-window isiconvisibleonclick="true">
-                            {{ marker.destination.Name }}
+                            <div>
+                                <h5>{{ marker.destination.Name }}</h5>
+                                <p>{{ marker.coords.longitude }}, {{ marker.coords.latitude }}</p>
+                            </div>
                         </ui-gmap-window>
                     </ui-gmap-marker>
 
-                    <ui-gmap-polyline ng-repeat="p in polyPath" path="p.path" stroke="{ color: '#000000'}"></ui-gmap-polyline>
+                    <ui-gmap-polyline ng-repeat="p in polyPath" path="p.path" stroke="p.stroke" visible="p.visible"></ui-gmap-polyline>
                 </ui-gmap-google-map>
             </div>
         </div>

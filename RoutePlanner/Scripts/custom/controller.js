@@ -4,19 +4,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     uiGmapGoogleMapApi.then(function (maps) {
 
         $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 2 };
-        var route = {
-            name: "USA",
-            marker: {
-                id: 0,
-                coords: {
-                    latitude: 45,
-                    longitude: -73
-                },
-                options: { draggable: true }
-            }
-        };
 
-        $scope.marker = route.marker;
     });
 
 
@@ -86,15 +74,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.route = [];
     $scope.polyPath = [];
-    $scope.polyPath.push({
-        id: "routeLine",
-        path: [],
-        stroke: {
-            color: '#000000',
-            weight: 3
-        },
-        visible: true
-    });
 
     $scope.HasRoute = function () {
         return $scope.route.length > 0 ? true : false;
@@ -148,7 +127,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     }
 
     $scope.SwitchRoute = function (fromIndex, toIndex) {
-        arraymove($scope.polyPath[0].path, fromIndex, toIndex);
+        arraymove($scope.polyPath, fromIndex, toIndex);
     }
 
     $scope.Choose = function () {
@@ -162,14 +141,39 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
                     longitude: $scope.ChosenDestination.Longitude
                 },
                 days: 0,
+                transport: 'Land',
                 get totalCost() { return this.destination.DailyCost * this.days; },
             });
 
-            $scope.polyPath[0].path.push({
-                latitude: $scope.ChosenDestination.Latitude,
-                longitude: $scope.ChosenDestination.Longitude
-            });
-            
+
+            if ($scope.polyPath.length > 0)
+            {
+                $scope.polyPath[0].path.push(
+                {
+                    latitude: $scope.ChosenDestination.Latitude,
+                    longitude: $scope.ChosenDestination.Longitude
+                });
+            }
+            else
+            {
+                $scope.polyPath.push({
+                    id: 1,
+                    path: [
+                        {
+                            latitude: $scope.ChosenDestination.Latitude,
+                            longitude: $scope.ChosenDestination.Longitude
+                        }
+                    ],
+                    stroke: {
+                        color: '#6060FB',
+                        weight: 3
+                    },
+                    editable: true,
+                    draggable: true,
+                    geodesic: true,
+                    visible: true
+                });
+            }
 
             $scope.UpdateStopNumbering($scope.route.length - 1);
             $scope.ChosenDestination = undefined;

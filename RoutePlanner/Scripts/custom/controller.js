@@ -177,50 +177,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
 
                 $scope.polyPath.push(polyLine);
-
-
-
-                //var newPolyLine = PolyPathService.CreateNewPolyLine($scope.polyPath, prevRoute.transport);
-                
-                //newPolyLine.path.push();
-                
-                //newPolyLine.path.push({
-                //    latitude: $scope.ChosenDestination.Latitude,
-                //    longitude: $scope.ChosenDestination.Longitude
-                //});
-
-                //$scope.polyPath[0].path.push(
-                //{
-                //    latitude: $scope.ChosenDestination.Latitude,
-                //    longitude: $scope.ChosenDestination.Longitude
-                //});
-            }
-            else
-            {
-                //var newPolyLine = PolyPathService.CreateNewPolyLine($scope.polyPath, 'Air');
-
-                //newPolyLine.path.push({
-                //    latitude: $scope.ChosenDestination.Latitude,
-                //    longitude: $scope.ChosenDestination.Longitude
-                //});
-
-                //$scope.polyPath.push({
-                //    id: 1,
-                //    path: [
-                //        {
-                //            latitude: $scope.ChosenDestination.Latitude,
-                //            longitude: $scope.ChosenDestination.Longitude
-                //        }
-                //    ],
-                //    stroke: {
-                //        color: '#6060FB',
-                //        weight: 3
-                //    },
-                //    editable: true,
-                //    draggable: true,
-                //    geodesic: true,
-                //    visible: true
-                //});
             }
 
             $scope.UpdateStopNumbering($scope.route.length - 1);
@@ -250,9 +206,55 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         return $scope.route.length;
     }
 
-    $scope.Remove = function (stop) {
-        $scope.route.splice(stop.stop - 1, 1);
-        $scope.UpdateStopNumbering(stop.stop - 1);
+    $scope.OnChangeTransport = function (val) {
+        
+        if (val.item.stop > 0 && $scope.polyPath.length >= val.item.stop) {
+            var polyPath = $scope.polyPath[val.item.stop - 1];
+
+            if (val.item.transport == "Air")
+                polyPath.stroke.color = '#6060FB';
+            else if (val.item.transport == "Land")
+                polyPath.stroke.color = color = '#000000';
+            else if (val.item.transport == "Sea")
+                polyPath.stroke.color = '#F6F6F6';
+        }
+    }
+
+    $scope.Remove = function (destination) {
+
+        var isFirstStop = destination.stop == 1;
+        var isSecondStop = destination.stop == 2;
+        var isLastDestination = destination.stop == $scope.route.length;
+
+        // remove from route array
+        $scope.route.splice(destination.stop - 1, 1);
+
+        if (isFirstStop) {
+            $scope.polyPath.splice(0, 1); // remove first
+        }
+        else if (isLastDestination) {
+            $scope.polyPath.splice(destination.stop - 2, 1); // remove last
+        }
+        else if (isSecondStop) {
+            var nextPolyPath = $scope.polyPath[destination.stop - 1];
+            nextPolyPath.path[0].longitude = $scope.polyPath[0].path[0].longitude;
+            nextPolyPath.path[0].latitude = $scope.polyPath[0].path[0].latitude;
+
+            $scope.polyPath.splice(0, 1); // remove first
+        }
+        else
+        {
+            var prevPolyPath = $scope.polyPath[destination.stop - 3];
+            var nextPolyPath = $scope.polyPath[destination.stop - 1];
+
+            nextPolyPath.path[0].longitude = prevPolyPath.path[1].longitude;
+            nextPolyPath.path[0].latitude = prevPolyPath.path[1].latitude;
+
+            // remove poly line
+            $scope.polyPath.splice(destination.stop - 2, 1);
+        }
+
+        $scope.UpdateStopNumbering(destination.stop - 1);
     }
 
 

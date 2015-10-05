@@ -30,6 +30,9 @@
 
     return {
         CreateNewPolyLine: CreateNewPolyLine
+        // changeTransportType
+        // changeOrder
+        // remove
     };
 
 }])

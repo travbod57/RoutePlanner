@@ -71,7 +71,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     };
 
     $scope.route = [];
-    $scope.polyPath = [];
+    $scope.PolyLines = [];
 
     $scope.HasRoute = function () {
         return $scope.route.length > 0 ? true : false;
@@ -125,8 +125,9 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     }
 
     $scope.SwitchRoute = function (fromIndex, toIndex) {
-        arraymove($scope.polyPath, fromIndex, toIndex);
+        arraymove($scope.PolyLines, fromIndex, toIndex);
     }
+
     var polyLineCount = 0;
     $scope.Choose = function () {
 
@@ -147,36 +148,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             if ($scope.route.length > 1)
             {
                 var prevRoute = $scope.route[$scope.route.length - 2];
-              
-                var stroke;
-
-                if (prevRoute.transport == "Air")
-                    stroke = { color: '#6060FB', weight: 3 };
-                else if (prevRoute.transport == "Land")
-                    stroke = { color: '#000000', weight: 3 };
-                else if (prevRoute.transport == "Sea")
-                    stroke = { color: '#F6F6F6', weight: 3 };
-
-                var polyLineNumber = ++polyLineCount;
-                var polyLine = {
-                    id: "polyPath" + polyLineNumber,
-                    path: [{
-                        latitude: prevRoute.coords.latitude,
-                        longitude: prevRoute.coords.longitude
-                    },
-                    {
-                        latitude: $scope.ChosenDestination.Latitude,
-                        longitude: $scope.ChosenDestination.Longitude
-                    }],
-                    stroke: stroke,
-                    editable: true,
-                    draggable: true,
-                    geodesic: true,
-                    visible: true
-                };
-
-
-                $scope.polyPath.push(polyLine);
+                PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenDestination, prevRoute);
             }
 
             $scope.UpdateStopNumbering($scope.route.length - 1);
@@ -208,15 +180,10 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.OnChangeTransport = function (val) {
         
-        if (val.item.stop > 0 && $scope.polyPath.length >= val.item.stop) {
-            var polyPath = $scope.polyPath[val.item.stop - 1];
+        if (val.item.stop > 0 && $scope.PolyLines.length >= val.item.stop) {
+            var polyPath = $scope.PolyLines[val.item.stop - 1];
 
-            if (val.item.transport == "Air")
-                polyPath.stroke.color = '#6060FB';
-            else if (val.item.transport == "Land")
-                polyPath.stroke.color = color = '#000000';
-            else if (val.item.transport == "Sea")
-                polyPath.stroke.color = '#F6F6F6';
+            PolyPathService.UpdateStrokeColour(val.item.transport, polyPath);
         }
     }
 
@@ -230,46 +197,36 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         $scope.route.splice(destination.stop - 1, 1);
 
         if (isFirstStop) {
-            $scope.polyPath.splice(0, 1); // remove first
+            $scope.PolyLines.splice(0, 1); // remove first
         }
         else if (isLastDestination) {
-            $scope.polyPath.splice(destination.stop - 2, 1); // remove last
+            $scope.PolyLines.splice(destination.stop - 2, 1); // remove last
         }
         else if (isSecondStop) {
-            var nextPolyPath = $scope.polyPath[destination.stop - 1];
-            nextPolyPath.path[0].longitude = $scope.polyPath[0].path[0].longitude;
-            nextPolyPath.path[0].latitude = $scope.polyPath[0].path[0].latitude;
+            var nextPolyPath = $scope.PolyLines[destination.stop - 1];
+            nextPolyPath.path[0].longitude = $scope.PolyLines[0].path[0].longitude;
+            nextPolyPath.path[0].latitude = $scope.PolyLines[0].path[0].latitude;
 
             var prevDestination = $scope.route[destination.stop - 2];
 
-            if (prevDestination.transport == "Air")
-                nextPolyPath.stroke.color = '#6060FB';
-            else if (prevDestination.transport == "Land")
-                nextPolyPath.stroke.color = '#000000';
-            else if (prevDestination.transport == "Sea")
-                nextPolyPath.stroke.color = '#F6F6F6';
+            PolyPathService.UpdateStrokeColour(prevDestination.transport, nextPolyPath);
 
-            $scope.polyPath.splice(0, 1); // remove first
+            $scope.PolyLines.splice(0, 1); // remove first
         }
         else
         {
-            var prevPolyPath = $scope.polyPath[destination.stop - 3];
-            var nextPolyPath = $scope.polyPath[destination.stop - 1];
+            var prevPolyPath = $scope.PolyLines[destination.stop - 3];
+            var nextPolyPath = $scope.PolyLines[destination.stop - 1];
 
             nextPolyPath.path[0].longitude = prevPolyPath.path[1].longitude;
             nextPolyPath.path[0].latitude = prevPolyPath.path[1].latitude;
 
             var prevDestination = $scope.route[destination.stop - 2];
 
-            if (prevDestination.transport == "Air")
-                nextPolyPath.stroke.color = '#6060FB';
-            else if (prevDestination.transport == "Land")
-                nextPolyPath.stroke.color = '#000000';
-            else if (prevDestination.transport == "Sea")
-                nextPolyPath.stroke.color = '#F6F6F6';
+            PolyPathService.UpdateStrokeColour(prevDestination.transport, nextPolyPath);
 
             // remove poly line
-            $scope.polyPath.splice(destination.stop - 2, 1);
+            $scope.PolyLines.splice(destination.stop - 2, 1);
         }
 
         $scope.UpdateStopNumbering(destination.stop - 1);

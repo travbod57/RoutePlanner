@@ -240,6 +240,15 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             nextPolyPath.path[0].longitude = $scope.polyPath[0].path[0].longitude;
             nextPolyPath.path[0].latitude = $scope.polyPath[0].path[0].latitude;
 
+            var prevDestination = $scope.route[destination.stop - 2];
+
+            if (prevDestination.transport == "Air")
+                nextPolyPath.stroke.color = '#6060FB';
+            else if (prevDestination.transport == "Land")
+                nextPolyPath.stroke.color = '#000000';
+            else if (prevDestination.transport == "Sea")
+                nextPolyPath.stroke.color = '#F6F6F6';
+
             $scope.polyPath.splice(0, 1); // remove first
         }
         else
@@ -249,6 +258,15 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
             nextPolyPath.path[0].longitude = prevPolyPath.path[1].longitude;
             nextPolyPath.path[0].latitude = prevPolyPath.path[1].latitude;
+
+            var prevDestination = $scope.route[destination.stop - 2];
+
+            if (prevDestination.transport == "Air")
+                nextPolyPath.stroke.color = '#6060FB';
+            else if (prevDestination.transport == "Land")
+                nextPolyPath.stroke.color = '#000000';
+            else if (prevDestination.transport == "Sea")
+                nextPolyPath.stroke.color = '#F6F6F6';
 
             // remove poly line
             $scope.polyPath.splice(destination.stop - 2, 1);

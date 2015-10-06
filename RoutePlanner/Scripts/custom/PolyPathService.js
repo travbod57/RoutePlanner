@@ -15,6 +15,10 @@
                     latitude: currentRoute.Latitude,
                     longitude: currentRoute.Longitude
                 }],
+            routeName : {
+                prev: previousRoute.destination.Name,
+                current: currentRoute.Name
+            },
             stroke: {},
             editable: true,
             draggable: true,

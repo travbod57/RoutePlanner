@@ -43,10 +43,36 @@
             polyLine.stroke = { color: '#F6F6F6', weight: 3 };
     }
 
+    function MendPolyLines(polyLines, routes, from, to) {
+
+        var isSwitchingLastRoute = (from == routes.length - 1) || (to == routes.length - 1);
+
+        var loopFrom = (from < to ? from : to) - 1;
+        var loopTo = (to > from ? to : from);
+
+        loopTo += isSwitchingLastRoute ? -1 : 0;
+
+        if (loopFrom == -1) loopFrom += 1;
+
+        for (i = loopFrom; i <= loopTo; i++)
+        {
+
+            polyLines[i].path[0].latitude = routes[i].coords.latitude;
+            polyLines[i].path[0].longitude = routes[i].coords.longitude;
+            polyLines[i].routeName.prev = routes[i].destination.Name;
+
+            polyLines[i].path[1].latitude = routes[i + 1].coords.latitude;
+            polyLines[i].path[1].longitude = routes[i + 1].coords.longitude;
+            polyLines[i].routeName.current = routes[i+1].destination.Name;
+
+            UpdateStrokeColour(routes[i].transport, polyLines[i]);
+        }
+    }
 
     return {
         CreateNewPolyLine: CreateNewPolyLine,
-        UpdateStrokeColour: UpdateStrokeColour
+        UpdateStrokeColour: UpdateStrokeColour,
+        MendPolyLines: MendPolyLines
         // changeTransportType
         // changeOrder
         // remove

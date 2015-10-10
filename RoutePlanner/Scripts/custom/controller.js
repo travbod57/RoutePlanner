@@ -118,44 +118,11 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         }
     }
 
-    //function arraymove(arr, fromIndex, toIndex) {
-    //    var element = arr[fromIndex];
-    //    arr.splice(fromIndex, 1);
-    //    arr.splice(toIndex, 0, element);
-    //}
-
     $scope.SwitchRoute = function (fromIndex, toIndex) {
-        // TODO: if moving to postion 1 and respecting transport changes
-        var movingPolyLine = $scope.PolyLines[fromIndex - 1];
-        var shiftedPolyLine = $scope.PolyLines[toIndex - 1];
-        
-        // moving a destination back
-        if (fromIndex > toIndex) {
-            movingPolyLine.path[0].latitude = shiftedPolyLine.path[0].latitude;
-            movingPolyLine.path[0].longitude = shiftedPolyLine.path[0].longitude;
-            movingPolyLine.routeName.prev = shiftedPolyLine.routeName.prev;
 
-            shiftedPolyLine.path[0].latitude = movingPolyLine.path[1].latitude;
-            shiftedPolyLine.path[0].longitude = movingPolyLine.path[1].longitude;
-            shiftedPolyLine.routeName.prev = movingPolyLine.routeName.current;
-        }
-        else // moving a destination forward
-        {
-            shiftedPolyLine.path[0].latitude = movingPolyLine.path[0].latitude;
-            shiftedPolyLine.path[0].longitude = movingPolyLine.path[0].longitude;
-            shiftedPolyLine.routeName.prev = movingPolyLine.routeName.prev;
-
-            movingPolyLine.path[0].latitude = shiftedPolyLine.path[1].latitude;
-            movingPolyLine.path[0].longitude = shiftedPolyLine.path[1].longitude;
-            movingPolyLine.routeName.prev = shiftedPolyLine.routeName.current;
-        }
-
-        $scope.PolyLines.splice(fromIndex - 1, 1);
-        $scope.PolyLines.splice(toIndex - 1, 0, movingPolyLine);
-
+        PolyPathService.MendPolyLines($scope.PolyLines, $scope.route, fromIndex, toIndex);
     }
 
-    var polyLineCount = 0;
     $scope.Choose = function () {
 
         if ($scope.ChosenDestination !== undefined) {

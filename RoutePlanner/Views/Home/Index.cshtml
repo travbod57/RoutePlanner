@@ -11,8 +11,8 @@
     <script src="~/Scripts/angular-resource.min.js"></script>
     <script src="~/Scripts/angular-route.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-animate.js"></script>
-    @*<script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>*@
-<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
+    <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.1.min.js"></script>
+@*<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>*@
     <script src="~/Scripts/custom/app.js"></script>
 <script src="~/Scripts/custom/PolyPathService.js"></script>
     <script src="~/Scripts/custom/controller.js"></script>
@@ -29,9 +29,61 @@
     .angular-google-map-container {
         height: 400px;
     }
+
+    #routeTable tbody tr td {
+        vertical-align: middle;
+    }
+
+    .has-error .form-control-feedback {
+    color: #a94442;
+}
+
+    .has-success .form-control-feedback {
+    color: #3c763d;
+}
+
+.form-control-feedback {
+    position: absolute;
+    top: 74px;
+    right: 20px;
+    z-index: 2;
+    display: block;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+}
 </style>
 
 <div ng-app="routePlanner" ng-controller="routePlannerCtrl" class="ng-cloak">
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Email Route</h3>
+        </div>
+        <div class="modal-body">
+            <p>Please provide your email address</p>
+            <form name="contactForm">
+                <div class="form-group" ng-class="{'has-error': !contactForm.Email.$valid && contactForm.Email.$dirty, 'has-success': contactForm.Email.$valid && contactForm.Email.$dirty, 'has-feedback': (!contactForm.Email.$valid && contactForm.Email.$dirty || contactForm.Email.$valid && contactForm.Email.$dirty)}">
+                    <label class="control-label">Email:</label>
+
+                    <input type="text" name="Email" placeholder="enter your email" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
+                    <div class="text-danger" ng-show="contactForm.Email.$error.required && contactForm.Email.$dirty">Please enter your email address</div>
+                    <div class="text-danger" ng-show="contactForm.Email.$error.pattern && contactForm.Email.$dirty">Please enter a valid email address</div>
+
+                    @*<uib-progressbar class="progress-striped active" value="100" type="info">sending email</uib-progressbar>*@
+                    {{ route | json }}
+                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!contactForm.Email.$valid && contactForm.Email.$dirty"></span>
+                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="contactForm.Email.$valid && contactForm.Email.$dirty"></span>
+                </div>
+            </form>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="contactForm.$invalid">Send</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 
     <div class="row">
         <div class="col-md-12">
@@ -65,8 +117,11 @@
                             </span>
                         </p>
 
-                        <input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">
+                        <input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">
+                        <input type="text" ng-model="ChosenDestination" placeholder="Locations loaded via $http" uib-typeahead="destination as destination.Name for destination in getLocation($viewValue) | limitTo:8" class="form-control">
+                        
                         <button id="destinationSelector" type="button" class="btn btn-primary" ng-click="Choose()">Choose</button>
+
                     </div>
                 </div>
             </div>
@@ -79,13 +134,13 @@
             @*<div><button ng-click="Switch()">Switch</button></div>*@
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-striped" style="width: 750px;">
+                    <table id="routeTable" class="table table-striped">
                         <thead>
                             <tr>
                                 <th style="width: 50px;">stop</th>
                                 <th style="width: 200px;">destination</th>
                                 <th style="width: 100px;">days</th>
-                                <th style="width: 100px;">daily cost</th>
+                                <th style="width: 100px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
                                 <th style="width: 200px;">total cost</th>
                                 <th style="width: 300px;">leave by</th>
                                 <th style="width: 100px;"></th>
@@ -123,9 +178,9 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" ng-click="save()">Save</button><button class="btn btn-primary">Email Route</button>
+            <button class="btn btn-primary" ng-click="save()">Save</button><button class="btn btn-primary" ng-click="open('lg')">Email Route</button>
             <br />{{ PolyLines | json}}
-            <br />
+            <br />{{ route | json}}
 
         </div>
     </div>

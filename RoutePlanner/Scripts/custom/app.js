@@ -1,5 +1,5 @@
 ﻿
-var app = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogle-maps'])
+var app = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogle-maps', 'ngAnimate'])
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
         //    key: 'your api key',

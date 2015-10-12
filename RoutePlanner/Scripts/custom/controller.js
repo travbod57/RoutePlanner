@@ -1,5 +1,5 @@
 ﻿
-app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, myHttpService, PolyPathService) {
+app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, myHttpService, PolyPathService, $uibModal) {
 
     uiGmapGoogleMapApi.then(function (maps) {
 
@@ -17,6 +17,18 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     }
 
+    $scope.getLocation = function (val) {
+        return $http.get('http://localhost:81/Slim/asyncDestinations', {
+            params: {
+                searchTerm: val
+            }
+        }).then(function (response) {
+            return response.data.map(function (item) {
+                return item;
+            });
+        });
+
+    };
     $scope.init();
 
     $scope.ChosenDestination;
@@ -122,6 +134,27 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
         PolyPathService.MendPolyLines($scope.PolyLines, $scope.route, fromIndex, toIndex);
     }
+
+    $scope.open = function (size) {
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'myModalContent.html',
+            controller: 'ModalInstanceCtrl',
+            size: size,
+            resolve: {
+                route: function () {
+                    return $scope.route;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+            $scope.selected = selectedItem;
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
 
     $scope.Choose = function () {
 
@@ -248,12 +281,12 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     };
     $scope.toggleMin();
 
-    $scope.open = function ($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
+    //$scope.open = function ($event) {
+    //    $event.preventDefault();
+    //    $event.stopPropagation();
 
-        $scope.opened = true;
-    };
+    //    $scope.opened = true;
+    //};
 
     $scope.dateOptions = {
         formatYear: 'yy',
@@ -285,6 +318,21 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     }, true);
 
 
+});
+
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
+
+    $scope.ContactDetails = { details: { Email: "" }};
+
+    $scope.route = route;
+
+    $scope.ok = function () {
+        $modalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 });
 
 app.factory("myHttpService", function ($http) {

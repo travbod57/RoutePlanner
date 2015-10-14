@@ -309,13 +309,13 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     // watch, use 'true' to also receive updates when values
     // change, instead of just the reference
-    $scope.$watch("route", function (value) {
-        //console.log("Route: " + value.map(function(e) {
+    //$scope.$watch("route", function (value) {
+    //    //console.log("Route: " + value.map(function(e) {
 
-        //return e.days
-        //}).join(','));
+    //    //return e.days
+    //    //}).join(','));
 
-    }, true);
+    //}, true);
 
 
 });
@@ -325,8 +325,19 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
     $scope.ContactDetails = { details: { Email: "" }};
 
     $scope.route = route;
-
     $scope.ok = function () {
+
+        $.ajax({
+            url: "/RoutePlanner/Home/MockSendEmail",
+            type: "GET"
+        }).done(function () {
+            alert('done');
+            // send email by calling SLIM
+        }).
+        fail(function () {
+            alert('fail');
+        });
+
         $modalInstance.close();
     };
 
@@ -345,8 +356,6 @@ app.factory("myHttpService", function ($http) {
         }
     }
 });
-
-
 
 // transforms the request into name value pairs
 angular.module('routePlanner').config(function ($httpProvider) {

@@ -64,5 +64,11 @@ namespace RoutePlanner.Controllers
 
             return View();
         }
+
+        public JsonResult MockSendEmail()
+        {
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
     }
 }

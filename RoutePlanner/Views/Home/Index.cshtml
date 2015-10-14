@@ -55,7 +55,7 @@
 }
 </style>
 
-<div ng-app="routePlanner" ng-controller="routePlannerCtrl" class="ng-cloak">
+<div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="ng-cloak">
 
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
@@ -72,7 +72,8 @@
                     <div class="text-danger" ng-show="contactForm.Email.$error.pattern && contactForm.Email.$dirty">Please enter a valid email address</div>
 
                     @*<uib-progressbar class="progress-striped active" value="100" type="info">sending email</uib-progressbar>*@
-                    {{ route | json }}
+                    <div ng-show="showProgress">Im a div</div>
+                    {{ showProgress }}
                     <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!contactForm.Email.$valid && contactForm.Email.$dirty"></span>
                     <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="contactForm.Email.$valid && contactForm.Email.$dirty"></span>
                 </div>
@@ -117,8 +118,8 @@
                             </span>
                         </p>
 
-                        <input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">
-                        <input type="text" ng-model="ChosenDestination" placeholder="Locations loaded via $http" uib-typeahead="destination as destination.Name for destination in getLocation($viewValue) | limitTo:8" class="form-control">
+                        @*<input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">*@
+                        <input type="text" ng-model="ChosenDestination" placeholder="Locations loaded via $http" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Name for destination in getLocation($viewValue)" class="form-control">
                         
                         <button id="destinationSelector" type="button" class="btn btn-primary" ng-click="Choose()">Choose</button>
 
@@ -157,9 +158,9 @@
                                 <td style="width: 200px;">{{item.totalCost | currency }}</td>
                                 <td style="width: 300px;">
                                     <div class="btn-group">
-                                        <label class="btn btn-primary" ng-model="item.transport" btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
-                                        <label class="btn btn-primary" ng-model="item.transport" btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
-                                        <label class="btn btn-primary" ng-model="item.transport" btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
+                                        <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
+                                        <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
+                                        <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
                                     </div>
                                 </td>
                                 <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>
@@ -179,9 +180,7 @@
             </div>
 
             <button class="btn btn-primary" ng-click="save()">Save</button><button class="btn btn-primary" ng-click="open('lg')">Email Route</button>
-            <br />{{ PolyLines | json}}
-            <br />{{ route | json}}
-
+ 
         </div>
     </div>
 </div>

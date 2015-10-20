@@ -156,6 +156,10 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         });
     };
 
+    $scope.onMarkerClick = function (model) {
+        model.show = !model.show;
+    };
+
     $scope.Choose = function () {
 
         if ($scope.ChosenDestination !== undefined) {

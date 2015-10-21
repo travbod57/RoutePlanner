@@ -20,9 +20,21 @@
     @*<script src="~/Scripts/custom/google-maps.js"></script>*@
 
     
+<link href="~/Content/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" />
+<script src="~/Scripts/custom/bootstrap.datepicker.js"></script>
     <script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
     <script src="~/Scripts/custom/angular-google-maps.min.js"></script>
 
+    <script type="text/javascript">
+        $("#startDate").datepicker({
+            format: "dd-M-yyyy",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true
+        }).on('hide', function (e) {
+            //$("#postponeDiary").valid();
+        });
+    </script>
 
 }
 <style>
@@ -122,6 +134,9 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <p class="input-group">
+                           
+                            <input type="text" class="form-control" id="startDate" />
+
                             <input type="text" class="form-control" datepicker-popup="{{format}}" placeholder="Enter the start date of your trip ..." ng-model="startDate" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
                                    ng-required="true" close-text="Close" />
                             <span class="input-group-btn">

@@ -3,7 +3,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     uiGmapGoogleMapApi.then(function (maps) {
 
-        $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 2 };
+        $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2 };
 
     });
 
@@ -284,13 +284,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         $scope.minDate = $scope.minDate ? null : new Date();
     };
     $scope.toggleMin();
-
-    //$scope.open = function ($event) {
-    //    $event.preventDefault();
-    //    $event.stopPropagation();
-
-    //    $scope.opened = true;
-    //};
 
     $scope.dateOptions = {
         formatYear: 'yy',

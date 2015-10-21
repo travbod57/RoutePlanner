@@ -105,7 +105,7 @@
 
                     <ui-gmap-markers models='route' idkey='id' coords="'coords'" click="onMarkerClick">
                         <ui-gmap-windows show="show">
-                            <div ng-non-bindable>{{destination.Name}}</div>
+                            <div ng-non-bindable>{{destination.Full_Name}}</div>
                         </ui-gmap-windows>
                     </ui-gmap-markers>
                     @*<ui-gmap-marker ng-repeat="marker in route" coords="marker.coords" idkey="'marker.id'">
@@ -145,7 +145,7 @@
                         </p>
 
                         @*<input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">*@
-                        <input type="text" ng-model="ChosenDestination" placeholder="Locations loaded via $http" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Name for destination in getLocation($viewValue)" class="form-control">
+                        <input type="text" ng-model="ChosenDestination" placeholder="Locations loaded via $http" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)" class="form-control">
                         
                         <button id="destinationSelector" type="button" class="btn btn-primary" ng-click="Choose()">Choose</button>
 
@@ -176,7 +176,7 @@
                         <tbody id="sortable" dnd-list="route">
                             <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
                                 <td style="width: 50px;">{{ item.stop }}:</td>
-                                <td style="width: 200px;">{{item.destination.Name}}</td>
+                                <td style="width: 200px;">{{item.destination.Full_Name}}</td>
                                 <td style="width: 100px;">
                                     <input type="number" ng-model="item.days" min="0" max="99" />
                                 </td>

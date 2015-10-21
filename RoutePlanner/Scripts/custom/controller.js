@@ -1,5 +1,5 @@
 ﻿
-app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, myHttpService, PolyPathService, $uibModal) {
+app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal) {
 
     uiGmapGoogleMapApi.then(function (maps) {
 
@@ -9,16 +9,15 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.init = function () {
 
-        $http.get('http://localhost:81/Slim/destinations')
+        $http.get('http://www.thinkbackpacking.com/Slim/destinations')
         .then(function (response) {
             $scope.destinations = [];
             $scope.destinations.push.apply($scope.destinations, response.data);
         });
-
     }
 
     $scope.getLocation = function (val) {
-        return $http.get('http://localhost:81/Slim/asyncDestinations', {
+        return $http.get('http://www.thinkbackpacking.com/Slim/asyncDestinations', {
             params: {
                 searchTerm: val
             }
@@ -59,18 +58,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             // called asynchronously if an error occurs
             // or server returns response with an error status.
         });
-
-
-        //alert(JSON.stringify($scope.route));
-        //$httpPromise = myHttpService.postDetails2(angular.toJson($scope.route));
-
-        //$httpPromise.then(
-        //function(payload) { 
-        // alert(payload.data);
-        //},
-        //function(errorPayload) {
-        // $log.error('failure loading movie', errorPayload);
-        // });
     };
 
     $scope.getDestinationsAsync = function (searchTerm) {
@@ -175,7 +162,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
                 get totalCost() { return this.destination.DailyCost * this.days; },
             });
 
-
             if ($scope.route.length > 1)
             {
                 var prevRoute = $scope.route[$scope.route.length - 2];
@@ -263,9 +249,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         $scope.UpdateStopNumbering(destination.stop - 1);
     }
 
-
-
-
     $scope.today = function () {
         $scope.startDate = new Date();
     };
@@ -292,29 +275,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $scope.format = $scope.formats[0];
-
-    $scope.$watch("SelectedRouteStop", function (value) {
-        //console.log("Route: " + value.map(function(e) {
-
-        //return e.days
-        //}).join(','));
-
-        //console.log($scope.SelectedRouteStop.name);
-    }, true);
-
-
-
-    // watch, use 'true' to also receive updates when values
-    // change, instead of just the reference
-    //$scope.$watch("route", function (value) {
-    //    //console.log("Route: " + value.map(function(e) {
-
-    //    //return e.days
-    //    //}).join(','));
-
-    //}, true);
-
-
 });
 
 app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
@@ -341,29 +301,4 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-});
-
-app.factory("myHttpService", function ($http) {
-    return {
-        postDetails: function (data) {
-            return $http.post('http://localhost:81/Slim/test', data, { "headers": { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" } });
-        },
-        postDetails2: function (data) {
-            return $http.post('http://localhost:81/Slim/test', { "routeData": data }, { "headers": { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" } });
-        }
-    }
-});
-
-// transforms the request into name value pairs
-angular.module('routePlanner').config(function ($httpProvider) {
-    //$httpProvider.defaults.transformRequest = function (data) {
-    //   var str = [];
-    // for (var p in data) {
-    //   data[p] !== undefined && str.push(encodeURIComponent(p) + '=' + encodeURIComponent(data[p]));
-    //}
-    //return str.join('&');
-    //  };
-
-
-    //$httpProvider.defaults.headers.put['Content-Type'] = $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 });

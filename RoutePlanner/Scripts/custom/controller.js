@@ -3,7 +3,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     uiGmapGoogleMapApi.then(function (maps) {
 
-        $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2 };
+        $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2} };
 
     });
 
@@ -93,7 +93,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.ReturnDate = function () {
         var returnDate = new Date();
-        returnDate.setDate($scope.startDate.getDate() + $scope.getTripLength());
+        //returnDate.setDate($scope.startDate.getDate() + $scope.getTripLength());
 
         return $filter('date')(returnDate, 'fullDate');
     }

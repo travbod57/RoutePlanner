@@ -9,11 +9,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.init = function () {
 
-        $http.get('http://www.thinkbackpacking.com/Slim/destinations')
-        .then(function (response) {
-            $scope.destinations = [];
-            $scope.destinations.push.apply($scope.destinations, response.data);
-        });
+        $scope.startDate = moment().format("DD-MMM-YYYY"); //new Date();
     }
 
     $scope.getLocation = function (val) {
@@ -68,6 +64,13 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             return response.data;
         });
     };
+
+    $scope.startDate;
+
+    $scope.$watch('startDate', function (newValue, oldValue) {
+        console.log('oldValue=' + oldValue);
+        console.log('newValue=' + newValue);
+    });
 
     $scope.route = [];
     $scope.PolyLines = [];
@@ -249,29 +252,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         $scope.UpdateStopNumbering(destination.stop - 1);
     }
 
-    $scope.today = function () {
-        $scope.startDate = new Date();
-    };
-    $scope.today();
-
-    $scope.clear = function () {
-        $scope.startDate = null;
-    };
-
-    // Disable weekend selection
-    $scope.disabled = function (date, mode) {
-        return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
-    };
-
-    $scope.toggleMin = function () {
-        $scope.minDate = $scope.minDate ? null : new Date();
-    };
-    $scope.toggleMin();
-
-    $scope.dateOptions = {
-        formatYear: 'yy',
-        startingDay: 1
-    };
 
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $scope.format = $scope.formats[0];

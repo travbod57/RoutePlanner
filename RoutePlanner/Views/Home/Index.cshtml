@@ -24,16 +24,16 @@
 <script src="~/Scripts/custom/bootstrap.datepicker.js"></script>
     <script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
     <script src="~/Scripts/custom/angular-google-maps.min.js"></script>
-
+<script src="~/Scripts/moment.min.js"></script>
     <script type="text/javascript">
         $("#startDate").datepicker({
             format: "dd-M-yyyy",
             clearBtn: true,
-            autoclose: true,
-            todayHighlight: true
-        }).on('hide', function (e) {
-            //$("#postponeDiary").valid();
+            autoclose: true//,
+            //todayHighlight: true
         });
+
+        //$('#startDate').datepicker('update', '30-Oct-2015');
     </script>
 
 }
@@ -133,16 +133,18 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <p class="input-group">
-                           
-                            <input type="text" class="form-control" id="startDate" />
+                        
+                        <input type="text" class="form-control" id="startDate" ng-model="startDate" />
+                       @* <p class="input-group">
 
-                            <input type="text" class="form-control" datepicker-popup="{{format}}" placeholder="Enter the start date of your trip ..." ng-model="startDate" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-                                   ng-required="true" close-text="Close" />
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                            </span>
-                        </p>
+                    <input type="text" class="form-control" datepicker-popup="{{format}}" placeholder="Enter the start date of your trip ..." ng-model="startDate" is-open="opened"
+                           min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                           ng-required="true" close-text="Close" />
+
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span></p>*@
+                        
 
                         @*<input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">*@
                         <input type="text" ng-model="ChosenDestination" placeholder="Locations loaded via $http" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)" class="form-control">

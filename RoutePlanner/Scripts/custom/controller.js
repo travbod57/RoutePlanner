@@ -9,7 +9,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.init = function () {
 
-        $scope.startDate = moment().format("DD-MMM-YYYY"); //new Date();
+        //$scope.startDate = moment().format("DD-MMM-YYYY"); //new Date();
     }
 
     $scope.getLocation = function (val) {
@@ -92,10 +92,14 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     }
 
     $scope.ReturnDate = function () {
-        var returnDate = new Date();
-        //returnDate.setDate($scope.startDate.getDate() + $scope.getTripLength());
-
-        return $filter('date')(returnDate, 'fullDate');
+        
+        if ($scope.startDate != undefined) {
+            var returnDate = new Date($scope.startDate);
+            return moment(returnDate.setDate(returnDate.getDate() + $scope.getTripLength())).format("DD-MMM-YYYY (ddd)");
+        }
+        else
+            return "Please enter a start date";
+        //return $filter('date')(returnDate, 'fullDate');
     }
 
     $scope.AddDays = function (e) {
@@ -264,11 +268,6 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
     $scope.ContactDetails = { details: { Email: "" }};
     $scope.route = route;
     $scope.ok = function () {
-
-        var data = {
-            routeData: "test",
-            email: $scope.ContactDetails.details.Email
-        }
 
         $.ajax({
             url: "http://www.thinkbackpacking.com/Slim/sendEmail",

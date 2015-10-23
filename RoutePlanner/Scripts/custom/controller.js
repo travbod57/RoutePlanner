@@ -259,23 +259,41 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
 app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
 
-    $scope.ContactDetails = { details: { Email: "" }};
+    
 
+    $scope.ContactDetails = { details: { Email: "" }};
     $scope.route = route;
     $scope.ok = function () {
 
-        $.ajax({
-            url: "/RoutePlanner/Home/MockSendEmail",
-            type: "GET"
-        }).done(function () {
-            alert('done');
-            // send email by calling SLIM
-        }).
-        fail(function () {
-            alert('fail');
-        });
+        var data = {
+            routeData: "test",
+            email: $scope.ContactDetails.details.Email
+        }
 
-        $modalInstance.close();
+        $.ajax({
+            url: "http://www.thinkbackpacking.com/Slim/sendEmail",
+            type: "POST",
+            dataType: "text",
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            transformRequest: function (obj) {
+                var str = [];
+                for (var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                return str.join("&");
+            },
+            data: { address: $scope.ContactDetails.details.Email, routeData: angular.toJson($scope.route) }
+        }).done(function () {
+            $scope.$apply(function () {
+                $scope.showEmailError = false;
+            });
+            $modalInstance.close();
+        }).
+        fail(function (jqXHR, textStatus, error) {
+            $scope.$apply(function () {
+                $scope.showEmailError = true;
+            });
+            
+        });
     };
 
     $scope.cancel = function () {

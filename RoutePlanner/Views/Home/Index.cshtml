@@ -29,8 +29,8 @@
         $("#startDate").datepicker({
             format: "dd-M-yyyy",
             clearBtn: true,
-            autoclose: true//,
-            //todayHighlight: true
+            autoclose: true,
+            todayHighlight: true
         });
 
         //$('#startDate').datepicker('update', '30-Oct-2015');
@@ -145,7 +145,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
 
-                        <input id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
+                        
                         @* <p class="input-group">
 
                             <input type="text" class="form-control" datepicker-popup="{{format}}" placeholder="Enter the start date of your trip ..." ng-model="startDate" is-open="opened"
@@ -160,6 +160,7 @@
                         @*<input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">*@
 
                         <form class="form-inline" role="form">
+                            <input id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
                             <input id="destinationPicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a destination ..." typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
                             <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
                         </form>
@@ -168,6 +169,8 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <p>Drag and drop instructions. Starting and final point to be shown clearly. days to be nights</p>
+
                     <span class="label label-primary">{{ getNumberOfStops() }} stops</span>
                     <span class="label label-primary">{{ getTripLength() }} days</span>
                 </div>

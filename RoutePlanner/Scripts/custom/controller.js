@@ -31,6 +31,24 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.destinations = [];
 
+    $scope.CurrencyDropdownValues = [{
+        id: 1,
+        label: 'GBP',
+        symbol: '£'
+    }, {
+        id: 2,
+        label: 'USD',
+        symbol: '$'
+    },
+    //{
+    //    id: 3,
+    //    label: 'EURO',
+    //    symbol: '&euro;'
+    //}
+    ];
+
+    $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
+
 
     $scope.save = function () {
 
@@ -121,6 +139,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
         for (i = indexToRenumberFrom; i < $scope.route.length; i++) {
             $scope.route[i].stop = i + 1;
+            //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
         }
 
         //for (i = 0; i < $scope.route.length; i++) {
@@ -130,7 +149,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         //    else if (i == $scope.route.length - 1)
         //        $scope.route[i].stop = 'End';
         //    else {
-        //        $("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
+        //        //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
         //        $scope.route[i].stop = i;
         //    }
         //}

@@ -78,6 +78,10 @@
         width: 200px;
     }
 
+    #currencyDropDown {
+        width: 150px;
+    }
+
     .numberCircle {
         position: relative;
         background-color: rgba(15,165,217,0.7);
@@ -94,6 +98,10 @@
         display: block;
         line-height: 1;
         padding: 8px 0 3px;
+    }
+
+    .infoWindowContent span {
+        display: block;
     }
 
 </style>
@@ -134,7 +142,12 @@
 
                     <ui-gmap-markers models='route' idkey='id' coords="'coords'" click="onMarkerClick" options="'options'">
                         <ui-gmap-windows show="show">
-                            <div ng-non-bindable>{{destination.Full_Name}}</div>
+                            <div class="infoWindowContent" ng-non-bindable>
+                                <span><strong>{{destination.Full_Name}}</strong></span>
+                                <span>stop {{stop}}</span>
+                                <span>{{nights}} nights</span>
+                                <span>Arrive by {{transport}}</span>
+                            </div>
                         </ui-gmap-windows>
                     </ui-gmap-markers>
                     @*<ui-gmap-marker ng-repeat="marker in route" coords="marker.coords" idkey="'marker.id'">
@@ -215,8 +228,12 @@
                                 <td style="width: 100px;">
                                     <input type="number" ng-model="item.nights" min="0" max="99" />
                                 </td>
-                                <td style="width: 100px;">{{ item.destination.DailyCost | currency }}</td>
-                                <td style="width: 200px;">{{item.totalCost | currency }}</td>
+                                <td style="width: 100px;">
+                                    @*<input type="number" ng-model="item.destination.DailyCost" min="0" />*@
+                                    @*<span ng-bind-html="item.destination.DailyCost | currency:SelectedCurrencyDropdownValue.symbol"></span>*@
+                                    {{ item.destination.DailyCost | currency: SelectedCurrencyDropdownValue.symbol }}
+                                </td>
+                                <td style="width: 200px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                                 <td style="width: 300px;">
                                     <div class="btn-group">
                                         <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
@@ -235,14 +252,18 @@
                         Return date: {{ ReturnDate() }}
                     </div>
                     <div class="alert alert-success">
-                        Total Cost: {{ getTotalRouteCost() | currency }}
+                        Total Cost: {{ getTotalRouteCost() | currency: SelectedCurrencyDropdownValue.symbol }}
                     </div>
                 </div>
             </div>
 
-            @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
-            <button class="btn btn-primary" ng-click="open('lg')" ng-disabled="route.length == 0">Email Route</button>
-            <span>{{ route | json}}</span>
+            <form class="form-inline" role="form">
+                <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>
+                <button class="btn btn-primary" ng-click="open('lg')" ng-disabled="route.length == 0">Email Route</button>
+            </form>
+                @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
+                
+                @*<span>{{ route | json}}</span>*@
         </div>
     </div>
 </div>

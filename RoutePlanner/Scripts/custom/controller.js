@@ -3,7 +3,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     uiGmapGoogleMapApi.then(function (maps) {
 
-        $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2} };
+        $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
 
     });
 
@@ -102,15 +102,15 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         //return $filter('date')(returnDate, 'fullDate');
     }
 
-    $scope.AddDays = function (e) {
-        $scope.SelectedRouteStop.days++;
-        $scope.SelectedRouteStop.totalCost = $scope.SelectedRouteStop.days
+    $scope.AddNights = function (e) {
+        $scope.SelectedRouteStop.nights++;
+        $scope.SelectedRouteStop.totalCost = $scope.SelectedRouteStop.nights
     };
 
-    $scope.SubtractDays = function (e) {
+    $scope.SubtractNights = function (e) {
 
-        if ($scope.SelectedRouteStop.days > 0)
-            $scope.SelectedRouteStop.days--;
+        if ($scope.SelectedRouteStop.nights > 0)
+            $scope.SelectedRouteStop.nights--;
     };
 
     $scope.TrackSelectedRouteStop = function (routeItem) {
@@ -122,6 +122,18 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         for (i = indexToRenumberFrom; i < $scope.route.length; i++) {
             $scope.route[i].stop = i + 1;
         }
+
+        //for (i = 0; i < $scope.route.length; i++) {
+
+        //    if (i == 0)
+        //        $scope.route[i].stop = 'Start';
+        //    else if (i == $scope.route.length - 1)
+        //        $scope.route[i].stop = 'End';
+        //    else {
+        //        $("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
+        //        $scope.route[i].stop = i;
+        //    }
+        //}
     }
 
     $scope.SwitchRoute = function (fromIndex, toIndex) {
@@ -133,20 +145,14 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
         var modalInstance = $uibModal.open({
             animation: true,
-            templateUrl: 'myModalContent.html',
-            controller: 'ModalInstanceCtrl',
+            templateUrl: 'sendEmailModal.html',
+            controller: 'SendEmailModalCtrl',
             size: size,
             resolve: {
                 route: function () {
                     return $scope.route;
                 }
             }
-        });
-
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
         });
     };
 
@@ -164,9 +170,12 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
                     latitude: $scope.ChosenDestination.Latitude,
                     longitude: $scope.ChosenDestination.Longitude
                 },
-                days: 0,
+                options: {
+                    //animation: google.maps.Animation.DROP
+                },
+                nights: 0,
                 transport: 'Air',
-                get totalCost() { return this.destination.DailyCost * this.days; },
+                get totalCost() { return this.destination.DailyCost * this.nights; },
             });
 
             if ($scope.route.length > 1)
@@ -176,6 +185,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             }
 
             $scope.UpdateStopNumbering($scope.route.length - 1);
+            
             $scope.ChosenDestination = undefined;
         }
     }
@@ -193,7 +203,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         var total = 0;
 
         for (i = 0; i < $scope.route.length; i++)
-            total += $scope.route[i].days;
+            total += $scope.route[i].nights;
 
         return total;
     }
@@ -261,9 +271,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     $scope.format = $scope.formats[0];
 });
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, route) {
-
-    
+app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
 
     $scope.ContactDetails = { details: { Email: "" }};
     $scope.route = route;

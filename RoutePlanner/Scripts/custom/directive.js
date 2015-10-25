@@ -39,7 +39,6 @@ app.directive('dndList', function () {
 
                     // to cater for drag up or down the list
                     // start renumber from lowest positioned item in list, either start position or final position
-                    var indexToRenumberFrom = (startIndex < newIndex) ? startIndex : newIndex;
                     scope.UpdateStopNumbering(indexToRenumberFrom);
                     
                     // change the Route lines

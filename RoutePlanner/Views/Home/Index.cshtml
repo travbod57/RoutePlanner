@@ -78,11 +78,29 @@
         width: 200px;
     }
 
+    .numberCircle {
+        position: relative;
+        background-color: rgba(15,165,217,0.7);
+        -webkit-border-radius: 24px;
+        border-radius: 24px;
+        color: #FFF;
+        height: 24px;
+        letter-spacing: 1px;
+        text-align: center;
+        width: 24px;
+    }
+
+    .numberCircleText {
+        display: block;
+        line-height: 1;
+        padding: 8px 0 3px;
+    }
+
 </style>
 
 <div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="ng-cloak">
 
-    <script type="text/ng-template" id="myModalContent.html">
+    <script type="text/ng-template" id="sendEmailModal.html">
         <div class="modal-header">
             <h3 class="modal-title">Email Route</h3>
         </div>
@@ -114,7 +132,7 @@
             <div class="angular-google-map-container">
                 <ui-gmap-google-map center='map.center' zoom='map.zoom' options="map.options">
 
-                    <ui-gmap-markers models='route' idkey='id' coords="'coords'" click="onMarkerClick">
+                    <ui-gmap-markers models='route' idkey='id' coords="'coords'" click="onMarkerClick" options="'options'">
                         <ui-gmap-windows show="show">
                             <div ng-non-bindable>{{destination.Full_Name}}</div>
                         </ui-gmap-windows>
@@ -169,10 +187,10 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <p>Drag and drop instructions. Starting and final point to be shown clearly. days to be nights</p>
+                    <p><strong>tip:</strong> You can drag and drop the added destinations to reorder your route</p>
 
                     <span class="label label-primary">{{ getNumberOfStops() }} stops</span>
-                    <span class="label label-primary">{{ getTripLength() }} days</span>
+                    <span class="label label-primary">{{ getTripLength() }} nights</span>
                 </div>
             </div>
             @*<div><button ng-click="Switch()">Switch</button></div>*@
@@ -183,7 +201,7 @@
                             <tr>
                                 <th style="width: 50px;">stop</th>
                                 <th style="width: 200px;">destination</th>
-                                <th style="width: 100px;">days</th>
+                                <th style="width: 100px;">nights</th>
                                 <th style="width: 100px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
                                 <th style="width: 200px;">total cost</th>
                                 <th style="width: 300px;">leave by</th>
@@ -192,10 +210,10 @@
                         </thead>
                         <tbody id="sortable" dnd-list="route">
                             <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
-                                <td style="width: 50px;">{{ item.stop }}:</td>
+                                <td style="width: 50px;"><div><span>{{ item.stop }}</span></div></td>
                                 <td style="width: 200px;">{{item.destination.Full_Name}}</td>
                                 <td style="width: 100px;">
-                                    <input type="number" ng-model="item.days" min="0" max="99" />
+                                    <input type="number" ng-model="item.nights" min="0" max="99" />
                                 </td>
                                 <td style="width: 100px;">{{ item.destination.DailyCost | currency }}</td>
                                 <td style="width: 200px;">{{item.totalCost | currency }}</td>
@@ -222,7 +240,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>
+            @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
             <button class="btn btn-primary" ng-click="open('lg')" ng-disabled="route.length == 0">Email Route</button>
             <span>{{ route | json}}</span>
         </div>

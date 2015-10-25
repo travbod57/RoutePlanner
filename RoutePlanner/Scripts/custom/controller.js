@@ -137,22 +137,22 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.UpdateStopNumbering = function (indexToRenumberFrom) {
 
-        for (i = indexToRenumberFrom; i < $scope.route.length; i++) {
-            $scope.route[i].stop = i + 1;
-            //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
-        }
-
-        //for (i = 0; i < $scope.route.length; i++) {
-
-        //    if (i == 0)
-        //        $scope.route[i].stop = 'Start';
-        //    else if (i == $scope.route.length - 1)
-        //        $scope.route[i].stop = 'End';
-        //    else {
-        //        //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
-        //        $scope.route[i].stop = i;
-        //    }
+        //for (i = indexToRenumberFrom; i < $scope.route.length; i++) {
+        //    $scope.route[i].stop = i + 1;
+        //    //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
         //}
+
+        for (i = 0; i < $scope.route.length; i++) {
+
+            if (i == 0)
+                $scope.route[i].stop = 'Start';
+            else if (i == $scope.route.length - 1)
+                $scope.route[i].stop = 'End';
+            else {
+                //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
+                $scope.route[i].stop = i;
+            }
+        }
     }
 
     $scope.SwitchRoute = function (fromIndex, toIndex) {
@@ -233,8 +233,13 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.OnChangeTransport = function (val) {
         
-        if (val.item.stop > 0 && $scope.PolyLines.length >= val.item.stop) {
-            var polyPath = $scope.PolyLines[val.item.stop - 1];
+        if (val.item.stop == 'Start')
+            index = 0;
+        else if (val.item.stop != 'End')
+            index = val.item.stop;
+
+        if ($scope.PolyLines.length > index) {
+            var polyPath = $scope.PolyLines[index];
 
             PolyPathService.UpdateStrokeColour(val.item.transport, polyPath);
         }
@@ -242,25 +247,38 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.Remove = function (destination) {
 
-        var isFirstStop = destination.stop == 1;
-        var isSecondStop = destination.stop == 2;
-        var isLastDestination = destination.stop == $scope.route.length;
+        var isFirstStop, isSecondStop, isLastDestination, index;
+
+        if (destination.stop == 'Start') {
+            isFirstStop = true;
+            index = 0;
+        }
+        else if (destination.stop == 1) {
+            isSecondStop = true;
+            index = 1;
+        }
+        else if (destination.stop == 'End') {
+            isLastDestination = true;
+            index = $scope.route.length - 1;
+        }
+        else
+            index = destination.stop;
 
         // remove from route array
-        $scope.route.splice(destination.stop - 1, 1);
+        $scope.route.splice(index, 1);
 
         if (isFirstStop) {
             $scope.PolyLines.splice(0, 1); // remove first
         }
         else if (isLastDestination) {
-            $scope.PolyLines.splice(destination.stop - 2, 1); // remove last
+            $scope.PolyLines.splice(index - 1, 1); // remove last
         }
         else if (isSecondStop) {
-            var nextPolyPath = $scope.PolyLines[destination.stop - 1];
+            var nextPolyPath = $scope.PolyLines[index];
             nextPolyPath.path[0].longitude = $scope.PolyLines[0].path[0].longitude;
             nextPolyPath.path[0].latitude = $scope.PolyLines[0].path[0].latitude;
 
-            var prevDestination = $scope.route[destination.stop - 2];
+            var prevDestination = $scope.route[index-1];
 
             PolyPathService.UpdateStrokeColour(prevDestination.transport, nextPolyPath);
 
@@ -268,18 +286,18 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         }
         else
         {
-            var prevPolyPath = $scope.PolyLines[destination.stop - 3];
-            var nextPolyPath = $scope.PolyLines[destination.stop - 1];
+            var prevPolyPath = $scope.PolyLines[index - 2];
+            var nextPolyPath = $scope.PolyLines[index];
 
             nextPolyPath.path[0].longitude = prevPolyPath.path[1].longitude;
             nextPolyPath.path[0].latitude = prevPolyPath.path[1].latitude;
 
-            var prevDestination = $scope.route[destination.stop - 2];
+            var prevDestination = $scope.route[index - 1];
 
             PolyPathService.UpdateStrokeColour(prevDestination.transport, nextPolyPath);
 
             // remove poly line
-            $scope.PolyLines.splice(destination.stop - 2, 1);
+            $scope.PolyLines.splice(index - 1, 1);
         }
 
         $scope.UpdateStopNumbering(destination.stop - 1);

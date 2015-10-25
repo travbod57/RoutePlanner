@@ -82,6 +82,18 @@
         width: 150px;
     }
 
+   .startCircle {
+        position: relative;
+        background-color: #dff0d8;
+        -webkit-border-radius: 24px;
+        border-radius: 24px;
+        color: #468847;
+        height: 24px;
+        letter-spacing: 1px;
+        text-align: center;
+        width: 58px;
+    }
+
     .numberCircle {
         position: relative;
         background-color: rgba(15,165,217,0.7);
@@ -94,6 +106,18 @@
         width: 24px;
     }
 
+    .endCircle {
+        position: relative;
+        background-color: #f2dede;
+        -webkit-border-radius: 24px;
+        border-radius: 24px;
+        color: #a94442;
+        height: 24px;
+        letter-spacing: 1px;
+        text-align: center;
+        width: 58px;
+    }
+    
     .numberCircleText {
         display: block;
         line-height: 1;
@@ -144,7 +168,7 @@
                         <ui-gmap-windows show="show">
                             <div class="infoWindowContent" ng-non-bindable>
                                 <span><strong>{{destination.Full_Name}}</strong></span>
-                                <span>stop {{stop}}</span>
+                                <span>stop {{ stop }}</span>
                                 <span>{{nights}} nights</span>
                                 <span>Arrive by {{transport}}</span>
                             </div>

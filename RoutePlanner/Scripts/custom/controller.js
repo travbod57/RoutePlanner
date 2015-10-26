@@ -1,4 +1,19 @@
 ﻿
+
+app.directive('currency', ['$filter', function ($filter) {
+    return {
+        require: 'ngModel',
+        link: function (elem, $scope, attrs, ngModel) {
+            ngModel.$formatters.push(function (val) {
+                return $filter('currency')(val)
+            });
+            ngModel.$parsers.push(function (val) {
+                return val.replace(/[\$,]/, '')
+            });
+        }
+    }
+}])
+
 app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal) {
 
     uiGmapGoogleMapApi.then(function (maps) {
@@ -186,9 +201,16 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         model.show = !model.show;
     };
 
+    $scope.typeOf = function (value) {
+        return typeof value;
+    };
+
     $scope.Choose = function () {
 
+
         if ($scope.ChosenDestination !== undefined) {
+           // console.log($scope.ChosenDestination.DailyCost);
+           // $scope.ChosenDestination.DailyCost = parseFloat("1.00");
             $scope.route.push({
                 id: $scope.ChosenDestination.Id,
                 destination: $scope.ChosenDestination,

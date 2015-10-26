@@ -125,18 +125,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         return $scope.route.length > 0 ? true : false;
     }
 
-    $scope.HasStartDate = function () {
-        return $scope.startDate !== undefined ? true : false;
-    }
-
-    $scope.ShowTotalCost = function () {
-        return $scope.HasRoute;
-    }
-
-    $scope.ShowReturnDate = function () {
-        return $scope.HasRoute && $scope.HasStartDate;
-    }
-
     $scope.ReturnDate = function () {
         
         if ($scope.startDate != undefined) {

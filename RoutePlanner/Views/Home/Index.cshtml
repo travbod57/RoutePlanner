@@ -237,10 +237,10 @@
                         <thead>
                             <tr>
                                 <th style="width: 50px;">stop</th>
-                                <th style="width: 200px;">destination</th>
+                                <th style="width: 300px;">destination</th>
                                 <th style="width: 100px;">night(s)</th>
-                                <th style="width: 200px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
-                                <th style="width: 200px;">total cost</th>
+                                <th style="width: 120px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
+                                <th style="width: 100px;">total cost</th>
                                 <th style="width: 300px;">leave by</th>
                                 <th style="width: 100px;"></th>
                             </tr>
@@ -248,14 +248,20 @@
                         <tbody id="sortable" dnd-list="route">
                             <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
                                 <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
-                                <td style="width: 200px;">{{item.destination.Full_Name}}</td>
+                                <td style="width: 300px;">{{item.destination.Full_Name}}</td>
                                 <td style="width: 100px;">
                                     <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
                                 </td>
-                                <td style="width: 200px;">
-                                    <span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]{1,7}\.[0-9]{2}$/" ng-model="item.destination.DailyCost" /></span>
+                                <td style="width: 120px;">
+
+                                    <div class="input-group">
+                                        <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
+                                        <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^([0-9]{1,7}\.[0-9]{2})|\d+$/" ng-model="item.destination.DailyCost" />
+                                    </div>
+
+                                    @*<span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^([0-9]{1,7}\.[0-9]{2})|\d+$/" ng-model="item.destination.DailyCost" /></span>*@
                                 </td>
-                                <td style="width: 200px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
+                                <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                                 <td style="width: 300px;">
                                     <div class="btn-group">
                                         <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
@@ -270,9 +276,13 @@
                     <div class="alert alert-warning" ng-hide="HasRoute()">
                         No destinations added
                     </div>
-                    <div class="alert alert-success" role="alert" ng-show="ShowReturnDate()">
-                        Return date: {{ ReturnDate() }}
+
+                    <div class="row">
+                        <div class="col-sm-4"><div class="alert alert-success" role="alert">Return date: {{ ReturnDate() }}</div></div>
+                        <div class="col-sm-4"><div class="alert alert-success" role="alert">Number of nights: {{ getTripLength() }}</div></div>
+                        <div class="col-sm-4"><div class="alert alert-success" role="alert">Stops: {{ getNumberOfStops() }}</div></div>
                     </div>
+               
                     <div class="alert alert-success">
                         <form class="form-inline" role="form">
                             <span>Total Cost: {{ getTotalRouteCost() | currency: SelectedCurrencyDropdownValue.symbol }}</span> <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>

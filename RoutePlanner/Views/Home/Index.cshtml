@@ -79,7 +79,11 @@
     }
 
     #currencyDropDown {
-        width: 150px;
+        width: 80px;
+    }
+
+    .inputDailyCost, .inputDays {
+        width: 70px;
     }
 
    .startCircle {
@@ -121,7 +125,13 @@
     .numberCircleText {
         display: block;
         line-height: 1;
-        padding: 8px 0 3px;
+        padding: 5px 0 3px;
+    }
+
+   .startEndCircleText {
+        display: block;
+        line-height: 1;
+        padding: 5px 0 3px;
     }
 
     .infoWindowContent span {
@@ -168,7 +178,7 @@
                         <ui-gmap-windows show="show">
                             <div class="infoWindowContent" ng-non-bindable>
                                 <span><strong>{{destination.Full_Name}}</strong></span>
-                                <span>stop {{ stop }}</span>
+                                <span>{{ stop }}</span>
                                 <span>{{nights}} nights</span>
                                 <span>Arrive by {{transport}}</span>
                             </div>
@@ -226,8 +236,8 @@
                 <div class="col-md-12">
                     <p><strong>tip:</strong> You can drag and drop the added destinations to reorder your route</p>
 
-                    <span class="label label-primary">{{ getNumberOfStops() }} stops</span>
-                    <span class="label label-primary">{{ getTripLength() }} nights</span>
+                    <span class="label label-primary">{{ getNumberOfStops() }} stop(s)</span>
+                    <span class="label label-primary">{{ getTripLength() }} night(s)</span>
                 </div>
             </div>
             @*<div><button ng-click="Switch()">Switch</button></div>*@
@@ -238,7 +248,7 @@
                             <tr>
                                 <th style="width: 50px;">stop</th>
                                 <th style="width: 200px;">destination</th>
-                                <th style="width: 100px;">nights</th>
+                                <th style="width: 100px;">night(s)</th>
                                 <th style="width: 100px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
                                 <th style="width: 200px;">total cost</th>
                                 <th style="width: 300px;">leave by</th>
@@ -247,15 +257,15 @@
                         </thead>
                         <tbody id="sortable" dnd-list="route">
                             <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
-                                <td style="width: 50px;"><div><span>{{ item.stop }}</span></div></td>
+                                <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
                                 <td style="width: 200px;">{{item.destination.Full_Name}}</td>
                                 <td style="width: 100px;">
-                                    <input type="number" ng-model="item.nights" min="0" max="99" />
+                                    <input class="form-control inputDays" type="number" ng-model="item.nights" min="0" max="99" />
                                 </td>
                                 <td style="width: 100px;">
-                                    @*<input type="number" ng-model="item.destination.DailyCost" min="0" />*@
+                                    {{ SelectedCurrencyDropdownValue.symbol }} @*<input class="form-control inputDailyCost" type="number" step="any" ng-model="item.destination.DailyCost" min="0" />*@
                                     @*<span ng-bind-html="item.destination.DailyCost | currency:SelectedCurrencyDropdownValue.symbol"></span>*@
-                                    {{ item.destination.DailyCost | currency: SelectedCurrencyDropdownValue.symbol }}
+                                    @*{{ item.destination.DailyCost | currency: SelectedCurrencyDropdownValue.symbol }}*@
                                 </td>
                                 <td style="width: 200px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                                 <td style="width: 300px;">
@@ -276,13 +286,15 @@
                         Return date: {{ ReturnDate() }}
                     </div>
                     <div class="alert alert-success">
-                        Total Cost: {{ getTotalRouteCost() | currency: SelectedCurrencyDropdownValue.symbol }}
+                        <form class="form-inline" role="form">
+                            <span>Total Cost: {{ getTotalRouteCost() | currency: SelectedCurrencyDropdownValue.symbol }}</span> <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>
+                        </form>
                     </div>
                 </div>
             </div>
 
             <form class="form-inline" role="form">
-                <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>
+                
                 <button class="btn btn-primary" ng-click="open('lg')" ng-disabled="route.length == 0">Email Route</button>
             </form>
                 @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@

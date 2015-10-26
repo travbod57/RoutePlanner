@@ -135,7 +135,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         $scope.SelectedRouteStop = routeItem.destination;
     }
 
-    $scope.UpdateStopNumbering = function (indexToRenumberFrom) {
+    $scope.UpdateStopNumbering = function () {
 
         //for (i = indexToRenumberFrom; i < $scope.route.length; i++) {
         //    $scope.route[i].stop = i + 1;
@@ -143,14 +143,21 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
         //}
 
         for (i = 0; i < $scope.route.length; i++) {
-
-            if (i == 0)
+            var child = i + 1;
+            if (i == 0) {
                 $scope.route[i].stop = 'Start';
-            else if (i == $scope.route.length - 1)
+                $scope.route[i].stopNumberDivClass = 'startCircle',
+                $scope.route[i].stopNumberSpanClass = 'startEndCircleText'
+            }
+            else if (i == $scope.route.length - 1) {
                 $scope.route[i].stop = 'End';
+                $scope.route[i].stopNumberDivClass = 'endCircle',
+                $scope.route[i].stopNumberSpanClass = 'startEndCircleText'
+            }
             else {
-                //$("#routeTable tbody tr:nth-child(" + (i + 1) + ") td:first").find("div").addClass("numberCircle").find("span").addClass("numberCircleText");
                 $scope.route[i].stop = i;
+                $scope.route[i].stopNumberDivClass = 'numberCircle',
+                $scope.route[i].stopNumberSpanClass = 'numberCircleText'
             }
         }
     }
@@ -195,6 +202,8 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
                 nights: 0,
                 transport: 'Air',
                 get totalCost() { return this.destination.DailyCost * this.nights; },
+                stopNumberDivClass: '',
+                stopNumberSpanClass: ''
             });
 
             if ($scope.route.length > 1)
@@ -203,7 +212,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
                 PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenDestination, prevRoute);
             }
 
-            $scope.UpdateStopNumbering($scope.route.length - 1);
+            $scope.UpdateStopNumbering();
             
             $scope.ChosenDestination = undefined;
         }
@@ -300,7 +309,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
             $scope.PolyLines.splice(index - 1, 1);
         }
 
-        $scope.UpdateStopNumbering(destination.stop - 1);
+        $scope.UpdateStopNumbering();
     }
 
 

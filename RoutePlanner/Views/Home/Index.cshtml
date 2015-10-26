@@ -263,7 +263,7 @@
                                     <input class="form-control inputDays" type="number" ng-model="item.nights" min="0" max="99" />
                                 </td>
                                 <td style="width: 200px;">
-                                    @*<span>{{ SelectedCurrencyDropdownValue.symbol }} </span>*@{{item.destination.DailyCost}}<span><input class="form-control inputDailyCost" step="0.01" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-model="item.destination.DailyCost" currency /></span>
+                                    <span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-model="item.destination.DailyCost" /></span>
                                     @*<span ng-bind-html="item.destination.DailyCost | currency:SelectedCurrencyDropdownValue.symbol"></span>*@
                                     @*{{ item.destination.DailyCost | currency: SelectedCurrencyDropdownValue.symbol }}*@
                                 </td>

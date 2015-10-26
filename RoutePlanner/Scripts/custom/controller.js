@@ -1,19 +1,37 @@
 ﻿
 
-//app.directive('currency', ['$filter', function ($filter) {
-//    return {
-//        require: 'ngModel',
-//        link: function (elem, $scope, attrs, ngModel) {
-//            ngModel.$formatters.push(function (val) {
-//                return $filter('currency')(val)
-//            });
-//            ngModel.$parsers.push(function (val) {
-//                return val.replace(/[\$,]/, '')
-//            });
-//        }
-//    }
-//}])
+app.directive('currency', ['$filter', function ($filter) {
+    return {
+        require: 'ngModel',
+        link: function (elem, $scope, attrs, ngModel) {
+            ngModel.$formatters.push(function (val) {
+                //return parseFloat(val).toFixed(2);
+                return $filter('number')(val, 2);
+            });
+            //ngModel.$parsers.push(function (val) {
+            //    return val.replace(/[\$,]/, '')
+            //});
+        }
+    }
+}])
+app.directive('numericOnly', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attrs, modelCtrl) {
 
+            modelCtrl.$parsers.push(function (inputValue) {
+                var transformedInput = inputValue ? inputValue.replace(/[^\d.-]/g, '') : null;
+
+                if (transformedInput != inputValue) {
+                    modelCtrl.$setViewValue(transformedInput);
+                    modelCtrl.$render();
+                }
+
+                return transformedInput;
+            });
+        }
+    };
+});
 app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal) {
 
     uiGmapGoogleMapApi.then(function (maps) {
@@ -100,11 +118,6 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
     $scope.startDate;
 
-    $scope.$watch('startDate', function (newValue, oldValue) {
-        console.log('oldValue=' + oldValue);
-        console.log('newValue=' + newValue);
-    });
-
     $scope.route = [];
     $scope.PolyLines = [];
 
@@ -127,8 +140,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
     $scope.ReturnDate = function () {
         
         if ($scope.startDate != undefined) {
-            var returnDate = new Date($scope.startDate);
-            return moment(returnDate.setDate(returnDate.getDate() + $scope.getTripLength())).format("DD-MMM-YYYY (ddd)");
+            return moment($("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
         }
         else
             return "Please enter a start date";
@@ -209,8 +221,7 @@ app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGma
 
 
         if ($scope.ChosenDestination !== undefined) {
-           // console.log($scope.ChosenDestination.DailyCost);
-           // $scope.ChosenDestination.DailyCost = parseFloat("1.00");
+
             $scope.route.push({
                 id: $scope.ChosenDestination.Id,
                 destination: $scope.ChosenDestination,

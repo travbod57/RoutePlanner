@@ -138,6 +138,13 @@
         display: block;
     }
 
+    input.inputDailyCost.ng-invalid, input.inputDays.ng-invalid {
+        border-color: red;
+    }
+
+    input.inputDailyCost.form-control {
+        display: inline;
+    }
 </style>
 
 <div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="ng-cloak">
@@ -184,14 +191,6 @@
                             </div>
                         </ui-gmap-windows>
                     </ui-gmap-markers>
-                    @*<ui-gmap-marker ng-repeat="marker in route" coords="marker.coords" idkey="'marker.id'">
-                            <ui-gmap-window isiconvisibleonclick="true">
-                                <div>
-                                    <h5>{{ marker.destination.Name }}</h5>
-                                    <p>{{ marker.coords.longitude }}, {{ marker.coords.latitude }}</p>
-                                </div>
-                            </ui-gmap-window>
-                        </ui-gmap-marker>*@
 
                     <ui-gmap-polyline ng-repeat="p in PolyLines" path="p.path" stroke="p.stroke" visible="p.visible"></ui-gmap-polyline>
 
@@ -209,24 +208,15 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-
-                        
-                        @* <p class="input-group">
-
-                            <input type="text" class="form-control" datepicker-popup="{{format}}" placeholder="Enter the start date of your trip ..." ng-model="startDate" is-open="opened"
-                                   min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-                                   ng-required="true" close-text="Close" />
-
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                            </span></p>*@
-
-
-                        @*<input type="text" class="form-control" ng-model="ChosenDestination" typeahead-editable="false" typeahead-min-length="3" placeholder="Type a destination ..." typeahead="destination as destination.Name for destination in destinations | filter:$viewValue | limitTo:8">*@
-
                         <form class="form-inline" role="form">
-                            <input id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
-                            <input id="destinationPicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a destination ..." typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
+                            </div>
+                            <div class="form-group">
+                                <label>Destination</label>
+                                <input id="destinationPicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a destination ..." typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                            </div>
                             <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
                         </form>
                     </div>
@@ -234,13 +224,13 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <p><strong>tip:</strong> You can drag and drop the added destinations to reorder your route</p>
+                    <p><strong>tip:</strong> You can drag and drop the destinations to reorder your route</p>
 
                     <span class="label label-primary">{{ getNumberOfStops() }} stop(s)</span>
                     <span class="label label-primary">{{ getTripLength() }} night(s)</span>
                 </div>
             </div>
-            @*<div><button ng-click="Switch()">Switch</button></div>*@
+
             <div class="row">
                 <div class="col-md-12">
                     <table id="routeTable" class="table table-striped">
@@ -260,12 +250,10 @@
                                 <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
                                 <td style="width: 200px;">{{item.destination.Full_Name}}</td>
                                 <td style="width: 100px;">
-                                    <input class="form-control inputDays" type="number" ng-model="item.nights" min="0" max="99" />
+                                    <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
                                 </td>
                                 <td style="width: 200px;">
-                                    <span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-model="item.destination.DailyCost" /></span>
-                                    @*<span ng-bind-html="item.destination.DailyCost | currency:SelectedCurrencyDropdownValue.symbol"></span>*@
-                                    @*{{ item.destination.DailyCost | currency: SelectedCurrencyDropdownValue.symbol }}*@
+                                    <span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]{1,7}\.[0-9]{2}$/" ng-model="item.destination.DailyCost" /></span>
                                 </td>
                                 <td style="width: 200px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                                 <td style="width: 300px;">

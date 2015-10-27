@@ -79,7 +79,7 @@
     }
 
     #currencyDropDown {
-        width: 80px;
+        width: 110px;
     }
 
     .inputDailyCost, .inputDays {
@@ -108,6 +108,7 @@
         letter-spacing: 1px;
         text-align: center;
         width: 24px;
+        margin-left: 15px;
     }
 
     .endCircle {
@@ -230,13 +231,13 @@
                     <span class="label label-primary">{{ getTripLength() }} night(s)</span>
                 </div>
             </div>
-
+            &euro;
             <div class="row">
                 <div class="col-md-12">
                     <table id="routeTable" class="table table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 50px;">stop</th>
+                                <th style="width: 80px;">stop</th>
                                 <th style="width: 300px;">destination</th>
                                 <th style="width: 100px;">night(s)</th>
                                 <th style="width: 120px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>

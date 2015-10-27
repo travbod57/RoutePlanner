@@ -13,18 +13,23 @@
 
     $scope.CurrencyDropdownValues = [{
         id: 1,
-        label: 'GBP',
+        label: 'POUND',
         symbol: '£'
     }, {
         id: 2,
-        label: 'USD',
+        label: 'DOLLAR',
         symbol: '$'
     },
-    //{
-    //    id: 3,
-    //    label: 'EURO',
-    //    symbol: '&euro;'
-    //}
+    {
+        id: 3,
+        label: 'EURO',
+        symbol: '€'
+    },
+    {
+        id: 4,
+        label: "YEN",
+        symbol: '¥'
+    }
     ];
 
     $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];

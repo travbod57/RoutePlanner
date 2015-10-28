@@ -40,7 +40,7 @@
         else if (transport == "Land")
             polyLine.stroke = { color: '#000000', weight: 3 };
         else if (transport == "Sea")
-            polyLine.stroke = { color: '#F6F6F6', weight: 3 };
+            polyLine.stroke = { color: '#cb2d22', weight: 3 };
     }
 
     function MendPolyLines(polyLines, routes, from, to) {

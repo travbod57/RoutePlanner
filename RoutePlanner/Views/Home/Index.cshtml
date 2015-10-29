@@ -225,6 +225,7 @@ sea ine
                             <div class="form-group">
                                 <label>Destination</label>
                                 <input id="destinationPicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a destination ..." typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                                <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
                             </div>
                         </form>
                     </div>

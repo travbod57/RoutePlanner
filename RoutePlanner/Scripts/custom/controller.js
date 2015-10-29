@@ -72,6 +72,8 @@
                     longitude: $scope.ChosenDestination.Longitude
                 },
                 options: {
+                    labelContent: "1werewrre",
+                    labelAnchor: '40 50'
                     //animation: google.maps.Animation.DROP
                 },
                 nights: 0,

@@ -15,7 +15,7 @@ app.directive('dndList', function () {
 
         // use jquery to make the element sortable (dnd). This is called
         // when the element is rendered
-        $(element[0]).sortable({
+        jQuery(element[0]).sortable({
             items: 'tr',
             start: function (event, ui) {
 
@@ -23,13 +23,13 @@ app.directive('dndList', function () {
                 ui.placeholder.height(ui.item.height());
 
                 // on start we define where the item is dragged from
-                startIndex = ($(ui.item).index());
+                startIndex = (jQuery(ui.item).index());
             },
             stop: function (event, ui) {
 
                 // on stop we determine the new index of the
                 // item and store it there
-                var newIndex = ($(ui.item).index());
+                var newIndex = (jQuery(ui.item).index());
 
                 // assuiming the item in the list actually moved somewhere
                 if (startIndex != newIndex) {

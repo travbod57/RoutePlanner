@@ -171,7 +171,7 @@
     $scope.ReturnDate = function () {
         
         if ($scope.startDate != undefined)
-            return moment($("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
+            return moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
         else
             return "Please enter a start date";
     }

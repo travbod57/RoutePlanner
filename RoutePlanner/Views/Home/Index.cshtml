@@ -25,16 +25,7 @@
     <script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
     <script src="~/Scripts/custom/angular-google-maps.min.js"></script>
     <script src="~/Scripts/moment.min.js"></script>
-    <script type="text/javascript">
-        $("input#startDate").datepicker({
-            format: "dd-M-yyyy",
-            clearBtn: true,
-            autoclose: true,
-            todayHighlight: true
-        });
-
-        //$('#startDate').datepicker('update', '30-Oct-2015');
-    </script>
+    <script src="~/Scripts/custom/travel-tool.js"></script>
 }
 
 <div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="container ng-cloak">
@@ -71,8 +62,8 @@
             <div class="alert alert-warning">
                 <strong>tips:</strong>
                 <ul>
-                    <li>You can drag and drop the destinations to reorder your route</li>
-                    <li>Click the markers to see more stop information</li>
+                    <li>You can drag and drop the locations to reorder your route</li>
+                    <li>Click the markers to see more information</li>
                 </ul>
             </div>
         </div>

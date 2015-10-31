@@ -5,28 +5,25 @@
 @section scripts {
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    @*<script src="http://maps.googleapis.com/maps/api/js"></script>*@
     <script src="~/Scripts/custom/lodash.js"></script>
     <script src="~/Scripts/angular.min.js"></script>
     <script src="~/Scripts/angular-resource.min.js"></script>
     <script src="~/Scripts/angular-route.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-animate.js"></script>
     <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.1.min.js"></script>
-    @*<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>*@
     <script src="~/Scripts/custom/app.js"></script>
     <script src="~/Scripts/custom/PolyPathService.js"></script>
     <script src="~/Scripts/custom/controller.js"></script>
     <script src="~/Scripts/custom/directive.js"></script>
-    @*<script src="~/Scripts/custom/google-maps.js"></script>*@
-
+    <link href="~/Content/travel-tool.css" rel="stylesheet" />
 
     <link href="~/Content/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" />
-    <script src="~/Scripts/custom/bootstrap.datepicker.js"></script>
+    <script src="~/Scripts/custom/bootstrap.datepicker.min.js"></script>
     <script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
     <script src="~/Scripts/custom/angular-google-maps.min.js"></script>
     <script src="~/Scripts/moment.min.js"></script>
     <script type="text/javascript">
-        $("#startDate").datepicker({
+        $("input#startDate").datepicker({
             format: "dd-M-yyyy",
             clearBtn: true,
             autoclose: true,
@@ -35,121 +32,9 @@
 
         //$('#startDate').datepicker('update', '30-Oct-2015');
     </script>
-
-sea ine 
 }
-<style>
-    .angular-google-map-container {
-        height: 400px;
-    }
 
-    #routeTable tbody tr td {
-        vertical-align: middle;
-    }
-
-    .has-error .form-control-feedback {
-        color: #a94442;
-    }
-
-    .has-success .form-control-feedback {
-        color: #3c763d;
-    }
-
-    .form-control-feedback {
-        position: absolute;
-        top: 50px;
-        right: 20px;
-        z-index: 2;
-        display: block;
-        width: 34px;
-        height: 34px;
-        line-height: 34px;
-        text-align: center;
-    }
-
-    .margin-5 {
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
-
-    #destinationPicker {
-        width: 350px;
-    }
-    #startDate {
-        width: 200px;
-    }
-
-    #currencyDropDown {
-        width: 110px;
-    }
-
-    .inputDailyCost, .inputDays {
-        width: 70px;
-    }
-
-   .startCircle {
-        position: relative;
-        background-color: #dff0d8;
-        -webkit-border-radius: 24px;
-        border-radius: 24px;
-        color: #468847;
-        height: 24px;
-        letter-spacing: 1px;
-        text-align: center;
-        width: 58px;
-    }
-
-    .numberCircle {
-        position: relative;
-        background-color: rgba(15,165,217,0.7);
-        -webkit-border-radius: 24px;
-        border-radius: 24px;
-        color: #FFF;
-        height: 24px;
-        letter-spacing: 1px;
-        text-align: center;
-        width: 24px;
-        margin-left: 15px;
-    }
-
-    .endCircle {
-        position: relative;
-        background-color: #f2dede;
-        -webkit-border-radius: 24px;
-        border-radius: 24px;
-        color: #a94442;
-        height: 24px;
-        letter-spacing: 1px;
-        text-align: center;
-        width: 58px;
-    }
-    
-    .numberCircleText {
-        display: block;
-        line-height: 1;
-        padding: 5px 0 3px;
-    }
-
-   .startEndCircleText {
-        display: block;
-        line-height: 1;
-        padding: 5px 0 3px;
-    }
-
-    .infoWindowContent span {
-        display: block;
-    }
-
-    input.inputDailyCost.ng-invalid, input.inputDays.ng-invalid {
-        border-color: red;
-    }
-
-    input.inputDailyCost.form-control {
-        display: inline;
-    }
-</style>
-
-<div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="ng-cloak">
+<div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="container ng-cloak">
 
     <script type="text/ng-template" id="sendEmailModal.html">
         <div class="modal-header">
@@ -180,7 +65,19 @@ sea ine
 
     <div class="row">
         <div class="col-md-12">
-            <div class="angular-google-map-container">
+            <div class="alert alert-warning">
+                <strong>tips:</strong>
+                <ul>
+                    <li>You can drag and drop the destinations to reorder your route</li>
+                    <li>Click the markers to see more stop information</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="travel-tool-map" class="angular-google-map-container">
                 <ui-gmap-google-map center='map.center' zoom='map.zoom' options="map.options">
 
                     <ui-gmap-markers models='route' idkey='id' coords="'coords'" click="onMarkerClick" options="'options'">
@@ -206,105 +103,102 @@ sea ine
         </div>
     </div>
     <div class="row">
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="travel-tool">{{ route.length > 0 ? 'Location' : 'Starting Location' }}</label>
+
+                <div class="input-group">
+                    <input id="destinationpicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a location ..." autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                    <span class="input-group-btn">
+                        <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="travel-tool">Start Date</label>
+                <input id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>Currency</label>
+                <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>
+            </div>
+        </div>
+        @*<span class="clearfix" />*@
+    </div>
+
+    <div class="row">
         <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <form class="form-inline" role="form">
-                            <div class="form-group">
-                                <label>Start Date</label>
-                                <input id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
-                            </div>
-                            <div class="form-group">
-                                <label>Currency</label>
-                                <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>
-                            </div>
-                        </form>
+            <table id="routeTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">stop</th>
+                        <th style="width: 300px;">location</th>
+                        <th style="width: 100px;">night(s)</th>
+                        <th style="width: 120px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
+                        <th style="width: 100px;">total cost</th>
+                        <th style="width: 300px;">leave by</th>
+                        <th style="width: 100px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="sortable" dnd-list="route">
+                    <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
+                        <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
+                        <td style="width: 300px;">{{item.destination.Full_Name}}</td>
+                        <td style="width: 100px;">
+                            <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
+                        </td>
+                        <td style="width: 120px;">
 
-                        <form class="form-inline" role="form">
-                            <div class="form-group">
-                                <label>Destination</label>
-                                <input id="destinationPicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a destination ..." typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
-                                <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
+                            <div class="input-group">
+                                <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
+                                <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]+([,.][0-9]{2})?$/" ng-model="item.destination.DailyCost" />
                             </div>
-                        </form>
-                    </div>
-                </div>
+
+                            @*<span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^([0-9]{1,7}\.[0-9]{2})|\d+$/" ng-model="item.destination.DailyCost" /></span>*@
+                        </td>
+                        <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
+                        <td style="width: 300px;">
+                            <div class="btn-group">
+                                <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
+                                <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
+                                <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
+                            </div>
+                        </td>
+                        <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="alert alert-warning" ng-hide="HasRoute()">
+                No destinations added
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <p><strong>tip:</strong> You can drag and drop the destinations to reorder your route</p>
 
-                    <span class="label label-primary">{{ getNumberOfStops() }} stop(s)</span>
-                    <span class="label label-primary">{{ getTripLength() }} night(s)</span>
-                </div>
+            <div class="row">
+                <div class="col-sm-4"><div class="alert alert-success" role="alert">Return date: {{ ReturnDate() }}</div></div>
+                <div class="col-sm-4"><div class="alert alert-success" role="alert">Number of nights: {{ getTripLength() }}</div></div>
+                <div class="col-sm-4"><div class="alert alert-success" role="alert">Stops: {{ getNumberOfStops() }}</div></div>
             </div>
-           
+
             <div class="row">
-                <div class="col-md-12">
-                    <table id="routeTable" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th style="width: 80px;">stop</th>
-                                <th style="width: 300px;">destination</th>
-                                <th style="width: 100px;">night(s)</th>
-                                <th style="width: 120px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
-                                <th style="width: 100px;">total cost</th>
-                                <th style="width: 300px;">leave by</th>
-                                <th style="width: 100px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="sortable" dnd-list="route">
-                            <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
-                                <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
-                                <td style="width: 300px;">{{item.destination.Full_Name}}</td>
-                                <td style="width: 100px;">
-                                    <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
-                                </td>
-                                <td style="width: 120px;">
-
-                                    <div class="input-group">
-                                        <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
-                                        <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]+([,.][0-9]{2})?$/" ng-model="item.destination.DailyCost" />
-                                    </div>
-
-                                    @*<span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^([0-9]{1,7}\.[0-9]{2})|\d+$/" ng-model="item.destination.DailyCost" /></span>*@
-                                </td>
-                                <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
-                                <td style="width: 300px;">
-                                    <div class="btn-group">
-                                        <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
-                                        <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
-                                        <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
-                                    </div>
-                                </td>
-                                <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="alert alert-warning" ng-hide="HasRoute()">
-                        No destinations added
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-4"><div class="alert alert-success" role="alert">Return date: {{ ReturnDate() }}</div></div>
-                        <div class="col-sm-4"><div class="alert alert-success" role="alert">Number of nights: {{ getTripLength() }}</div></div>
-                        <div class="col-sm-4"><div class="alert alert-success" role="alert">Stops: {{ getNumberOfStops() }}</div></div>
-                    </div>
-               
+                <div class="col-sm-12">
                     <div class="alert alert-info">
-                            <span>Total Cost: {{ getTotalRouteCost() | currency: SelectedCurrencyDropdownValue.symbol }}</span>
+                        <span id="totalCost">Total Cost: {{ getTotalRouteCost() | currency: SelectedCurrencyDropdownValue.symbol }}</span>
                     </div>
                 </div>
             </div>
-
-            <form class="form-inline" role="form">
-                
-                <button class="btn btn-primary" ng-click="open('lg')" ng-disabled="route.length == 0">Email Route</button>
-            </form>
-                @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
-                
-                @*<span>{{ route | json}}</span>*@
         </div>
     </div>
+
+
+    <button class="btn btn-primary" ng-click="open('lg')" ng-disabled="route.length == 0">Email Route</button>
+
+    @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
+
+    @*<span>{{ route | json}}</span>*@
+
+
 </div>

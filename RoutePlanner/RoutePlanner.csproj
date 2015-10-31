@@ -175,6 +175,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\images\help.png" />
+    <Content Include="Content\travel-tool.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -195,7 +196,7 @@
     <Content Include="Scripts\custom\angular-google-maps.min.js" />
     <Content Include="Scripts\custom\angular-simple-logger\index.js" />
     <Content Include="Scripts\custom\app.js" />
-    <Content Include="Scripts\custom\bootstrap.datepicker.js" />
+    <Content Include="Scripts\custom\bootstrap.datepicker.min.js" />
     <Content Include="Scripts\custom\controller.js" />
     <Content Include="Scripts\custom\directive.js" />
     <Content Include="Scripts\custom\google-maps.js" />

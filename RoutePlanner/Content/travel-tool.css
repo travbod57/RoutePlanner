@@ -1,0 +1,128 @@
+﻿    .angular-google-map-container {
+        height: 400px;
+    }
+
+    #routeTable tbody tr td {
+        vertical-align: middle;
+    }
+
+    .has-error .form-control-feedback {
+        color: #a94442;
+    }
+
+    .has-success .form-control-feedback {
+        color: #3c763d;
+    }
+
+    .form-control-feedback {
+        position: absolute;
+        top: 50px;
+        right: 20px;
+        z-index: 2;
+        display: block;
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+    }
+
+    .margin-5 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    #travel-tool-map {
+        margin-bottom: 15px
+    }
+
+    #totalCost {
+        font-size: 1.2em;
+        font-weight: 700;
+    }
+
+    label.travel-tool {
+        margin-bottom: 0;
+    }
+
+    .inputDailyCost, .inputDays {
+        width: 70px;
+    }
+
+   .startCircle {
+        position: relative;
+        background-color: #dff0d8;
+        -webkit-border-radius: 24px;
+        border-radius: 24px;
+        color: #468847;
+        height: 24px;
+        letter-spacing: 1px;
+        text-align: center;
+        width: 58px;
+    }
+
+    .numberCircle {
+        position: relative;
+        background-color: rgba(15,165,217,0.7);
+        -webkit-border-radius: 24px;
+        border-radius: 24px;
+        color: #FFF;
+        height: 24px;
+        letter-spacing: 1px;
+        text-align: center;
+        width: 24px;
+        margin-left: 15px;
+    }
+
+    .endCircle {
+        position: relative;
+        background-color: #f2dede;
+        -webkit-border-radius: 24px;
+        border-radius: 24px;
+        color: #a94442;
+        height: 24px;
+        letter-spacing: 1px;
+        text-align: center;
+        width: 58px;
+    }
+    
+    .numberCircleText {
+        display: block;
+        line-height: 1;
+        padding: 5px 0 3px;
+    }
+
+   .startEndCircleText {
+        display: block;
+        line-height: 1;
+        padding: 5px 0 3px;
+    }
+
+    .infoWindowContent span {
+        display: block;
+    }
+
+    input.inputDailyCost.ng-invalid, input.inputDays.ng-invalid {
+        border-color: red;
+    }
+
+    input.inputDailyCost.form-control {
+        display: inline;
+    }
+
+    .markerLabelStartStyle {
+        background-color: #FFFFFF;
+        padding: 2px;
+        border: solid 1px;
+    }
+
+    .markerLabelEndStyle {
+        background-color: #FFFFFF;
+        padding: 2px;
+        border: solid 1px;
+    }
+
+    .markerLabelNumberStyle {
+        background-color: #FFFFFF;
+        padding: 2px;
+        border: solid 1px;
+    }

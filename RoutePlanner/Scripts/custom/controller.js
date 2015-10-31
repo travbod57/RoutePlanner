@@ -72,8 +72,7 @@
                     longitude: $scope.ChosenDestination.Longitude
                 },
                 options: {
-                    labelContent: "1werewrre",
-                    labelAnchor: '40 50'
+                    //labelAnchor: '15 0'
                     //animation: google.maps.Animation.DROP
                 },
                 nights: 0,
@@ -222,19 +221,25 @@
             var child = i + 1;
             if (i == 0) {
                 $scope.route[i].stop = 'Start';
-                $scope.route[i].stopNumberDivClass = 'startCircle',
-                $scope.route[i].stopNumberSpanClass = 'startEndCircleText'
+                $scope.route[i].stopNumberDivClass = 'startCircle';
+                $scope.route[i].stopNumberSpanClass = 'startEndCircleText';
+                //$scope.route[i].options.labelClass = 'markerLabelStartStyle';
             }
             else if (i == $scope.route.length - 1) {
                 $scope.route[i].stop = 'End';
-                $scope.route[i].stopNumberDivClass = 'endCircle',
-                $scope.route[i].stopNumberSpanClass = 'startEndCircleText'
+                $scope.route[i].stopNumberDivClass = 'endCircle';
+                $scope.route[i].stopNumberSpanClass = 'startEndCircleText';
+                //$scope.route[i].options.labelClass = 'markerLabelEndStyle';
             }
             else {
                 $scope.route[i].stop = i;
-                $scope.route[i].stopNumberDivClass = 'numberCircle',
-                $scope.route[i].stopNumberSpanClass = 'numberCircleText'
+                $scope.route[i].stopNumberDivClass = 'numberCircle';
+                $scope.route[i].stopNumberSpanClass = 'numberCircleText';
+                //$scope.route[i].options.labelClass = 'markerLabelNumberStyle';
             }
+
+            //$scope.route[i].options.labelContent = $scope.route[i].stop;
+            //$scope.route[i].options.labelInBackground = true;
         }
     }
 

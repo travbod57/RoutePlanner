@@ -202,6 +202,7 @@
     <Content Include="Scripts\custom\bootstrap.datepicker.min.js" />
     <Content Include="Scripts\custom\controller.js" />
     <Content Include="Scripts\custom\directive.js" />
+    <Content Include="Scripts\custom\Filters.js" />
     <Content Include="Scripts\custom\google-maps.js" />
     <Content Include="Scripts\custom\lodash.js" />
     <Content Include="Scripts\custom\PolyPathService.js" />

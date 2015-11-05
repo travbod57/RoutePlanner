@@ -168,13 +168,13 @@
         return $scope.route.length > 0 ? true : false;
     }
 
-    $scope.ReturnDate = function () {
+    //$scope.ReturnDate = function () {
         
-        if ($scope.startDate != undefined)
-            return moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
-        else
-            return "Please enter a start date";
-    }
+    //    if ($scope.startDate != undefined)
+    //        return moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
+    //    else
+    //        return "Please enter a start date";
+    //}
 
     $scope.getTotalRouteCost = function () {
         var total = 0;
@@ -285,13 +285,14 @@
 
 });
 
+// to do: change to $http service
 app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
 
     $scope.ContactDetails = { details: { Email: "" }};
     $scope.route = route;
     $scope.ok = function () {
 
-        $.ajax({
+        jQuery.ajax({
             url: "http://www.thinkbackpacking.com/Slim/sendEmail",
             type: "POST",
             dataType: "text",

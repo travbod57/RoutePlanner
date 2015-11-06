@@ -242,7 +242,7 @@
             }
 
             $scope.route[i].options.labelContent = $scope.route[i].stop;
-            $scope.route[i].options.labelInBackground = true;
+            $scope.route[i].options.labelInBackground = false;
         }
     }
 

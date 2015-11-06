@@ -1,0 +1,7 @@
+angular-google-maps.min.js 
+
+-- markers are positioned in front of other markers the lower down on the canvas they appear. 
+The bug was that the makers higher up the canvas had their label text in front of the marker that was lower down the canvas. To solve this a manual change was made to this file:
+
+Find and replace: overlayImage.appendChild(this.labelDiv_) with markerLayer.appendChild(this.labelDiv_). There should be one occurance.
+

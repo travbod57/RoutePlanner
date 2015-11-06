@@ -110,19 +110,26 @@
     }
 
     .markerLabelStartStyle {
-        background-color: #FFFFFF;
-        padding: 2px;
-        border: solid 1px;
+        background-color: transparent;
+        padding-top: 5px;
+        padding-left: 4px;
+        font-weight: 700;
+        z-index: 1;
     }
 
     .markerLabelEndStyle {
-        background-color: #FFFFFF;
-        padding: 2px;
-        border: solid 1px;
+        background-color: transparent;
+        padding-top: 5px;
+        padding-left: 6px;
+        font-weight: 700;
+        z-index: 1;
     }
 
     .markerLabelNumberStyle {
-        background-color: #FFFFFF;
+        background-color: transparent;
         padding: 2px;
-        border: solid 1px;
+        padding-top: 5px;
+        padding-left: 12px;
+        font-weight: 700;
+        z-index: 1;
     }

@@ -72,7 +72,7 @@
                     longitude: $scope.ChosenDestination.Longitude
                 },
                 options: {
-                    //labelAnchor: '15 0'
+                    labelAnchor: '15 45'
                     //animation: google.maps.Animation.DROP
                 },
                 nights: 0,
@@ -223,23 +223,26 @@
                 $scope.route[i].stop = 'Start';
                 $scope.route[i].stopNumberDivClass = 'startCircle';
                 $scope.route[i].stopNumberSpanClass = 'startEndCircleText';
-                //$scope.route[i].options.labelClass = 'markerLabelStartStyle';
+                $scope.route[i].options.labelClass = 'markerLabelStartStyle';
+                $scope.route[i].icon = "/RoutePlanner/Content/images/markers/free-map-marker-icon-green-darker.png";
             }
             else if (i == $scope.route.length - 1) {
                 $scope.route[i].stop = 'End';
                 $scope.route[i].stopNumberDivClass = 'endCircle';
                 $scope.route[i].stopNumberSpanClass = 'startEndCircleText';
-                //$scope.route[i].options.labelClass = 'markerLabelEndStyle';
+                $scope.route[i].options.labelClass = 'markerLabelEndStyle';
+                $scope.route[i].icon = "/RoutePlanner/Content/images/markers/free-map-marker-icon-red.png";
             }
             else {
                 $scope.route[i].stop = i;
                 $scope.route[i].stopNumberDivClass = 'numberCircle';
                 $scope.route[i].stopNumberSpanClass = 'numberCircleText';
-                //$scope.route[i].options.labelClass = 'markerLabelNumberStyle';
+                $scope.route[i].options.labelClass = 'markerLabelNumberStyle';
+                $scope.route[i].icon = "/RoutePlanner/Content/images/markers/free-map-marker-icon-blue-darker.png";
             }
 
-            //$scope.route[i].options.labelContent = $scope.route[i].stop;
-            //$scope.route[i].options.labelInBackground = true;
+            $scope.route[i].options.labelContent = $scope.route[i].stop;
+            $scope.route[i].options.labelInBackground = true;
         }
     }
 

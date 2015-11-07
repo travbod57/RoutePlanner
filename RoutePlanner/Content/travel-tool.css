@@ -13,6 +13,10 @@
         padding-right: 3px;
     }
 
+    ul.dropdown-menu li a {
+        cursor: pointer;
+    }
+
     /* End General */
 
     /* Google Map */

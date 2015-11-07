@@ -75,7 +75,7 @@
             <div id="travel-tool-map" class="angular-google-map-container">
                 <ui-gmap-google-map center='map.center' zoom='map.zoom' options="map.options">
 
-                    <ui-gmap-markers models='route' idkey='id' coords="'coords'" click="onMarkerClick" options="'options'" icon="'icon'">
+                    <ui-gmap-markers models='route' idkey='id' coords="'coords'" options="'options'" icon="'icon'" events="markersEvents">
                         <ui-gmap-windows show="show">
                             <div class="infoWindowContent" ng-non-bindable>
                                 <span><strong>{{destination.Full_Name}}</strong></span>

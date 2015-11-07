@@ -259,8 +259,19 @@
         PolyPathService.MendPolyLines($scope.PolyLines, $scope.route, fromIndex, toIndex);
     }
 
-    $scope.onMarkerClick = function (model) {
-        model.show = !model.show;
+    //$scope.onMarkerClick = function (model) {
+    //    model.show = !model.show;
+    //};
+
+    $scope.markersEvents = {
+        mouseover: function (gMarker, eventName, model) {
+            model.show = true;
+            $scope.$apply();
+        },
+        mouseout: function (gMarker, eventName, model) {
+            model.show = false;
+            $scope.$apply();
+        }
     };
 
     $scope.OnChangeTransport = function (val) {

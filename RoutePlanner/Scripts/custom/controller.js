@@ -6,7 +6,6 @@
 
     $scope.ChosenDestination;
     $scope.SelectedRouteStop;
-    $scope.destinations = [];
     $scope.startDate;
     $scope.route = [];
     $scope.PolyLines = [];
@@ -278,9 +277,14 @@
         }
     }
 
+    $scope.Reset = function () {
+        $scope.route = [];
+        $scope.PolyLines = [];
+    };
+
     /* MODAL */
 
-    $scope.open = function (size) {
+    $scope.Email = function (size) {
 
         var modalInstance = $uibModal.open({
             animation: true,

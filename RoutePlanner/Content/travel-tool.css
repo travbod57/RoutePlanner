@@ -1,18 +1,42 @@
-﻿    .angular-google-map-container {
+﻿    /* General */
+
+    .margin-5 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    label.travel-tool {
+        margin-bottom: 0;
+    }
+
+    /* End General */
+
+    /* Google Map */
+
+    .angular-google-map-container {
         height: 400px;
+    }
+
+    #travel-tool-map {
+        margin-bottom: 15px
     }
 
     #routeTable tbody tr td {
         vertical-align: middle;
     }
 
-    .has-error .form-control-feedback {
-        color: #a94442;
+    #routeTable tr td input.inputDailyCost, #routeTable tr td input.inputDays {
+        width: 70px;
     }
 
-    .has-success .form-control-feedback {
-        color: #3c763d;
+    #totalCost {
+        font-size: 1.2em;
+        font-weight: 700;
     }
+
+    /* End Google Map */
+
+    /* Email Modal Form */
 
     form span.form-control-feedback {
         position: absolute;
@@ -26,27 +50,17 @@
         text-align: center;
     }
 
-    .margin-5 {
-        margin-top: 5px;
-        margin-bottom: 5px;
+    .has-error .form-control-feedback {
+        color: #a94442;
     }
 
-    #travel-tool-map {
-        margin-bottom: 15px
+    .has-success .form-control-feedback {
+        color: #3c763d;
     }
 
-    #totalCost {
-        font-size: 1.2em;
-        font-weight: 700;
-    }
+    /* End Email Modal Form */
 
-    label.travel-tool {
-        margin-bottom: 0;
-    }
-
-    .inputDailyCost, .inputDays {
-        width: 70px;
-    }
+    /* Number Circles */
 
    .startCircle {
         position: relative;
@@ -85,10 +99,16 @@
         width: 58px;
     }
     
-    .numberCircleText {
+    .singleDigitNumberCircleText {
         display: block;
         line-height: 1;
-        padding: 5px 0 3px;
+        padding: 5px 0 3px 1px;
+    }
+
+    .doubleDigitNumberCircleText {
+        display: block;
+        line-height: 1;
+        padding: 5px 0 3px 0px;
     }
 
    .startEndCircleText {
@@ -96,6 +116,48 @@
         line-height: 1;
         padding: 5px 0 3px;
     }
+
+    /* End Number Circles */
+
+    /* Marker Labels */
+
+    .markerLabelStartStyle {
+        background-color: transparent;
+        padding-top: 5px;
+        padding-left: 3px;
+        font-weight: 700;
+        z-index: 1;
+    }
+
+    .markerLabelEndStyle {
+        background-color: transparent;
+        padding-top: 5px;
+        padding-left: 6px;
+        font-weight: 700;
+        z-index: 1;
+    }
+
+    .markerLabelSingleDigitNumberStyle {
+        background-color: transparent;
+        padding: 2px;
+        padding-top: 5px;
+        padding-left: 12px;
+        font-weight: 700;
+        z-index: 1;
+    }
+
+    .markerLabelDoubleDigitNumberStyle {
+        background-color: transparent;
+        padding: 2px;
+        padding-top: 5px;
+        padding-left: 9px;
+        font-weight: 700;
+        z-index: 1;
+    }
+
+    /* End Marker Labels */
+
+    /* Marker Info Window */
 
     .infoWindowContent span {
         display: block;
@@ -109,27 +171,4 @@
         display: inline;
     }
 
-    .markerLabelStartStyle {
-        background-color: transparent;
-        padding-top: 5px;
-        padding-left: 4px;
-        font-weight: 700;
-        z-index: 1;
-    }
-
-    .markerLabelEndStyle {
-        background-color: transparent;
-        padding-top: 5px;
-        padding-left: 6px;
-        font-weight: 700;
-        z-index: 1;
-    }
-
-    .markerLabelNumberStyle {
-        background-color: transparent;
-        padding: 2px;
-        padding-top: 5px;
-        padding-left: 12px;
-        font-weight: 700;
-        z-index: 1;
-    }
+    /* End Marker Info Window */

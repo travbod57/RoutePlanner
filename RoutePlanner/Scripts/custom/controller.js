@@ -218,31 +218,40 @@
     $scope.UpdateStopNumbering = function () {
 
         for (i = 0; i < $scope.route.length; i++) {
+
             var child = i + 1;
+            var routeItem = $scope.route[i];
+
             if (i == 0) {
-                $scope.route[i].stop = 'Start';
-                $scope.route[i].stopNumberDivClass = 'startCircle';
-                $scope.route[i].stopNumberSpanClass = 'startEndCircleText';
-                $scope.route[i].options.labelClass = 'markerLabelStartStyle';
-                $scope.route[i].icon = "/RoutePlanner/Content/images/markers/free-map-marker-icon-green-darker.png";
+                routeItem.stop = 'Start';
+                routeItem.stopNumberDivClass = 'startCircle';
+                routeItem.stopNumberSpanClass = 'startEndCircleText';
+                routeItem.options.labelClass = 'markerLabelStartStyle';
+                routeItem.icon = "/RoutePlanner/Content/images/markers/map-marker-icon-green-darker.png";
             }
             else if (i == $scope.route.length - 1) {
-                $scope.route[i].stop = 'End';
-                $scope.route[i].stopNumberDivClass = 'endCircle';
-                $scope.route[i].stopNumberSpanClass = 'startEndCircleText';
-                $scope.route[i].options.labelClass = 'markerLabelEndStyle';
-                $scope.route[i].icon = "/RoutePlanner/Content/images/markers/free-map-marker-icon-red.png";
+                routeItem.stop = 'End';
+                routeItem.stopNumberDivClass = 'endCircle';
+                routeItem.stopNumberSpanClass = 'startEndCircleText';
+                routeItem.options.labelClass = 'markerLabelEndStyle';
+                routeItem.icon = "/RoutePlanner/Content/images/markers/map-marker-icon-red.png";
             }
             else {
-                $scope.route[i].stop = i;
-                $scope.route[i].stopNumberDivClass = 'numberCircle';
-                $scope.route[i].stopNumberSpanClass = 'numberCircleText';
-                $scope.route[i].options.labelClass = 'markerLabelNumberStyle';
-                $scope.route[i].icon = "/RoutePlanner/Content/images/markers/free-map-marker-icon-blue-darker.png";
+                routeItem.stop = i;
+                routeItem.stopNumberDivClass = 'numberCircle';
+                routeItem.icon = "/RoutePlanner/Content/images/markers/map-marker-icon-blue-darker.png";
+
+                if (routeItem.stop < 10) {
+                    routeItem.options.labelClass = 'markerLabelSingleDigitNumberStyle';
+                    routeItem.stopNumberSpanClass = 'singleDigitNumberCircleText';
+                }
+                else {
+                    routeItem.options.labelClass = 'markerLabelDoubleDigitNumberStyle';
+                    routeItem.stopNumberSpanClass = 'doubleDigitNumberCircleText';
+                }
             }
 
-            $scope.route[i].options.labelContent = $scope.route[i].stop;
-            $scope.route[i].options.labelInBackground = false;
+            routeItem.options.labelContent = routeItem.stop;
         }
     }
 

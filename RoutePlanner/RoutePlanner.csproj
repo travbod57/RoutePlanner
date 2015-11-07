@@ -175,9 +175,9 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\images\help.png" />
-    <Content Include="Content\images\markers\free-map-marker-icon-blue-darker.png" />
-    <Content Include="Content\images\markers\free-map-marker-icon-green-darker.png" />
-    <Content Include="Content\images\markers\free-map-marker-icon-red.png" />
+    <Content Include="Content\images\markers\map-marker-icon-blue-darker.png" />
+    <Content Include="Content\images\markers\map-marker-icon-green-darker.png" />
+    <Content Include="Content\images\markers\map-marker-icon-red.png" />
     <Content Include="Content\travel-tool.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

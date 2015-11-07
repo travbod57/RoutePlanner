@@ -134,7 +134,7 @@
                         <th style="width: 80px;">stop</th>
                         <th style="width: 300px;">location</th>
                         <th style="width: 100px;">night(s)</th>
-                        <th style="width: 120px;">daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
+                        <th style="width: 150px;">est. daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
                         <th style="width: 100px;">total cost</th>
                         <th style="width: 300px;">leave by</th>
                         <th style="width: 100px;"></th>
@@ -147,7 +147,7 @@
                         <td style="width: 100px;">
                             <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
                         </td>
-                        <td style="width: 120px;">
+                        <td style="width: 150px;">
 
                             <div class="input-group">
                                 <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
@@ -193,7 +193,7 @@
 
     @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
 
-    <span>{{ route | json}}</span>
+    @*<span>{{ route | json}}</span>*@
 
 
 </div>

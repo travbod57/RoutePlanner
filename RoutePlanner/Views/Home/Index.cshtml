@@ -58,13 +58,21 @@
         </div>
     </script>
 
+    <script type="text/ng-template" id="customTemplate.html">
+        <a>
+            <span ng-show="match.model.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
+            <span ng-show="match.model.IsAirport == 1"  class="glyphicon glyphicon glyphicon-plane"></span>
+            <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+        </a>
+    </script>
+
     <div class="row">
         <div class="col-md-12">
             <div class="alert alert-warning">
                 <strong>tips:</strong>
                 <ul>
                     <li>You can drag and drop the locations to reorder your route</li>
-                    <li>Click the markers to see more information</li>
+                    <li>Hover over the markers to see more information</li>
                 </ul>
             </div>
         </div>
@@ -104,7 +112,7 @@
                 <label class="travel-tool">{{ route.length > 0 ? 'Add Location' : 'Add Starting Location' }}</label>
 
                 <div class="input-group">
-                    <input id="destinationpicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a location ..." autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                    <input id="destinationpicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
                     <span class="input-group-btn">
                         <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
                     </span>

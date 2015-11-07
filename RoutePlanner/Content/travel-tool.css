@@ -9,6 +9,10 @@
         margin-bottom: 0;
     }
 
+    .glyphicon {
+        padding-right: 3px;
+    }
+
     /* End General */
 
     /* Google Map */

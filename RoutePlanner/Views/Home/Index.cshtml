@@ -151,7 +151,11 @@
                 <tbody id="sortable" dnd-list="route">
                     <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
                         <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
-                        <td style="width: 300px;">{{item.destination.Full_Name}}</td>
+                        <td style="width: 300px;">
+                            <span ng-show="item.destination.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
+                            <span ng-show="item.destination.IsAirport == 1" class="glyphicon glyphicon glyphicon-plane"></span>
+                            {{item.destination.Full_Name}}
+                        </td>
                         <td style="width: 100px;">
                             <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
                         </td>

@@ -181,7 +181,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-4"><div class="alert alert-success" role="alert">Return date: {{ startDate | displayReturnDateFilter: this }}</div></div>
+                <div class="col-sm-4"><div class="alert alert-success" role="alert">Return date: {{ ReturnDate() }}</div></div>
                 <div class="col-sm-4"><div class="alert alert-success" role="alert">Number of nights: {{ getTripLength() }}</div></div>
                 <div class="col-sm-4"><div class="alert alert-success" role="alert">Stops: {{ getNumberOfStops() }}</div></div>
             </div>

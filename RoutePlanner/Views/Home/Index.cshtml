@@ -37,23 +37,23 @@
         </div>
         <div class="modal-body">
             <p>Please provide your email address</p>
-            <form name="contactForm">
-                <div class="form-group" ng-class="{'has-error': !contactForm.Email.$valid && contactForm.Email.$dirty, 'has-success': contactForm.Email.$valid && contactForm.Email.$dirty, 'has-feedback': (!contactForm.Email.$valid && contactForm.Email.$dirty || contactForm.Email.$valid && contactForm.Email.$dirty)}">
+            <form id="emailRouteForm" name="emailRouteForm">
+                <div class="form-group" ng-class="{'has-error': !emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-success': emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-feedback': (!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty || emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty)}">
 
                     <input type="text" name="Email" placeholder="enter your email" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
-                    <div class="text-danger" ng-show="contactForm.Email.$error.required && contactForm.Email.$dirty">Please enter your email address</div>
-                    <div class="text-danger" ng-show="contactForm.Email.$error.pattern && contactForm.Email.$dirty">Please enter a valid email address</div>
+                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.required && emailRouteForm.Email.$dirty">Please enter your email address</div>
+                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
 
                     <div ng-show="showEmailError"><p>You're email failed to send. Please try again later</p></div>
 
-                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!contactForm.Email.$valid && contactForm.Email.$dirty"></span>
-                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="contactForm.Email.$valid && contactForm.Email.$dirty"></span>
+                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
+                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
                 </div>
             </form>
 
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="contactForm.$invalid">Send</button>
+            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="emailRouteForm.$invalid">Send</button>
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>

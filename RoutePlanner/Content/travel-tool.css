@@ -46,16 +46,20 @@
 
     /* Email Modal Form */
 
-    form span.form-control-feedback {
-        position: absolute;
-        top: 50px;
-        right: 20px;
-        z-index: 2;
-        display: block;
-        width: 34px;
-        height: 34px;
-        line-height: 34px;
-        text-align: center;
+    form#emailRouteForm span.form-control-feedback {
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		z-index: 2;
+		display: block;
+		width: 34px;
+		height: 34px;
+		line-height: 34px;
+		text-align: center;
+    }
+
+    .modal-body p {
+        line-height: 1.428571429;
     }
 
     .has-error .form-control-feedback {

@@ -58,6 +58,19 @@
         </div>
     </script>
 
+    <script type="text/ng-template" id="resetModalTemplate.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Warning</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to reset your route?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="yes()">Yes</button>
+            <button class="btn btn-warning" type="button" ng-click="no()">No</button>
+        </div>
+    </script>
+
     <script type="text/ng-template" id="customTemplate.html">
         <a>
             <span ng-show="match.model.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
@@ -112,7 +125,7 @@
                 <label class="travel-tool">{{ route.length > 0 ? 'Add Location' : 'Add Starting Location' }}</label>
 
                 <div class="input-group">
-                    <input id="destinationpicker" class="form-control margin-5" type="text" ng-model="ChosenDestination" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                    <input id="destinationpicker" input-group-btn-click class="form-control margin-5" type="text" ng-model="ChosenDestination" typeahead-editable="false" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
                     <span class="input-group-btn">
                         <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
                     </span>
@@ -202,7 +215,7 @@
 
 
     <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="route.length == 0">Email Route</button>
-    <button class="btn btn-primary" ng-click="Reset()" ng-disabled="route.length == 0">Reset Route</button>
+    <button class="btn btn-primary" ng-click="Reset('lg')" ng-disabled="route.length == 0">Reset Route</button>
     @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
 
     @*<span>{{ route | json}}</span>*@

@@ -74,3 +74,23 @@ app.directive('datepicker', function () {
         link : linkFn
     }
 });
+
+app.directive('inputGroupBtnClick', function () {
+
+    var linkFn = function link(scope, element, attrs) {
+        
+        element.keypress(function (event) {
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if (keycode == '13') {
+                scope.Choose();
+                scope.$apply();
+            }
+        });
+
+    };
+
+    return {
+        restrict: 'A',
+        link: linkFn
+    }
+});

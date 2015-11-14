@@ -288,12 +288,12 @@
         }
     }
 
-    $scope.Reset = function () {
+    $scope.ResetOld = function () {
         $scope.route = [];
         $scope.PolyLines = [];
     };
 
-    /* MODAL */
+    /* MODALS */
 
     $scope.Email = function (size) {
 
@@ -305,6 +305,24 @@
             resolve: {
                 route: function () {
                     return $scope.route;
+                }
+            }
+        });
+    };
+
+    $scope.Reset = function (size) {
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'resetModalTemplate.html',
+            controller: 'resetModalCtrl',
+            size: size,
+            resolve: {
+                yes: function () {
+                    return function () {
+                        $scope.route = [];
+                        $scope.PolyLines = [];
+                    }
                 }
             }
         });
@@ -346,6 +364,18 @@ app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
     };
 
     $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+app.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
+
+    $scope.yes = function () {
+        yes();
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.no = function () {
         $modalInstance.dismiss('cancel');
     };
 });

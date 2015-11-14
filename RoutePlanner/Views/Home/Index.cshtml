@@ -31,54 +31,6 @@
 
 <div id="application" ng-app="routePlanner" ng-controller="routePlannerCtrl" class="container ng-cloak">
 
-    <script type="text/ng-template" id="sendEmailModal.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Email Route</h3>
-        </div>
-        <div class="modal-body">
-            <p>Please provide your email address</p>
-            <form id="emailRouteForm" name="emailRouteForm">
-                <div class="form-group" ng-class="{'has-error': !emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-success': emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-feedback': (!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty || emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty)}">
-
-                    <input type="text" name="Email" placeholder="enter your email" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
-                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.required && emailRouteForm.Email.$dirty">Please enter your email address</div>
-                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
-
-                    <div ng-show="showEmailError"><p>You're email failed to send. Please try again later</p></div>
-
-                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
-                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
-                </div>
-            </form>
-
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="emailRouteForm.$invalid">Send</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="resetModalTemplate.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Warning</h3>
-        </div>
-        <div class="modal-body">
-            <p>Are you sure you want to reset your route?</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="yes()">Yes</button>
-            <button class="btn btn-warning" type="button" ng-click="no()">No</button>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="customTemplate.html">
-        <a>
-            <span ng-show="match.model.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
-            <span ng-show="match.model.IsAirport == 1"  class="glyphicon glyphicon glyphicon-plane"></span>
-            <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
-        </a>
-    </script>
-
     <div class="row">
         <div class="col-md-12">
             <div class="alert alert-warning">
@@ -118,6 +70,7 @@
             </div>
         </div>
     </div>
+
     <div class="row">
 
         <div class="col-md-6">
@@ -213,9 +166,69 @@
         </div>
     </div>
 
-
     <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="route.length == 0">Email Route</button>
     <button class="btn btn-primary" ng-click="Reset('lg')" ng-disabled="route.length == 0">Reset Route</button>
+
+    <script type="text/ng-template" id="sendEmailModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Email Route</h3>
+        </div>
+        <div class="modal-body">
+            <p>Please provide your email address</p>
+            <form id="emailRouteForm" name="emailRouteForm">
+                <div class="form-group" ng-class="{'has-error': !emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-success': emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-feedback': (!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty || emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty)}">
+
+                    <input type="text" name="Email" placeholder="enter your email" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
+                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.required && emailRouteForm.Email.$dirty">Please enter your email address</div>
+                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
+
+                    <div ng-show="showEmailError"><p>You're email failed to send. Please try again later</p></div>
+
+                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
+                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
+                </div>
+            </form>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="emailRouteForm.$invalid">Send</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="resetModalTemplate.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Warning</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to reset your route?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="yes()">Yes</button>
+            <button class="btn btn-warning" type="button" ng-click="no()">No</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="routeLengthExceededModalTemplate.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Sorry</h3>
+        </div>
+        <div class="modal-body">
+            <p>You are not permitted to add more than {{ MaxDestinations }} stops to your route</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="customTemplate.html">
+        <a>
+            <span ng-show="match.model.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
+            <span ng-show="match.model.IsAirport == 1" class="glyphicon glyphicon glyphicon-plane"></span>
+            <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+        </a>
+    </script>
+
     @*<button class="btn btn-primary" ng-click="save()" ng-disabled="route.length == 0">Save</button>*@
 
     @*<span>{{ route | json}}</span>*@

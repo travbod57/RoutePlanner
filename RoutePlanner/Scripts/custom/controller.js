@@ -9,6 +9,7 @@
     $scope.startDate;
     $scope.route = [];
     $scope.PolyLines = [];
+    $scope.MaxDestinations = 50;
 
     $scope.CurrencyDropdownValues = [{
         id: 1,
@@ -63,32 +64,38 @@
 
         if ($scope.ChosenDestination !== undefined) {
 
-            $scope.route.push({
-                id: $scope.ChosenDestination.Id,
-                destination: $scope.ChosenDestination,
-                coords: {
-                    latitude: $scope.ChosenDestination.Latitude,
-                    longitude: $scope.ChosenDestination.Longitude
-                },
-                options: {
-                    labelAnchor: '15 45'
-                    //animation: google.maps.Animation.DROP
-                },
-                nights: 0,
-                transport: 'Air',
-                get totalCost() { return this.destination.DailyCost * this.nights; },
-                stopNumberDivClass: '',
-                stopNumberSpanClass: ''
-            });
-
-            if ($scope.route.length > 1) {
-                var prevRoute = $scope.route[$scope.route.length - 2];
-                PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenDestination, prevRoute);
+            if (($scope.route.length - 1) == $scope.MaxDestinations) {
+                OpenRouteLengthExceeded('lg');
             }
+            else {
 
-            $scope.UpdateStopNumbering();
+                $scope.route.push({
+                    id: $scope.ChosenDestination.Id,
+                    destination: $scope.ChosenDestination,
+                    coords: {
+                        latitude: $scope.ChosenDestination.Latitude,
+                        longitude: $scope.ChosenDestination.Longitude
+                    },
+                    options: {
+                        labelAnchor: '15 45'
+                        //animation: google.maps.Animation.DROP
+                    },
+                    nights: 0,
+                    transport: 'Air',
+                    get totalCost() { return this.destination.DailyCost * this.nights; },
+                    stopNumberDivClass: '',
+                    stopNumberSpanClass: ''
+                });
 
-            $scope.ChosenDestination = undefined;
+                if ($scope.route.length > 1) {
+                    var prevRoute = $scope.route[$scope.route.length - 2];
+                    PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenDestination, prevRoute);
+                }
+
+                $scope.UpdateStopNumbering();
+
+                $scope.ChosenDestination = undefined;
+            }
         }
     }
 
@@ -194,7 +201,7 @@
     }
 
     $scope.getNumberOfStops = function () {
-        return $scope.route.length;
+        return $scope.route.length - 1;
     }
 
     /* FUNCTIONS */
@@ -297,7 +304,7 @@
 
     $scope.Email = function (size) {
 
-        var modalInstance = $uibModal.open({
+        $uibModal.open({
             animation: true,
             templateUrl: 'sendEmailModal.html',
             controller: 'SendEmailModalCtrl',
@@ -312,7 +319,7 @@
 
     $scope.Reset = function (size) {
 
-        var modalInstance = $uibModal.open({
+        $uibModal.open({
             animation: true,
             templateUrl: 'resetModalTemplate.html',
             controller: 'resetModalCtrl',
@@ -328,6 +335,20 @@
         });
     };
 
+    function OpenRouteLengthExceeded(size) {
+
+        $uibModal.open({
+            animation: true,
+            templateUrl: 'routeLengthExceededModalTemplate.html',
+            controller: 'routeLengthExceededModalCtrl',
+            size: size,
+            resolve: {
+                maxDestinations: function () {
+                    return $scope.MaxDestinations;
+                }
+            }
+        });
+    }
 });
 
 // to do: change to $http service
@@ -378,4 +399,14 @@ app.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
     $scope.no = function () {
         $modalInstance.dismiss('cancel');
     };
+});
+
+app.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance, maxDestinations) {
+
+    $scope.MaxDestinations = maxDestinations;
+
+    $scope.ok = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
 });

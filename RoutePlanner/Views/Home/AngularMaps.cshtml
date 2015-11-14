@@ -5,138 +5,76 @@
 
 <h2>AngularMaps</h2>
 
-<script src="~/Scripts/custom/lodash.js"></script>
 <script src="~/Scripts/angular.js"></script>
-<script src="~/Scripts/custom/angular-simple-logger/index.js"></script>
-<script src="~/Scripts/custom/angular-google-maps.min.js"></script>
-
 <script src="~/Scripts/angular-resource.min.js"></script>
 <script src="~/Scripts/angular-route.min.js"></script>
+<script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.1.min.js"></script>
 
 <script type="text/javascript">
 
-    angular.module('myApp', ['uiGmapgoogle-maps'])
-.config(function (uiGmapGoogleMapApiProvider) {
-    uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
-        v: '3.20', //defaults to latest 3.X anyhow
-        libraries: 'weather,geometry,visualization'
-    });
-})
-.controller('AppCtrl', function ($scope, uiGmapGoogleMapApi) {
-    // Do stuff with your $scope.
-    // Note: Some of the directives require at least something to be defined originally!
-    // e.g. $scope.markers = []
+    var myApp = angular.module('myApp', ['ui.bootstrap']);
+    myApp.controller('AppCtrl', function ($scope, $uibModal) {
 
-    // uiGmapGoogleMapApi is a promise.
-    // The "then" callback function provides the google.maps object.
-    uiGmapGoogleMapApi.then(function (maps) {
+        $scope.HelloMessage = "Hello world";
 
-        $scope.MapOptions = {
-            minZoom: 3,
-            zoomControl: false,
-            draggable: true,
-            navigationControl: false,
-            mapTypeControl: false,
-            scaleControl: false,
-            streetViewControl: false,
-            disableDoubleClickZoom: false,
-            keyboardShortcuts: true
-        };
+        $scope.OpenModal = function (size) {
 
-        $scope.PolyLines = [];
-        $scope.randomMarkers = [];
-        
-        $scope.polylines = [];
-
-
-        //$scope.polylines[0].path.push({
-
-        //            latitude: 55,
-        //            longitude: -55
-        //        }
-            
-        //);
-
-
-        $scope.map = {
-            center: { latitude: 45, longitude: -73 },
-            zoom: 2,
-            option: $scope.MapOptions
-        };
-
-        $scope.counter = 0;
-        $scope.addMarker = function () {
-            
-            $scope.fisrtMarker = {
-                id: 3,
-                stuff: "stuff",
-                coords: {
-                    latitude: 13,
-                    longitude: -13
-                },
-                options: { draggable: true },
-                data: "hello1"
-            };
-
-            $scope.secondMarker = {
-                id: 5,
-                stuff: "stuff",
-                coords: {
-                    latitude: 15,
-                    longitude: -15
-                },
-                options: { draggable: true },
-                data: "hello2"
-            };
-
-            $scope.randomMarkers.push($scope.fisrtMarker);
-            $scope.randomMarkers.push($scope.secondMarker);
-            $scope.polylines.push({
-                id: 1,
-                path: [
-                    {
-                        latitude: 45,
-                        longitude: -74
-                    }, {
-
-                        latitude: 55,
-                        longitude: -55
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'myModal.html',
+                controller: 'myModalCtrl',
+                size: size,
+                resolve: {
+                    message: function () {
+                        return "a message";
+                    },
+                    route: function () {
+                        return $scope.route;
                     }
-                ],
-                stroke: {
-                    color: '#6060FB',
-                    weight: 3
-                },
-                editable: true,
-                draggable: true,
-                geodesic: true,
-                visible: true
+                }
             });
         }
 
-
     });
 
-});
+    // to do: change to $http service
+    myApp.controller('myModalCtrl', function ($scope, $modalInstance, message) {
+
+        $scope.message = message;
+
+        $scope.ok = function () {
+            $modalInstance.dismiss('cancel');
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    });
 
 </script>
-<style>
-    .angular-google-map-container { height: 400px; }
-</style>
-<div ng-app="myApp" ng-controller="AppCtrl" class="angular-google-map-container">
 
-    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
-        <ui-gmap-marker ng-repeat="marker in randomMarkers" coords="marker.coords" idkey="'marker.id'">
-            <ui-gmap-window IsIconVisibleOnClick="true">
-                {{ marker.data }}
-            </ui-gmap-window>
-        </ui-gmap-marker>
-        <ui-gmap-polyline ng-repeat="p in polylines" path="p.path" stroke="{ color: '#000000'}">
+<div ng-app="myApp" ng-controller="AppCtrl">
 
-        </ui-gmap-polyline>
-    </ui-gmap-google-map>
-    
-    <button type="button" ng-click="addMarker()">Click me</button>
+    {{ HelloMessage }}
+ 
+
+    <button class="btn btn-primary" ng-click="OpenModal('lg')">Open Modal</button>
+
+    <script type="text/ng-template" id="myModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Modal Title</h3>
+        </div>
+        <div class="modal-body">
+
+            {{ message }}
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Ok</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 
 </div>
+
+

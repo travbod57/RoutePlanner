@@ -201,7 +201,11 @@
     }
 
     $scope.getNumberOfStops = function () {
-        return $scope.route.length - 1;
+
+        if ($scope.route.length > 0)
+            return $scope.route.length - 1;
+        else
+            return 0;
     }
 
     /* FUNCTIONS */

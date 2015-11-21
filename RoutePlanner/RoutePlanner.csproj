@@ -213,6 +213,7 @@
     <Content Include="Scripts\custom\travel-tool.js" />
     <Content Include="Scripts\custom\ui-bootstrap-custom-tpls-0.10.0.min.js" />
     <Content Include="Scripts\custom\ui-bootstrap-custom-tpls-0.14.1.min.js" />
+    <Content Include="Scripts\custom\Utils.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />

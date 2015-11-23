@@ -187,8 +187,9 @@
 
     <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="route.length == 0">Email Route</button>
     <button class="btn btn-primary" ng-click="Reset('lg')" ng-disabled="route.length == 0">Reset Route</button>
+    <button class="btn btn-primary" ng-click="Save()" ng-disabled="route.length == 0">Save Route</button>
 
-    <div login-modal-show class="modal fade">
+    <div login-modal-show modal-visible="ShowLoginDialog" class="modal fade">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -196,11 +197,11 @@
                     <h4 class="modal-title" id="myModalLabel">Please login or register</h4>
                 </div>
                 <div class="modal-body">
-                    In order to be able to save your route you will need to login to your account or register with us.
+                    In order to be able to save your route you will need to login to your account or register with us. If you would like to view an already saved trip please click here.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Continue</button>
-                    <button type="button" class="btn btn-primary" ng-click="Login()" data-dismiss="modal">Login</button>
+                    <button type="button" class="btn btn-primary" ng-click="Login()">Login</button>
                     <button type="button" class="btn btn-primary" ng-click="Register()">Register</button>
                 </div>
             </div>

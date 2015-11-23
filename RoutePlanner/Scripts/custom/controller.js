@@ -1,4 +1,4 @@
-﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal) {
+﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window) {
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -10,6 +10,7 @@
     $scope.route = [];
     $scope.PolyLines = [];
     $scope.MaxDestinations = 50;
+    $scope.ShowLoginDialog = false;
 
     $scope.CurrencyDropdownValues = [{
         id: 1,
@@ -156,6 +157,10 @@
         $scope.UpdateStopNumbering();
     }
 
+    $scope.Save = function () {
+        $scope.ShowLoginDialog = true;
+    }
+
     /* GETTERS */
 
     $scope.getLocation = function (val) {
@@ -299,10 +304,13 @@
         }
     }
 
-    $scope.ResetOld = function () {
-        $scope.route = [];
-        $scope.PolyLines = [];
-    };
+    $scope.Register = function () {
+        $window.location.href = 'index.php?page_id=743';
+    }
+
+    $scope.Login = function () {
+        $window.location.href = 'index.php?page_id=741';
+    }
 
     /* MODALS */
 

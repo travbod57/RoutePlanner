@@ -98,15 +98,10 @@ app.directive('inputGroupBtnClick', function () {
 app.directive("loginModalShow", function ($window) {
     return {
         restrict: "A",
+        scope: {
+            modalVisible: "="
+        },
         link: function (scope, element, attrs) {
-
-            scope.Register = function() {
-                $window.location.href = 'index.php?page_id=752';
-            }
-
-            scope.Login = function () {
-                $window.location.href = 'index.php?page_id=750';
-            }
 
             //Hide or show the modal
             scope.showModal = function (visible) {
@@ -123,24 +118,20 @@ app.directive("loginModalShow", function ($window) {
 
                 //The attribute isn't defined, show the modal by default
                 scope.showModal(true);
-
+                scope.modalVisible = true;
             }
-            else {
+          
+            //Watch for changes to the modal-visible attribute
+            scope.$watch("modalVisible", function (newValue, oldValue) {
+                scope.showModal(newValue);
+            });
 
-                //Watch for changes to the modal-visible attribute
-                scope.$watch("modalVisible", function (newValue, oldValue) {
-                    scope.showModal(newValue);
-                });
-
-                //Update the visible value when the dialog is closed through UI actions (Ok, cancel, etc.)
-                element.bind("hide.bs.modal", function () {
-                    scope.modalVisible = false;
-                    if (!scope.$$phase && !scope.$root.$$phase)
-                        scope.$apply();
-                });
-
-            }
-
+            //Update the visible value when the dialog is closed through UI actions (Ok, cancel, etc.)
+            element.bind("hide.bs.modal", function () {
+                scope.modalVisible = false;
+                if (!scope.$$phase && !scope.$root.$$phase)
+                    scope.$apply();
+            });
         }
     };
 

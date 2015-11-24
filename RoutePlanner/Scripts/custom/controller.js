@@ -1,4 +1,4 @@
-﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window) {
+﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $localStorage, $sessionStorage) {
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -7,10 +7,20 @@
     $scope.ChosenDestination;
     $scope.SelectedRouteStop;
     $scope.startDate;
-    $scope.route = [];
-    $scope.PolyLines = [];
     $scope.MaxDestinations = 50;
     $scope.ShowLoginDialog = false;
+    $scope.$storage = $sessionStorage;
+    $scope.route = [];
+    $scope.PolyLines = [];
+    
+    var sessionData = $scope.$storage['myTrip'];
+
+    if (sessionData != undefined)
+    {
+        $scope.route = angular.fromJson(sessionData.route);
+        $scope.PolyLines = angular.fromJson(sessionData.polyLines);
+        //$scope.startDate = sessionData.startDate;
+    }
 
     $scope.CurrencyDropdownValues = [{
         id: 1,
@@ -157,8 +167,27 @@
         $scope.UpdateStopNumbering();
     }
 
-    $scope.Save = function () {
-        $scope.ShowLoginDialog = true;
+    $scope.Save = function (isUserLoggedIn) {
+
+        if (isUserLoggedIn != 1) {
+
+            $scope.$storage['route'] = angular.toJson($scope.route);
+            $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
+
+            var myTrip = {
+                route: angular.toJson($scope.route),
+                polyLines: angular.toJson($scope.PolyLines),
+                startDate: startDate
+            }
+
+            $scope.$storage['myTrip'] = myTrip;
+
+            $scope.ShowLoginDialog = true;
+        }
+        else {
+            $scope.$storage['myTrip'] = undefined;
+            // make ajax request
+        }
     }
 
     /* GETTERS */

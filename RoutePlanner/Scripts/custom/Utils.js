@@ -1,7 +1,9 @@
-﻿var app = app || {};
-app.utils = app.utils || {};
+﻿var routePlanner = routePlanner || {};
+routePlanner.utils = routePlanner.utils || {};
 
-app.utils = (function (jQuery) {
+routePlanner.utils = (function (jQuery) {
+
+    var isUserLoggedIn = jQuery("body").hasClass("logged-in");
 
     var BrowserDetect = {
         init: function () {
@@ -45,7 +47,8 @@ app.utils = (function (jQuery) {
     };
 
     return {
-        BrowserDetect: BrowserDetect
+        BrowserDetect: BrowserDetect,
+        IsUserLoggedIn: isUserLoggedIn
     }
 
-})(jQuery)
+})($)

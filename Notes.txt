@@ -6,3 +6,4 @@ The bug was that the makers higher up the canvas had their label text in front o
 Find and replace: overlayImage.appendChild(this.labelDiv_) with markerLayer.appendChild(this.labelDiv_). There should be one occurance.
 
 @@ to @ on ngPattern
+<?php echo is_user_logged_in(); ?> in the Save() button

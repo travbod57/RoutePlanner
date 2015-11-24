@@ -122,50 +122,53 @@
 
     <div class="row">
         <div class="col-md-12">
-            <table id="routeTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th style="width: 80px;">stop</th>
-                        <th style="width: 300px;">location</th>
-                        <th style="width: 100px;">night(s)</th>
-                        <th style="width: 150px;">est. daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
-                        <th style="width: 100px;">total cost</th>
-                        <th style="width: 300px;">leave by</th>
-                        <th style="width: 100px;"></th>
-                    </tr>
-                </thead>
-                <tbody id="sortable" dnd-list="route">
-                    <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
-                        <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
-                        <td style="width: 300px;">
-                            <span ng-show="item.destination.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
-                            <span ng-show="item.destination.IsAirport == 1" class="glyphicon glyphicon glyphicon-plane"></span>
-                            {{item.destination.Full_Name}}
-                        </td>
-                        <td style="width: 100px;">
-                            <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
-                        </td>
-                        <td style="width: 150px;">
+            <form id="routeForm" name="routeForm">
+                <table id="routeTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">stop</th>
+                            <th style="width: 300px;">location</th>
+                            <th style="width: 100px;">night(s)</th>
+                            <th style="width: 150px;">est. daily cost <a href="javascript:void(0;)" tooltip-placement="top" uib-tooltip="An estimated value of daily cost including accommodation, food and drink"><img src="@Url.Content("~/Content/images/help.png")" /></a></th>
+                            <th style="width: 100px;">total cost</th>
+                            <th style="width: 300px;">leave by</th>
+                            <th style="width: 100px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="sortable" dnd-list="route">
+                        <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
+                            <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
+                            <td style="width: 300px;">
+                                <span ng-show="item.destination.IsAirport != 1" class="glyphicon glyphicon-map-marker"></span>
+                                <span ng-show="item.destination.IsAirport == 1" class="glyphicon glyphicon glyphicon-plane"></span>
+                                {{item.destination.Full_Name}}
+                            </td>
+                            <td style="width: 100px;">
+                                <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
+                            </td>
+                            <td style="width: 150px;">
 
-                            <div class="input-group">
-                                <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
-                                <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]+([,.][0-9]{2})?$/" ng-model="item.destination.DailyCost" />
-                            </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
+                                    <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]+([,.][0-9]{2})?$/" ng-model="item.destination.DailyCost" />
+                                </div>
 
-                            @*<span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^([0-9]{1,7}\.[0-9]{2})|\d+$/" ng-model="item.destination.DailyCost" /></span>*@
-                        </td>
-                        <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
-                        <td style="width: 300px;">
-                            <div class="btn-group">
-                                <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
-                                <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
-                                <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
-                            </div>
-                        </td>
-                        <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>
-                    </tr>
-                </tbody>
-            </table>
+                                @*<span>{{ SelectedCurrencyDropdownValue.symbol }} </span><span><input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^([0-9]{1,7}\.[0-9]{2})|\d+$/" ng-model="item.destination.DailyCost" /></span>*@
+                            </td>
+                            <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
+                            <td style="width: 300px;">
+                                <div class="btn-group">
+                                    <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
+                                    <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
+                                    <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
+                                </div>
+                            </td>
+                            <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+
             <div class="alert alert-warning" ng-hide="HasRoute()">
                 No destinations added
             </div>
@@ -183,12 +186,13 @@
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 
     <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="route.length == 0">Email Route</button>
     <button class="btn btn-primary" ng-click="Reset('lg')" ng-disabled="route.length == 0">Reset Route</button>
-    <button class="btn btn-primary" ng-click="Save()" ng-disabled="route.length == 0">Save Route</button>
+    <button class="btn btn-primary" ng-click="Save()" ng-disabled="route.length == 0 || routeForm.$invalid">Save Route</button>
 
     <div login-modal-show modal-visible="ShowLoginDialog" class="modal fade">
         <div class="modal-dialog" role="document">

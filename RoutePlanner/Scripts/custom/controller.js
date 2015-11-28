@@ -4,10 +4,10 @@
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
     });
 
-    $scope.ChosenDestination;
+    $scope.ChosenLocation;
     $scope.SelectedRouteStop;
     $scope.startDate;
-    $scope.MaxDestinations = 50;
+    $scope.MaxLocations = 50;
     $scope.ShowLoginDialog = false;
     $scope.$storage = $sessionStorage;
     $scope.route = [];
@@ -73,19 +73,19 @@
 
     $scope.Choose = function () {
 
-        if ($scope.ChosenDestination !== undefined) {
+        if ($scope.ChosenLocation !== undefined) {
 
-            if (($scope.route.length - 1) == $scope.MaxDestinations) {
+            if (($scope.route.length - 1) == $scope.MaxLocations) {
                 OpenRouteLengthExceeded('lg');
             }
             else {
 
                 $scope.route.push({
-                    id: $scope.ChosenDestination.Id,
-                    destination: $scope.ChosenDestination,
+                    id: $scope.ChosenLocation.Id,
+                    location: $scope.ChosenLocation,
                     coords: {
-                        latitude: $scope.ChosenDestination.Latitude,
-                        longitude: $scope.ChosenDestination.Longitude
+                        latitude: $scope.ChosenLocation.Latitude,
+                        longitude: $scope.ChosenLocation.Longitude
                     },
                     options: {
                         labelAnchor: '15 45'
@@ -93,41 +93,41 @@
                     },
                     nights: 0,
                     transport: 'Air',
-                    get totalCost() { return this.destination.DailyCost * this.nights; },
+                    get totalCost() { return this.location.DailyCost * this.nights; },
                     stopNumberDivClass: '',
                     stopNumberSpanClass: ''
                 });
 
                 if ($scope.route.length > 1) {
                     var prevRoute = $scope.route[$scope.route.length - 2];
-                    PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenDestination, prevRoute);
+                    PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenLocation, prevRoute);
                 }
 
                 $scope.UpdateStopNumbering();
 
-                $scope.ChosenDestination = undefined;
+                $scope.ChosenLocation = undefined;
             }
         }
     }
 
-    $scope.Remove = function (destination) {
+    $scope.Remove = function (location) {
 
-        var isFirstStop, isSecondStop, isLastDestination, index;
+        var isFirstStop, isSecondStop, isLastLocation, index;
 
-        if (destination.stop == 'Start') {
+        if (location.stop == 'Start') {
             isFirstStop = true;
             index = 0;
         }
-        else if (destination.stop == 1) {
+        else if (location.stop == 1) {
             isSecondStop = true;
             index = 1;
         }
-        else if (destination.stop == 'End') {
-            isLastDestination = true;
+        else if (location.stop == 'End') {
+            isLastLocation = true;
             index = $scope.route.length - 1;
         }
         else
-            index = destination.stop;
+            index = location.stop;
 
         // remove from route array
         $scope.route.splice(index, 1);
@@ -135,7 +135,7 @@
         if (isFirstStop) {
             $scope.PolyLines.splice(0, 1); // remove first
         }
-        else if (isLastDestination) {
+        else if (isLastLocation) {
             $scope.PolyLines.splice(index - 1, 1); // remove last
         }
         else if (isSecondStop) {
@@ -143,9 +143,9 @@
             nextPolyPath.path[0].longitude = $scope.PolyLines[0].path[0].longitude;
             nextPolyPath.path[0].latitude = $scope.PolyLines[0].path[0].latitude;
 
-            var prevDestination = $scope.route[index - 1];
+            var prevLocation = $scope.route[index - 1];
 
-            PolyPathService.UpdateStrokeColour(prevDestination.transport, nextPolyPath);
+            PolyPathService.UpdateStrokeColour(prevLocation.transport, nextPolyPath);
 
             $scope.PolyLines.splice(0, 1); // remove first
         }
@@ -156,9 +156,9 @@
             nextPolyPath.path[0].longitude = prevPolyPath.path[1].longitude;
             nextPolyPath.path[0].latitude = prevPolyPath.path[1].latitude;
 
-            var prevDestination = $scope.route[index - 1];
+            var prevLocation = $scope.route[index - 1];
 
-            PolyPathService.UpdateStrokeColour(prevDestination.transport, nextPolyPath);
+            PolyPathService.UpdateStrokeColour(prevLocation.transport, nextPolyPath);
 
             // remove poly line
             $scope.PolyLines.splice(index - 1, 1);
@@ -256,7 +256,7 @@
     };
 
     $scope.TrackSelectedRouteStop = function (routeItem) {
-        $scope.SelectedRouteStop = routeItem.destination;
+        $scope.SelectedRouteStop = routeItem.location;
     }
 
     $scope.UpdateStopNumbering = function () {
@@ -384,8 +384,8 @@
             controller: 'routeLengthExceededModalCtrl',
             size: size,
             resolve: {
-                maxDestinations: function () {
-                    return $scope.MaxDestinations;
+                maxLocations: function () {
+                    return $scope.MaxLocations;
                 }
             }
         });
@@ -442,9 +442,9 @@ app.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
     };
 });
 
-app.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance, maxDestinations) {
+app.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance, maxLocations) {
 
-    $scope.MaxDestinations = maxDestinations;
+    $scope.MaxLocations = maxLocations;
 
     $scope.ok = function () {
         $modalInstance.dismiss('cancel');

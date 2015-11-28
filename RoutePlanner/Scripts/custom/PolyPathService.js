@@ -16,7 +16,7 @@
                     longitude: currentRoute.Longitude
                 }],
             routeName : {
-                prev: previousRoute.destination.Name,
+                prev: previousRoute.location.Name,
                 current: currentRoute.Name
             },
             stroke: {},
@@ -59,11 +59,11 @@
 
             polyLines[i].path[0].latitude = routes[i].coords.latitude;
             polyLines[i].path[0].longitude = routes[i].coords.longitude;
-            polyLines[i].routeName.prev = routes[i].destination.Name;
+            polyLines[i].routeName.prev = routes[i].location.Name;
 
             polyLines[i].path[1].latitude = routes[i + 1].coords.latitude;
             polyLines[i].path[1].longitude = routes[i + 1].coords.longitude;
-            polyLines[i].routeName.current = routes[i+1].destination.Name;
+            polyLines[i].routeName.current = routes[i+1].location.Name;
 
             UpdateStrokeColour(routes[i].transport, polyLines[i]);
         }

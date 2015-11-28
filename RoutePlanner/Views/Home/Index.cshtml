@@ -99,7 +99,7 @@
                 <label class="travel-tool">{{ route.length > 0 ? 'Add Location' : 'Add Starting Location' }}</label>
 
                 <div class="input-group">
-                    <input id="destinationpicker" input-group-btn-click class="form-control margin-5" type="text" ng-model="ChosenDestination" typeahead-editable="false" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocation($viewValue)">
+                    <input id="destinationpicker" input-group-btn-click class="form-control margin-5" type="text" ng-model="ChosenDestination" typeahead-editable="false" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="destination as destination.Full_Name for destination in getLocationsByTerm($viewValue)">
                     <span class="input-group-btn">
                         <button id="destinationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
                     </span>

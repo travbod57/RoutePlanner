@@ -1,4 +1,4 @@
-﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $localStorage, $sessionStorage) {
+﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $localStorage, $sessionStorage, CONFIG) {
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -51,7 +51,7 @@
 
         $http({
             method: 'POST',
-            url: "http://localhost:81/Slim/saveRoute",
+            url: CONFIG.SAVE_ROUTE_URL,
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             transformRequest: function (obj) {
                 var str = [];
@@ -192,8 +192,8 @@
 
     /* GETTERS */
 
-    $scope.getLocation = function (val) {
-        return $http.get('http://www.thinkbackpacking.com/Slim/asyncDestinations', {
+    $scope.getLocationsByTerm = function (val) {
+        return $http.get(CONFIG.GET_LOCATIONS_BY_TERM_URL, {
             params: {
                 searchTerm: val
             }
@@ -271,19 +271,19 @@
                 routeItem.stopNumberDivClass = 'startCircle';
                 routeItem.stopNumberSpanClass = 'startEndCircleText';
                 routeItem.options.labelClass = 'markerLabelStartStyle';
-                routeItem.icon = "/RoutePlanner/Content/images/markers/map-marker-icon-green-darker.png";
+                routeItem.icon = CONFIG.START_MARKER_ICON;
             }
             else if (i == $scope.route.length - 1) {
                 routeItem.stop = 'End';
                 routeItem.stopNumberDivClass = 'endCircle';
                 routeItem.stopNumberSpanClass = 'startEndCircleText';
                 routeItem.options.labelClass = 'markerLabelEndStyle';
-                routeItem.icon = "/RoutePlanner/Content/images/markers/map-marker-icon-red.png";
+                routeItem.icon = CONFIG.END_MARKER_ICON;
             }
             else {
                 routeItem.stop = i;
                 routeItem.stopNumberDivClass = 'numberCircle';
-                routeItem.icon = "/RoutePlanner/Content/images/markers/map-marker-icon-blue-darker.png";
+                routeItem.icon = CONFIG.NUMBER_MARKER_ICON;
 
                 if (routeItem.stop < 10) {
                     routeItem.options.labelClass = 'markerLabelSingleDigitNumberStyle';
@@ -400,7 +400,7 @@ app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
     $scope.ok = function () {
 
         jQuery.ajax({
-            url: "http://www.thinkbackpacking.com/Slim/sendEmail",
+            url: CONFIG.SEND_EMAIL_URL,
             type: "POST",
             dataType: "text",
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

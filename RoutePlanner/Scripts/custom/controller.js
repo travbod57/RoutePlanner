@@ -14,7 +14,7 @@
     $scope.$storage = $sessionStorage;
     $scope.SelectedCurrencyDropdownValue;
 
-
+    InitialiseTrip();
 
     /* ACTIONS */
 

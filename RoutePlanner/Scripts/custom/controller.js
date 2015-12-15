@@ -7,106 +7,115 @@
     $scope.ChosenLocation;
     $scope.SelectedRouteStop;
     $scope.startDate;
+    $scope.route = [];
+    $scope.PolyLines = [];
     $scope.MaxLocations = 50;
     $scope.ShowLoginDialog = false;
     $scope.$storage = $sessionStorage;
-    $scope.route = [];
-    $scope.PolyLines = [];
-    
-    var sessionData = $scope.$storage['myTrip'];
+    $scope.SelectedCurrencyDropdownValue;
 
-    if (sessionData != undefined)
-    {
-        $scope.route = angular.fromJson(sessionData.route);
-        $scope.PolyLines = angular.fromJson(sessionData.polyLines);
-        //$scope.startDate = sessionData.startDate;
-    }
 
-    $scope.CurrencyDropdownValues = [{
-        id: 1,
-        label: 'POUND',
-        symbol: '£'
-    }, {
-        id: 2,
-        label: 'DOLLAR',
-        symbol: '$'
-    },
-    {
-        id: 3,
-        label: 'EURO',
-        symbol: '€'
-    },
-    {
-        id: 4,
-        label: "YEN",
-        symbol: '¥'
-    }
-    ];
-
-    $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
 
     /* ACTIONS */
 
-    $scope.save = function () {
+    $scope.Save = function () {
 
-        $http({
-            method: 'POST',
-            url: CONFIG.SAVE_ROUTE_URL,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            transformRequest: function (obj) {
-                var str = [];
-                for (var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                return str.join("&");
-            },
-            data: { routeData: angular.toJson($scope.route) }
-        }).then(function (response) {
-            alert("this callback will be called asynchronously");
-            // this callback will be called asynchronously
-            // when the response is available
-        }, function (response) {
-            alert(response + "called asynchronously if an error occurs");
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
+        var isUserLoggedIn = IsAuthenticated();
+
+        isUserLoggedIn.then(function (response) {
+
+            if (response.data != 1) {
+
+                $scope.$storage['route'] = angular.toJson($scope.route);
+                $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
+
+                var myTrip = {
+                    route: angular.toJson($scope.route),
+                    polyLines: angular.toJson($scope.PolyLines),
+                    startDate: startDate
+                }
+
+                $scope.$storage['myTrip'] = myTrip;
+
+                $scope.ShowLoginDialog = true;
+            }
+            else {
+                $scope.$storage['myTrip'] = undefined;
+
+                jQuery.ajax({
+                    url: CONFIG.SAVE_ROUTE_URL,
+                    type: "POST",
+                    dataType: "text",
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    transformRequest: function (obj) {
+                        var str = [];
+                        for (var p in obj)
+                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                        return str.join("&");
+                    },
+                    data: { routeData: angular.toJson($scope.route) }
+                }).done(function () {
+                    alert("ROUTE SAVED");
+                }).
+                fail(function (jqXHR, textStatus, error) {
+                    alert("ROUTE SAVED FAILED");
+                });
+            }
+
+        }, function errorCallback(response) {
+            alert("ERROR");
         });
+
+        //$http({
+        //    method: 'POST',
+        //    url: "http://localhost:81/Slim/saveRoute",
+        //    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        //    transformRequest: function (obj) {
+        //        var str = [];
+        //        for (var p in obj)
+        //            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        //        return str.join("&");
+        //    },
+        //    data: { routeData: angular.toJson($scope.route) }
+        //}).then(function (response) {
+        //    alert("this callback will be called asynchronously");
+        //    // this callback will be called asynchronously
+        //    // when the response is available
+        //}, function (response) {
+        //    alert(response + "called asynchronously if an error occurs");
+        //    // called asynchronously if an error occurs
+        //    // or server returns response with an error status.
+        //});
     };
 
     $scope.Choose = function () {
 
         if ($scope.ChosenLocation !== undefined) {
 
-            if (($scope.route.length - 1) == $scope.MaxLocations) {
-                OpenRouteLengthExceeded('lg');
-            }
-            else {
+            $scope.route.push({
+                id: $scope.ChosenLocation.Id,
+                location: $scope.ChosenLocation,
+                coords: {
+                    latitude: $scope.ChosenLocation.Latitude,
+                    longitude: $scope.ChosenLocation.Longitude
+                },
+                options: {
+                    labelAnchor: '15 45'
+                    //animation: google.maps.Animation.DROP
+                },
+                nights: 0,
+                transport: 'Air',
+                transportId: 1,
+                get totalCost() { return this.location.DailyCost * this.nights; },
+                stopNumberDivClass: '',
+                stopNumberSpanClass: ''
+            });
 
-                $scope.route.push({
-                    id: $scope.ChosenLocation.Id,
-                    location: $scope.ChosenLocation,
-                    coords: {
-                        latitude: $scope.ChosenLocation.Latitude,
-                        longitude: $scope.ChosenLocation.Longitude
-                    },
-                    options: {
-                        labelAnchor: '15 45'
-                        //animation: google.maps.Animation.DROP
-                    },
-                    nights: 0,
-                    transport: 'Air',
-                    get totalCost() { return this.location.DailyCost * this.nights; },
-                    stopNumberDivClass: '',
-                    stopNumberSpanClass: ''
-                });
+            CreatePolyLine($scope.ChosenLocation);
 
-                if ($scope.route.length > 1) {
-                    var prevRoute = $scope.route[$scope.route.length - 2];
-                    PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.ChosenLocation, prevRoute);
-                }
+            $scope.UpdateStopNumbering();
 
-                $scope.UpdateStopNumbering();
-
-                $scope.ChosenLocation = undefined;
-            }
+            $scope.ChosenLocation = undefined;
         }
     }
 
@@ -167,26 +176,66 @@
         $scope.UpdateStopNumbering();
     }
 
-    $scope.Save = function (isUserLoggedIn) {
+    function IsAuthenticated() {
 
-        if (isUserLoggedIn != 1) {
+        return $http.get(CONFIG.IS_AUTHENTICATED_URL);
+    }
 
-            $scope.$storage['route'] = angular.toJson($scope.route);
-            $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
+    function InitialiseTrip() {
 
-            var myTrip = {
-                route: angular.toJson($scope.route),
-                polyLines: angular.toJson($scope.PolyLines),
-                startDate: startDate
+        $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$'},{ id: 3, label: 'EURO', symbol: '€'},{ id: 4, label: "YEN", symbol: '¥'}];
+
+        $http.get(CONFIG.GET_TRIP_URL, {
+            params: {
+                tripId: 1
+            }
+        }).then(function (response) {
+
+            // retrieve from database
+            $scope.trip = response.data.Trip;
+
+            var lookup = {};
+            for (var i = 0, len = $scope.CurrencyDropdownValues.length; i < len; i++) {
+                lookup[$scope.CurrencyDropdownValues[i].id] = $scope.CurrencyDropdownValues[i];
             }
 
-            $scope.$storage['myTrip'] = myTrip;
+            $scope.SelectedCurrencyDropdownValue = lookup[$scope.trip.CurrencyId];
 
-            $scope.ShowLoginDialog = true;
-        }
-        else {
-            $scope.$storage['myTrip'] = undefined;
-            // make ajax request
+            $scope.route = response.data.Route;
+            $scope.UpdateStopNumbering();
+
+            if ($scope.route.length > 1) {
+                for (var i = 1; i < $scope.route.length; i++) {
+                    CreatePolyLine($scope.route[i].location);
+                }
+            }
+
+        }, function errorCallback(response) {
+
+            // if not logged into WordPress then use Session Storage
+            if (response.status == '401') {
+
+                var sessionData = $scope.$storage['myTrip'];
+
+                if (sessionData != undefined) {
+                    $scope.route = angular.fromJson(sessionData.route);
+                    $scope.PolyLines = angular.fromJson(sessionData.polyLines);
+                    //$scope.startDate = sessionData.startDate;
+                }
+                else
+                {
+                    // load page for first time use
+                    $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
+                }
+            }
+        });
+    }
+
+    function CreatePolyLine(location) {
+
+        if ($scope.route.length > 1) {
+            var prevRoute = $scope.route[$scope.route.length - 2];
+            PolyPathService.CreateNewPolyLine($scope.PolyLines, location, prevRoute);
         }
     }
 
@@ -209,7 +258,7 @@
     }
 
     $scope.ReturnDate = function () {
-        
+
         if ($scope.startDate != '' && $scope.startDate != undefined)
             return moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
         else
@@ -235,11 +284,7 @@
     }
 
     $scope.getNumberOfStops = function () {
-
-        if ($scope.route.length > 0)
-            return $scope.route.length - 1;
-        else
-            return 0;
+        return $scope.route.length;
     }
 
     /* FUNCTIONS */
@@ -333,19 +378,16 @@
         }
     }
 
-    $scope.Register = function () {
-        $window.location.href = 'index.php?page_id=743';
-    }
+    $scope.Reset = function () {
+        $scope.route = [];
+        $scope.PolyLines = [];
+    };
 
-    $scope.Login = function () {
-        $window.location.href = 'index.php?page_id=741';
-    }
-
-    /* MODALS */
+    /* MODAL */
 
     $scope.Email = function (size) {
 
-        $uibModal.open({
+        var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'sendEmailModal.html',
             controller: 'SendEmailModalCtrl',
@@ -395,12 +437,12 @@
 // to do: change to $http service
 app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
 
-    $scope.ContactDetails = { details: { Email: "" }};
+    $scope.ContactDetails = { details: { Email: "" } };
     $scope.route = route;
     $scope.ok = function () {
 
         jQuery.ajax({
-            url: CONFIG.SEND_EMAIL_URL,
+            url: "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
             type: "POST",
             dataType: "text",
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -421,7 +463,7 @@ app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
             $scope.$apply(function () {
                 $scope.showEmailError = true;
             });
-            
+
         });
     };
 

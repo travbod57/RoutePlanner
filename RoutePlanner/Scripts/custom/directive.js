@@ -40,7 +40,7 @@ app.directive('dndList', function () {
                     // to cater for drag up or down the list
                     // start renumber from lowest positioned item in list, either start position or final position
                     scope.UpdateStopNumbering();
-                    
+
                     // change the Route lines
                     scope.SwitchRoute(startIndex, newIndex);
 
@@ -71,14 +71,14 @@ app.directive('datepicker', function () {
 
     return {
         restrict: 'A',
-        link : linkFn
+        link: linkFn
     }
 });
 
 app.directive('inputGroupBtnClick', function () {
 
     var linkFn = function link(scope, element, attrs) {
-        
+
         element.keypress(function (event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
@@ -120,7 +120,7 @@ app.directive("loginModalShow", function ($window) {
                 scope.showModal(true);
                 scope.modalVisible = true;
             }
-          
+
             //Watch for changes to the modal-visible attribute
             scope.$watch("modalVisible", function (newValue, oldValue) {
                 scope.showModal(newValue);
@@ -136,3 +136,43 @@ app.directive("loginModalShow", function ($window) {
     };
 
 });
+
+//app.directive('int', function () {
+//    return {
+//        restrict: 'A',
+//        require: 'ngModel',
+//        link: function (scope, element, attrs, ngModel) {
+
+//            //format text going to user (model to view)
+//            ngModel.$formatters.push(function (value) {
+//                return parseInt(value, 10);
+//            });
+
+//            //format text from the user (view to model)
+//            ngModel.$parsers.push(function (value) {
+//                return value.toString();
+//            });
+//        }
+//    }
+//});
+
+//app.directive('float', function () {
+//    return {
+//        restrict: 'A',
+//        require: 'ngModel',
+//        link: function (scope, element, attrs, ngModel) {
+
+//            //format text going to user (model to view)
+//            ngModel.$formatters.push(function (value) {
+//                return parseFloat(value).toFixed(2);
+//            });
+
+//            //format text from the user (view to model)
+//            ngModel.$parsers.push(function (value) {
+//                return value.toString();
+//            });
+//        }
+//    }
+//});
+
+

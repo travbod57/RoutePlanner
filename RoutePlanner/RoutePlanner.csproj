@@ -268,6 +268,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\AngularMaps.cshtml" />
+    <Content Include="Slim\index.php" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

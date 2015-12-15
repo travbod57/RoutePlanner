@@ -8,14 +8,14 @@
         var polyLine = {
             id: "polyPath" + polyLineNumber,
             path: [{
-                    latitude: previousRoute.coords.latitude,
-                    longitude: previousRoute.coords.longitude
-                },
+                latitude: previousRoute.coords.latitude,
+                longitude: previousRoute.coords.longitude
+            },
                 {
                     latitude: currentRoute.Latitude,
                     longitude: currentRoute.Longitude
                 }],
-            routeName : {
+            routeName: {
                 prev: previousRoute.location.Name,
                 current: currentRoute.Name
             },
@@ -33,8 +33,7 @@
         return polyLine;
     }
 
-    function UpdateStrokeColour(transport, polyLine)
-    {
+    function UpdateStrokeColour(transport, polyLine) {
         if (transport == "Air")
             polyLine.stroke = { color: '#6060FB', weight: 3 };
         else if (transport == "Land")
@@ -54,8 +53,7 @@
 
         if (loopFrom == -1) loopFrom += 1;
 
-        for (i = loopFrom; i <= loopTo; i++)
-        {
+        for (i = loopFrom; i <= loopTo; i++) {
 
             polyLines[i].path[0].latitude = routes[i].coords.latitude;
             polyLines[i].path[0].longitude = routes[i].coords.longitude;
@@ -63,7 +61,7 @@
 
             polyLines[i].path[1].latitude = routes[i + 1].coords.latitude;
             polyLines[i].path[1].longitude = routes[i + 1].coords.longitude;
-            polyLines[i].routeName.current = routes[i+1].location.Name;
+            polyLines[i].routeName.current = routes[i + 1].location.Name;
 
             UpdateStrokeColour(routes[i].transport, polyLines[i]);
         }

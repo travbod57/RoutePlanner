@@ -1,0 +1,429 @@
+<?php
+/**
+
+ */
+require 'Slim/Slim.php';
+require 'responseDataDtos.php';
+require_once($_SERVER["DOCUMENT_ROOT"] . 'wp_thinkbackpacking/wp-blog-header.php'); /* For wordpress authentication to work */ // if required then stripslashes needed on hte post of json array data
+require_once('../phpMailer/class.phpmailer.php');
+require_once('../phpMailer/class.smtp.php'); // optional, gets called from within class.phpmailer.php if not already loaded
+	
+//$app->log->INFO($_SERVER["DOCUMENT_ROOT"] . 'wp_thinkbackpacking/wp-blog-header.php');
+
+\Slim\Slim::registerAutoloader();
+
+/**
+ * Step 2: Instantiate a Slim application
+ *
+ * This example instantiates a Slim application using
+ * its default settings. However, you will usually configure
+ * your Slim application now by passing an associative array
+ * of setting names and values into the application constructor.
+ */
+ 
+$logWriter = new \Slim\LogWriter(fopen('C:/wamp/www/wp_thinkbackpacking/Slim/errors_log.txt', 'a'));
+$app = new \Slim\Slim(array(
+    'debug' => true,
+    'log.enabled' => true,
+    'log.level' => \Slim\Log::DEBUG,
+    'log.writer' => $logWriter
+));
+
+$env = $app->environment();
+
+/**
+ * Step 3: Define the Slim application routes
+ *
+ * Here we define several Slim application routes that respond
+ * to appropriate HTTP request methods. In this example, the second
+ * argument for `Slim::get`, `Slim::post`, `Slim::put`, `Slim::patch`, and `Slim::delete`
+ * is an anonymous function.
+ */
+
+ $app->error(function (\Exception $e) use ($app) {
+    echo 'An error occurred';
+    $app->log->ERROR($e);
+ });
+ 
+// GET isAuthenticated
+ $app->get('/isAuthenticated', function () use ($app, $env) {
+    
+    try
+    {
+		$response = $app->response();
+		$response->headers->set('Content-Type', 'application/text');
+		$response->headers->set('Access-Control-Allow-Origin', '*');
+		$response->headers->set('Access-Control-Allow-Methods', 'GET, POST');
+
+		//$response->body(is_user_logged_in());
+		$response->body(1);
+     }
+     catch (\Exception $e) {
+		$app->error($e);
+     }
+});
+
+// GET asyncLocations
+ $app->get('/getLocationsByTerm', function () use ($app, $env) {
+    
+    try
+    {
+	
+	$searchTerm = '%' . $_GET['searchTerm'] . '%';
+		
+	$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+
+	$sql = "SELECT * FROM location WHERE Place LIKE :searchTerm LIMIT 0,8";
+	$statement = $pdo->prepare($sql);		
+	$statement->bindValue(':searchTerm', $searchTerm, PDO::PARAM_STR);
+	$statement->execute();
+	$results=$statement->fetchAll(PDO::FETCH_ASSOC);
+
+	$json=json_encode($results);
+	$response = $app->response();
+	$response->headers->set('Content-Type', 'application/json');
+	$response->headers->set('Access-Control-Allow-Origin', '*');
+	$response->body($json);
+     }
+     catch (\Exception $e) {
+	$app->error($e);
+     }
+});
+
+// POST save route
+$app->post(
+    '/saveRoute',
+    function () use ($app, $env) {
+		
+		$routeData = $_POST['routeData'];
+		
+		//$app->log->INFO($_SERVER["DOCUMENT_ROOT"] . 'wp_thinkbackpacking/wp-blog-header.php');
+		
+		$arrRoute = json_decode(stripslashes($routeData));
+		$arrRouteLength = count($arrRoute);
+
+		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$stopNumberInc = 0;
+		$sqlStatementCount = 0;
+		$tripId = 1;
+			
+		$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
+		$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, TotalCost, TransportId) VALUES (:tripId, :locationId, :stopNumber, :nights, :totalCost, :transportId)";
+			
+		$stmt[$sqlStatementCount] = $pdo->prepare($delete_route_sql);
+		$stmt[$sqlStatementCount]->bindValue(':tripId', $tripId, PDO::PARAM_INT);	
+			
+		for ($x = 0; $x < $arrRouteLength; $x++) {
+			
+			$sqlStatementCount++;
+			
+			foreach($arrRoute[$x] as $routeKey => $routeValue) {
+					
+				if ($routeKey == "location")
+				{
+					foreach($routeValue as $locationKey => $locationValue)
+					{
+						if ($locationKey == "Id")
+							$locationId = $locationValue;
+					}
+				}
+				else
+				{
+					if ($routeKey == "stop")
+						$stopNumber = ++$stopNumberInc;
+					else if ($routeKey == "nights")
+						$nights = $routeValue;
+					else if ($routeKey == "totalCost")
+						$totalCost = $routeValue;
+					else if ($routeKey == "transportId")
+						$transportId = $routeValue;
+				}
+			}
+			
+			//$app->log->INFO("tripId: " . $tripId . "locationId: " . $locationId . "stopNumber: " . $stopNumber . "nights: "  . $nights . "totalCost:" . $totalCost . "transportId: " . $transportId);
+			
+			$stmt[$sqlStatementCount] = $pdo->prepare($add_route_sql);
+			
+			$stmt[$sqlStatementCount]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':locationId', $locationId, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':stopNumber', $stopNumber, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':nights', $nights, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':totalCost', $totalCost);
+			$stmt[$sqlStatementCount]->bindValue(':transportId', $transportId, PDO::PARAM_INT);	
+			
+			
+		}
+
+		$pdo->beginTransaction();
+
+		try
+		{
+			$stmtLength = count($stmt);
+			
+			for ($y = 0; $y < $stmtLength; $y++) {
+
+				$stmt[$y]->execute();
+			}
+
+			$pdo->commit();     
+			
+									$response = $app->response();
+				$response->headers->set('Content-Type', 'application/json');
+				$response->headers->set('Access-Control-Allow-Origin', '*');
+				$response->body("Success");
+		}
+		catch(PDOException $e)
+		{
+			$pdo->rollBack();
+			$app->error($e);
+			
+			//echo $pdo->errorInfo();
+			//echo $ex->getMessage();
+		}    
+    }
+); 
+
+// Get Trip
+ $app->get('/getTrip', function () use ($app, $env) {
+		
+		if (is_user_logged_in()) 
+		{
+			$tripId = $_GET['tripId'];
+			
+			$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId";
+			$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			
+			$get_route_sql = "SELECT R.Id as RouteId, R.StopNumber, R.Nights, R.DailyCost, R.TotalCost,
+			L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Name as Transport
+			FROM Route R JOIN Location L ON L.Id = R.LocationId JOIN Transport T ON T.Id = R.TransportId WHERE R.TripId = :tripId"; // SELECT * FROM route WHERE TripId = :tripId
+
+			$stmt[0] = $pdo->prepare($get_trip_sql);
+			$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+			$stmt[0]->execute();
+			$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
+
+			$stmt[1] = $pdo->prepare($get_route_sql);
+			$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+			$stmt[1]->execute();
+			$routeData = $stmt[1]->fetchAll(PDO::FETCH_ASSOC);
+			
+			$routeDataArray = Array();
+			$routeDataCount = $stmt[1]->rowCount();
+			
+			foreach ($routeData as $row)
+			{
+				array_push($routeDataArray, new Route($row, $routeDataCount));
+			}
+			
+			$tripResult = new TripResult();
+			$tripResult->Trip = new Trip($tripData[0]);
+			$tripResult->Route = $routeDataArray;
+			$tripResult->PolyLines = null;
+			
+			$json = json_encode($tripResult);
+		}
+		else
+		{
+			$app->response->setStatus(401);
+			$unauthArray = array("You are not authorised");
+			$json = json_encode($unauthArray);
+		}
+		
+		$response = $app->response();
+		$response->headers->set('Content-Type', 'application/json');
+		$response->headers->set('Access-Control-Allow-Origin', '*');
+		$response->body($json);
+    }
+); 
+
+// POST sendEmail
+$app->post(
+    '/sendEmail',
+    function () use ($app) {
+
+    try
+    {
+
+	
+	// receive data - JSON, email address
+	//$json = '[ { "id": "1", "location": { "Id": "1", "Name": "USA", "DailyCost": "20.00", "Latitude": "1.00000000", "Longitude": "-1.00000000" }, "coords": { //"latitude": "1.00000000", "longitude": "-1.00000000" }, "nights": 0, "transport": "Air", "totalCost": 0, "stop": 1 }, { "id": "533", "location": { "Id": "533", //"Name": "London, United Kingdom", "DailyCost": "0.00", "Latitude": "51.50000000", "Longitude": "-0.08333300" }, "coords": { "latitude": "51.50000000", //"longitude": "-0.08333300" }, "nights": 0, "transport": "Air", "totalCost": 0, "stop": 2 }, { "id": "310", "location": { "Id": "310", "Name": "Canberra, //Australia", "DailyCost": "0.00", "Latitude": "-35.26666641", "Longitude": "100.00000000" }, "coords": { "latitude": "-35.26666641", "longitude": "100.00000000" }, //"nights": 0, "transport": "Air", "totalCost": 0, "stop": 3 }, { "id": "388", "location": { "Id": "388", "Name": "Paris, France", "DailyCost": "0.00", "Latitude": //"48.86666489", "Longitude": "2.33333302" }, "coords": { "latitude": "48.86666489", "longitude": "2.33333302" }, "nights": 0, "transport": "Air", "totalCost": 0, //"stop": 4 } ]';
+	
+	$emailAddress = $_POST['address'];
+	$bccAddress = "alexwilliams57@hotmail.com";
+	$json = $_POST['routeData'];
+	
+    date_default_timezone_set('Europe/London');
+	$app->log->info("INFO - an email was sent to: " . $emailAddress . ", at: " . date("Y-m-d H:m:s"));
+	$app->log->info($json);
+	// decode JSON
+	
+	$arrRoute = json_decode(stripslashes($json));
+	$arrRouteLength = count($arrRoute);
+	
+	//create HTML email
+	
+	$html = "<html><head><style>table, p { font-family: 'Arial', Helvetica, sans-serif; font-size: 0.8em; }
+	th, td { text-align: left; padding: 5px; }
+	th { font-weight: bold; border-bottom: 1px; }
+	tbody tr:nth-child(odd){ background-color:#f9f9f9; }
+	</style></head><body>";
+	
+	$html .= "<p>Dear backpacker,</p><p>Thank you for planning your world travel experience with Thinkbackpacking.com!</p><table><thead><th>Stop</th>		      <th>Location</th><th>Nights</th><th>Daily Cost</th><th>Total Cost</th><th>Leave By</th></thead><tbody>";
+	
+	for ($x = 0; $x < $arrRouteLength; $x++) {
+		
+		$html .= "<tr>";
+		
+		foreach($arrRoute[$x] as $routeKey => $routeValue) {
+			
+			if ($routeKey == "location")
+			{
+				foreach($routeValue as $locationKey => $locationValue)
+				{
+					if ($locationKey == "Id")
+						$locationId = $locationValue;
+					if ($locationKey == "Full_Name")
+						$locationName = $locationValue;
+					if ($locationKey == "DailyCost")
+						$dailyCost = $locationValue;
+				}
+			}
+			else
+			{
+				if ($routeKey == "stop")
+					$stopNumber = $routeValue;
+				else if ($routeKey == "nights")
+					$nights = $routeValue;
+				else if ($routeKey == "totalCost")
+					$totalCost = $routeValue;
+				else if ($routeKey == "transport")
+					$transport = $routeValue;
+			}
+		}
+		
+		$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . $totalCost . "</td> 	<td>" . $transport . "</td>";
+		$html .= "</tr>";
+	}
+	
+	$html .= "</tbody></table><br/><p>Happy trails</p></body></html>";
+	
+	// Send Email
+	
+	$mail = new PHPMailer(); // create a new object
+	$mail->IsSMTP(); // enable SMTP
+	$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+	$mail->SMTPAuth = true; // authentication enabled
+	$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
+	$mail->Port = 465; // or 587
+	$mail->IsHTML(true);
+	//$mail->Host = "smtp.gmail.com";
+	//$mail->Username = "alexjwilliams57@gmail.com";
+	//$mail->Password = "eae.b-hJ";
+	$mail->Host = "thinkbackpacking.com";
+	$mail->Username = "travel@thinkbackpacking.com";
+	$mail->Password = "Dinosaur89";
+	$mail->SetFrom("travel@thinkbackpacking.com", 'thinkbackpacking');
+	$mail->Subject = "Your trip";
+	$mail->Body = "$html";
+	$mail->AddAddress($emailAddress);
+	$mail->AddBCC($bccAddress);
+	
+	if(!$mail->Send())
+	{
+	    echo "Mailer Error: " . $mail->ErrorInfo;
+	}
+	else
+	{
+	    echo "Message has been sent";
+	}
+	
+	$response = $app->response();
+	$response->headers->set('Content-Type', 'application/json');
+	$response->headers->set('Access-Control-Allow-Origin', '*');
+
+     }
+     catch (\Exception $e) {
+	$app->error($e);
+     }
+
+    }
+); 
+
+
+// POST route
+$app->post(
+    '/contactUs',
+    function () use ($app) {
+		
+	try
+	{		
+		require_once('../phpMailer/class.phpmailer.php');
+		require_once('../phpMailer/class.smtp.php'); // optional, gets called from within class.phpmailer.php if not already loaded
+		
+		$name = $_POST['Name'];
+		$message = $_POST['Message'];
+		$email = $_POST['Email'];
+		
+		$to = "contact@thinkbackpacking.com";
+		$bccAddress = "alexwilliams57@hotmail.com";
+
+		//create HTML email
+		
+		$html = "<html><body>";
+		$html .= "<p>Name: <strong>" . $name ."</strong></p><p>Email: <strong>" . $email . "</strong></p><p>" . $message . "</p>";
+		$html .= "</body></html>";
+		
+		echo $html;
+		
+		// Send Email
+		
+		$mail = new PHPMailer(); // create a new object
+		$mail->IsSMTP(); // enable SMTP
+		$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+		$mail->SMTPAuth = true; // authentication enabled
+		$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
+		$mail->Port = 465; // or 587
+		$mail->IsHTML(true);
+		//$mail->Host = "smtp.gmail.com";
+		//$mail->Username = "alexjwilliams57@gmail.com";
+		//$mail->Password = "eae.b-hJ";
+		$mail->Host = "thinkbackpacking.com";
+		$mail->Username = "contact@thinkbackpacking.com";
+		$mail->Password = "Dinosaur89";
+		$mail->SetFrom("contact@thinkbackpacking.com", 'thinkbackpacking');
+		$mail->Subject = "Contact from " . $name;
+		$mail->Body = "$html";
+		$mail->AddAddress($to);
+                $mail->AddBCC($bccAddress);
+		
+		if(!$mail->Send())
+		{
+		echo "Mailer Error: " . $mail->ErrorInfo;
+		}
+		else
+		{
+		echo "Message has been sent";
+		}
+	
+		$response = $app->response();
+		$response->headers->set('Content-Type', 'application/json');
+		$response->headers->set('Access-Control-Allow-Origin', '*');
+
+	     }
+	     catch (\Exception $e) {
+		$app->error($e);
+	     }
+    }
+); 
+
+
+/**
+ * Step 4: Run the Slim application
+ *
+ * This method should be called last. This executes the Slim application
+ * and returns the HTTP response to the HTTP client.
+ */
+$app->run();

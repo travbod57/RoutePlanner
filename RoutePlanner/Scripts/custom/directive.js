@@ -137,24 +137,24 @@ app.directive("loginModalShow", function ($window) {
 
 });
 
-//app.directive('int', function () {
-//    return {
-//        restrict: 'A',
-//        require: 'ngModel',
-//        link: function (scope, element, attrs, ngModel) {
+app.directive('int', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ngModel) {
 
-//            //format text going to user (model to view)
-//            ngModel.$formatters.push(function (value) {
-//                return parseInt(value, 10);
-//            });
+            //format text going to user (model to view)
+            ngModel.$formatters.push(function (value) {
+                return parseInt(value, 10);
+            });
 
-//            //format text from the user (view to model)
-//            ngModel.$parsers.push(function (value) {
-//                return value.toString();
-//            });
-//        }
-//    }
-//});
+            //format text from the user (view to model)
+            ngModel.$parsers.push(function (value) {
+                return value.toString();
+            });
+        }
+    }
+});
 
 //app.directive('float', function () {
 //    return {

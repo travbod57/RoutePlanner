@@ -101,12 +101,12 @@
                             <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
                             <td style="width: 300px;">{{item.location.Full_Name}}</td>
                             <td style="width: 100px;">
-                                <input class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" />
+                                <input int class="form-control inputDays" type="number" placeholder="0" ng-pattern="/^\d+$/" ng-model="item.nights" min="0" max="99" ng-change="CalculateLocationCost(item)" />
                             </td>
                             <td style="width: 150px;">
                                 <div class="input-group">
                                     <span class="input-group-addon">{{ SelectedCurrencyDropdownValue.symbol }}</span>
-                                    <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]+([,.][0-9]{2})?$/" ng-model="item.location.DailyCost" />
+                                    <input type="text" class="form-control inputDailyCost" placeholder="0.00" ng-pattern="/^[0-9]+([,.][0-9]{2})?$/" ng-model="item.location.DailyCost" ng-change="CalculateLocationCost(item)" />
                                 </div>
                             </td>
                             <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>

@@ -4,6 +4,8 @@
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
     });
 
+    var trip = {};
+
     $scope.ChosenLocation;
     $scope.SelectedRouteStop;
     $scope.startDate;
@@ -29,18 +31,20 @@
                 $scope.$storage['route'] = angular.toJson($scope.route);
                 $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
 
-                var myTrip = {
-                    route: angular.toJson($scope.route),
-                    polyLines: angular.toJson($scope.PolyLines),
-                    startDate: startDate
-                }
+                trip.route = angular.toJson($scope.route);
+                trip.polyLines = angular.toJson($scope.PolyLines);
+                trip.startDate = startDate;
 
-                $scope.$storage['myTrip'] = myTrip;
+                $scope.$storage['trip'] = trip;
 
                 $scope.ShowLoginDialog = true;
             }
             else {
-                $scope.$storage['myTrip'] = undefined;
+                $scope.$storage['trip'] = undefined;
+
+                trip.id = 1;
+                trip.startDate = moment($scope.startDate).format("YYYY-MM-DD");
+                trip.currencyId = $scope.SelectedCurrencyDropdownValue.id;
 
                 jQuery.ajax({
                     url: CONFIG.SAVE_ROUTE_URL,
@@ -53,7 +57,7 @@
                             str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                         return str.join("&");
                     },
-                    data: { routeData: angular.toJson($scope.route) }
+                    data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(trip) }
                 }).done(function () {
                     alert("ROUTE SAVED");
                 }).
@@ -106,7 +110,7 @@
                 nights: 0,
                 transport: 'Air',
                 transportId: 1,
-                get totalCost() { return this.location.DailyCost * this.nights; },
+                totalCost: '',
                 stopNumberDivClass: '',
                 stopNumberSpanClass: ''
             });
@@ -185,50 +189,50 @@
 
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$'},{ id: 3, label: 'EURO', symbol: '€'},{ id: 4, label: "YEN", symbol: '¥'}];
 
-        $http.get(CONFIG.GET_TRIP_URL, {
-            params: {
-                tripId: 1
-            }
-        }).then(function (response) {
+        //$http.get(CONFIG.GET_TRIP_URL, {
+        //    params: {
+        //        tripId: 1
+        //    }
+        //}).then(function (response) {
 
-            // retrieve from database
-            $scope.trip = response.data.Trip;
+        //    // retrieve from database
+        //    $scope.trip = response.data.Trip;
 
-            var lookup = {};
-            for (var i = 0, len = $scope.CurrencyDropdownValues.length; i < len; i++) {
-                lookup[$scope.CurrencyDropdownValues[i].id] = $scope.CurrencyDropdownValues[i];
-            }
+        //    var lookup = {};
+        //    for (var i = 0, len = $scope.CurrencyDropdownValues.length; i < len; i++) {
+        //        lookup[$scope.CurrencyDropdownValues[i].id] = $scope.CurrencyDropdownValues[i];
+        //    }
 
-            $scope.SelectedCurrencyDropdownValue = lookup[$scope.trip.CurrencyId];
+        //    $scope.SelectedCurrencyDropdownValue = lookup[$scope.trip.CurrencyId];
 
-            $scope.route = response.data.Route;
-            $scope.UpdateStopNumbering();
+        //    $scope.route = response.data.Route;
+        //    $scope.UpdateStopNumbering();
 
-            if ($scope.route.length > 1) {
-                for (var i = 1; i < $scope.route.length; i++) {
-                    CreatePolyLine($scope.route[i].location);
-                }
-            }
+        //    if ($scope.route.length > 1) {
+        //        for (var i = 1; i < $scope.route.length; i++) {
+        //            CreatePolyLine($scope.route[i].location);
+        //        }
+        //    }
 
-        }, function errorCallback(response) {
+        //}, function errorCallback(response) {
 
-            // if not logged into WordPress then use Session Storage
-            if (response.status == '401') {
+        //    // if not logged into WordPress then use Session Storage
+        //    if (response.status == '401') {
 
-                var sessionData = $scope.$storage['myTrip'];
+        //        var sessionData = $scope.$storage['trip'];
 
-                if (sessionData != undefined) {
-                    $scope.route = angular.fromJson(sessionData.route);
-                    $scope.PolyLines = angular.fromJson(sessionData.polyLines);
-                    //$scope.startDate = sessionData.startDate;
-                }
-                else
-                {
-                    // load page for first time use
-                    $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
-                }
-            }
-        });
+        //        if (sessionData != undefined) {
+        //            $scope.route = angular.fromJson(sessionData.route);
+        //            $scope.PolyLines = angular.fromJson(sessionData.polyLines);
+        //            //$scope.startDate = sessionData.startDate;
+        //        }
+        //        else
+        //        {
+        //            // load page for first time use
+        //            $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
+        //        }
+        //    }
+        //});
     }
 
     function CreatePolyLine(location) {
@@ -260,7 +264,11 @@
     $scope.ReturnDate = function () {
 
         if ($scope.startDate != '' && $scope.startDate != undefined)
-            return moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days').format("DD-MMM-YYYY (ddd)");
+        {
+            var returnDate = moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days');
+            trip.endDate = returnDate.format("YYYY-MM-DD");
+            return returnDate.format("DD-MMM-YYYY (ddd)");
+        }  
         else
             return "Please enter a start date";
     }
@@ -269,29 +277,35 @@
         var total = 0;
 
         for (i = 0; i < $scope.route.length; i++)
-            total += $scope.route[i].totalCost;
+            total += parseFloat($scope.route[i].totalCost);
 
-        return total;
+        trip.totalCost = total.toFixed(2);
+
+        return trip.totalCost;
     }
 
     $scope.getTripLength = function () {
         var total = 0;
 
         for (i = 0; i < $scope.route.length; i++)
-            total += $scope.route[i].nights;
+            total += parseInt($scope.route[i].nights);
 
-        return total;
+        trip.numberOfNights = total;
+
+        return trip.numberOfNights;
     }
 
     $scope.getNumberOfStops = function () {
-        return $scope.route.length;
+
+        trip.numberOfStops = $scope.route.length;
+
+        return trip.numberOfStops;
     }
 
     /* FUNCTIONS */
 
     $scope.AddNights = function (e) {
         $scope.SelectedRouteStop.nights++;
-        $scope.SelectedRouteStop.totalCost = $scope.SelectedRouteStop.nights
     };
 
     $scope.SubtractNights = function (e) {
@@ -347,6 +361,10 @@
     $scope.SwitchRoute = function (fromIndex, toIndex) {
 
         PolyPathService.MendPolyLines($scope.PolyLines, $scope.route, fromIndex, toIndex);
+    }
+
+    $scope.CalculateLocationCost = function (routeItem) {
+        routeItem.totalCost = (routeItem.nights * routeItem.location.DailyCost).toFixed(2);
     }
 
     //$scope.onMarkerClick = function (model) {

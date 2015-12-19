@@ -47,7 +47,7 @@
                                 <span><strong>{{location.Full_Name}}</strong></span>
                                 <span>{{ stop }}</span>
                                 <span>{{nights}} nights</span>
-                                <span>Leave by {{transport}}</span>
+                                <span>Leave by {{ transportName()}}</span>
                             </div>
                         </ui-gmap-windows>
                     </ui-gmap-markers>
@@ -112,9 +112,9 @@
                             <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                             <td style="width: 300px;">
                                 <div class="btn-group">
-                                    <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Air'" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
-                                    <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Land'" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
-                                    <label class="btn btn-primary" ng-model="item.transport" uib-btn-radio="'Sea'" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
+                                    <label class="btn btn-primary" ng-model="item.transportId" uib-btn-radio="1" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
+                                    <label class="btn btn-primary" ng-model="item.transportId" uib-btn-radio="2" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
+                                    <label class="btn btn-primary" ng-model="item.transportId" uib-btn-radio="3" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
                                 </div>
                             </td>
                             <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i>{{ item.departureDate}}</td>

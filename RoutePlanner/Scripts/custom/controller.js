@@ -5,6 +5,7 @@
     });
 
     var trip = {};
+    var _transport;
 
     $scope.ChosenLocation;
     $scope.SelectedRouteStop;
@@ -108,8 +109,13 @@
                     //animation: google.maps.Animation.DROP
                 },
                 nights: 0,
-                transport: 'Air',
                 transportId: 1,
+                transportName: function() {
+
+                    var transportItem = _transport[this.transportId];
+
+                    return transportItem.name;
+                },
                 totalCost: '',
                 stopNumberDivClass: '',
                 stopNumberSpanClass: ''
@@ -158,7 +164,7 @@
 
             var prevLocation = $scope.route[index - 1];
 
-            PolyPathService.UpdateStrokeColour(prevLocation.transport, nextPolyPath);
+            PolyPathService.UpdateStrokeColour(prevLocation.transportId, nextPolyPath);
 
             $scope.PolyLines.splice(0, 1); // remove first
         }
@@ -171,7 +177,7 @@
 
             var prevLocation = $scope.route[index - 1];
 
-            PolyPathService.UpdateStrokeColour(prevLocation.transport, nextPolyPath);
+            PolyPathService.UpdateStrokeColour(prevLocation.transportId, nextPolyPath);
 
             // remove poly line
             $scope.PolyLines.splice(index - 1, 1);
@@ -188,6 +194,8 @@
     function InitialiseTrip() {
 
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$'},{ id: 3, label: 'EURO', symbol: '€'},{ id: 4, label: "YEN", symbol: '¥'}];
+
+        _transport = lookUp([{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea'}]);
 
         //$http.get(CONFIG.GET_TRIP_URL, {
         //    params: {
@@ -392,7 +400,7 @@
         if ($scope.PolyLines.length > index) {
             var polyPath = $scope.PolyLines[index];
 
-            PolyPathService.UpdateStrokeColour(val.item.transport, polyPath);
+            PolyPathService.UpdateStrokeColour(val.item.transportId, polyPath);
         }
     }
 
@@ -400,6 +408,18 @@
         $scope.route = [];
         $scope.PolyLines = [];
     };
+
+    /* HELPERS */
+
+    function lookUp(array) {
+
+        var lookup = {};
+        for (var i = 0, len = array.length; i < len; i++) {
+            lookup[array[i].id] = array[i];
+        }
+
+        return lookup;
+    }
 
     /* MODAL */
 

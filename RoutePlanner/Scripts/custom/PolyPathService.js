@@ -26,19 +26,19 @@
             visible: true
         };
 
-        UpdateStrokeColour(previousRoute.transport, polyLine);
+        UpdateStrokeColour(previousRoute.transportId, polyLine);
 
         polyLines.push(polyLine);
 
         return polyLine;
     }
 
-    function UpdateStrokeColour(transport, polyLine) {
-        if (transport == "Air")
+    function UpdateStrokeColour(transportId, polyLine) {
+        if (transportId == 1) // Air
             polyLine.stroke = { color: '#6060FB', weight: 3 };
-        else if (transport == "Land")
+        else if (transportId == 2) // Land
             polyLine.stroke = { color: '#000000', weight: 3 };
-        else if (transport == "Sea")
+        else if (transportId == 3) // Sea
             polyLine.stroke = { color: '#cb2d22', weight: 3 };
     }
 
@@ -63,7 +63,7 @@
             polyLines[i].path[1].longitude = routes[i + 1].coords.longitude;
             polyLines[i].routeName.current = routes[i + 1].location.Name;
 
-            UpdateStrokeColour(routes[i].transport, polyLines[i]);
+            UpdateStrokeColour(routes[i].transportId, polyLines[i]);
         }
     }
 

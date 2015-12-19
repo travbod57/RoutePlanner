@@ -115,7 +115,7 @@ $app->post(
 		$tripId = 1;
 			
 		$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
-		$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, TotalCost, TransportId) VALUES (:tripId, :locationId, :stopNumber, :nights, :totalCost, :transportId)";
+		$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, DailyCost, TotalCost, TransportId) VALUES (:tripId, :locationId, :stopNumber, :nights, :dailyCost, :totalCost, :transportId)";
 		$update_trip_sql = "UPDATE Trip SET StartDate = :startDate, EndDate = :endDate, NumberOfStops = :numberOfStops, NumberOfNights = :numberOfNights, TotalCost = :totalCost, CurrencyId = :currencyId, ModifiedDate = :modifiedDate WHERE Id = :tripId";
 	
 		$sqlStatementCount = 0;
@@ -153,6 +153,8 @@ $app->post(
 						$stopNumber = ++$stopNumberInc;
 					else if ($routeKey == "nights")
 						$nights = $routeValue;
+					else if ($routeKey == "dailyCost")
+						$dailyCost = $routeValue;
 					else if ($routeKey == "totalCost")
 						$totalCost = $routeValue;
 					else if ($routeKey == "transportId")
@@ -168,6 +170,7 @@ $app->post(
 			$stmt[$sqlStatementCount]->bindValue(':locationId', $locationId, PDO::PARAM_INT);
 			$stmt[$sqlStatementCount]->bindValue(':stopNumber', $stopNumber, PDO::PARAM_INT);
 			$stmt[$sqlStatementCount]->bindValue(':nights', $nights, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':dailyCost', $dailyCost);
 			$stmt[$sqlStatementCount]->bindValue(':totalCost', $totalCost);
 			$stmt[$sqlStatementCount]->bindValue(':transportId', $transportId, PDO::PARAM_INT);	
 		}

@@ -116,6 +116,7 @@
 
                     return transportItem.name;
                 },
+                dailyCost: $scope.ChosenLocation.DailyCost,
                 totalCost: '',
                 stopNumberDivClass: '',
                 stopNumberSpanClass: ''

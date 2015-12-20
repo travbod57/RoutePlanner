@@ -4,7 +4,7 @@
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
     });
 
-    var trip = {};
+    var _trip = {};
     var _transport;
 
     $scope.ChosenLocation;
@@ -21,55 +21,7 @@
 
     /* ACTIONS */
 
-    $scope.Save = function () {
-
-        var isUserLoggedIn = IsAuthenticated();
-
-        isUserLoggedIn.then(function (response) {
-
-            if (response.data != 1) {
-
-                $scope.$storage['route'] = angular.toJson($scope.route);
-                $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
-
-                trip.route = angular.toJson($scope.route);
-                trip.polyLines = angular.toJson($scope.PolyLines);
-                trip.startDate = startDate;
-
-                $scope.$storage['trip'] = trip;
-
-                $scope.ShowLoginDialog = true;
-            }
-            else {
-                $scope.$storage['trip'] = undefined;
-
-                trip.id = 1;
-                trip.startDate = moment($scope.startDate).format("YYYY-MM-DD");
-                trip.currencyId = $scope.SelectedCurrencyDropdownValue.id;
-
-                jQuery.ajax({
-                    url: CONFIG.SAVE_ROUTE_URL,
-                    type: "POST",
-                    dataType: "text",
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    transformRequest: function (obj) {
-                        var str = [];
-                        for (var p in obj)
-                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                        return str.join("&");
-                    },
-                    data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(trip) }
-                }).done(function () {
-                    alert("ROUTE SAVED");
-                }).
-                fail(function (jqXHR, textStatus, error) {
-                    alert("ROUTE SAVED FAILED");
-                });
-            }
-
-        }, function errorCallback(response) {
-            alert("ERROR");
-        });
+    //$scope.Save = function () {
 
         //$http({
         //    method: 'POST',
@@ -91,7 +43,44 @@
         //    // called asynchronously if an error occurs
         //    // or server returns response with an error status.
         //});
-    };
+    //};
+
+    function _saveDataLocally() {
+
+        $scope.$storage['route'] = angular.toJson($scope.route);
+        $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
+
+        _trip.route = angular.toJson($scope.route);
+        _trip.polyLines = angular.toJson($scope.PolyLines);
+        _trip.startDate = startDate;
+
+        $scope.$storage['trip'] = _trip;
+
+        $scope.ShowLoginDialog = true;
+    }
+
+    function _saveDataRemotely() {
+
+        $scope.$storage['trip'] = undefined;
+
+        _trip.id = 1;
+        _trip.startDate = moment($scope.startDate).format("YYYY-MM-DD");
+        _trip.currencyId = $scope.SelectedCurrencyDropdownValue.id;
+
+        return jQuery.ajax({
+            url: CONFIG.SAVE_ROUTE_URL,
+            type: "POST",
+            dataType: "text",
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            transformRequest: function (obj) {
+                var str = [];
+                for (var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                return str.join("&");
+            },
+            data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(_trip) }
+        });
+    }
 
     $scope.Choose = function () {
 
@@ -205,14 +194,14 @@
         //}).then(function (response) {
 
         //    // retrieve from database
-        //    $scope.trip = response.data.Trip;
+        //    $scope._trip = response.data.Trip;
 
         //    var lookup = {};
         //    for (var i = 0, len = $scope.CurrencyDropdownValues.length; i < len; i++) {
         //        lookup[$scope.CurrencyDropdownValues[i].id] = $scope.CurrencyDropdownValues[i];
         //    }
 
-        //    $scope.SelectedCurrencyDropdownValue = lookup[$scope.trip.CurrencyId];
+        //    $scope.SelectedCurrencyDropdownValue = lookup[$scope._trip.CurrencyId];
 
         //    $scope.route = response.data.Route;
         //    $scope.UpdateStopNumbering();
@@ -228,7 +217,7 @@
         //    // if not logged into WordPress then use Session Storage
         //    if (response.status == '401') {
 
-        //        var sessionData = $scope.$storage['trip'];
+        //        var sessionData = $scope.$storage['_trip'];
 
         //        if (sessionData != undefined) {
         //            $scope.route = angular.fromJson(sessionData.route);
@@ -275,7 +264,7 @@
         if ($scope.startDate != '' && $scope.startDate != undefined)
         {
             var returnDate = moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days');
-            trip.endDate = returnDate.format("YYYY-MM-DD");
+            _trip.endDate = returnDate.format("YYYY-MM-DD");
             return returnDate.format("DD-MMM-YYYY (ddd)");
         }  
         else
@@ -288,9 +277,9 @@
         for (i = 0; i < $scope.route.length; i++)
             total += parseFloat($scope.route[i].totalCost);
 
-        trip.totalCost = total.toFixed(2);
+        _trip.totalCost = total.toFixed(2);
 
-        return trip.totalCost;
+        return _trip.totalCost;
     }
 
     $scope.getTripLength = function () {
@@ -299,16 +288,16 @@
         for (i = 0; i < $scope.route.length; i++)
             total += parseInt($scope.route[i].nights);
 
-        trip.numberOfNights = total;
+        _trip.numberOfNights = total;
 
-        return trip.numberOfNights;
+        return _trip.numberOfNights;
     }
 
     $scope.getNumberOfStops = function () {
 
-        trip.numberOfStops = $scope.route.length;
+        _trip.numberOfStops = $scope.route.length;
 
-        return trip.numberOfStops;
+        return _trip.numberOfStops;
     }
 
     /* FUNCTIONS */
@@ -457,6 +446,27 @@
         });
     };
 
+    $scope.SaveTrip = function (size) {
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'saveTripModal.html',
+            controller: 'SaveTripModalCtrl',
+            size: size,
+            resolve: {
+                saveDataLocally: function () {
+                    return _saveDataLocally;
+                },
+                saveDataRemotely: function () {
+                    return _saveDataRemotely;
+                },
+                authenticate: function () {
+                    return IsAuthenticated;
+                }
+            }
+        });
+    };
+
     function OpenRouteLengthExceeded(size) {
 
         $uibModal.open({
@@ -531,4 +541,62 @@ app.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance,
         $modalInstance.dismiss('cancel');
     };
 
+});
+
+app.controller('SaveTripModalCtrl', function ($scope, $modalInstance, saveDataLocally, saveDataRemotely, authenticate) {
+
+    var progressBarTypes = ['danger', 'info', 'warning', 'success'];
+    var isUserLoggedIn = authenticate();
+
+    isUserLoggedIn.then(function (response) {
+
+        if (response.data != 1) {
+            $modalInstance.dismiss('cancel');
+            saveDataLocally();
+        }
+        else {
+
+            $scope.type = progressBarTypes[1];
+            $scope.showProgressBar = true;
+            $scope.title = "Saving trip ...";
+
+            var promise = saveDataRemotely();
+
+            promise.done(function () {
+                $scope.type = progressBarTypes[3];
+                $scope.title = "Trip saved successfully";
+                $scope.information = "You can now continue adding more locations";
+            }).
+            fail(function (jqXHR, textStatus, error) {
+                $scope.title = "Trip failed to save";
+                $scope.information = "Please check your connectivity or try again later.";
+                $scope.type = progressBarTypes[0];
+            })
+            .then(function () {
+
+                $scope.$apply(function () {
+                    $scope.showProgressBar = false;
+                    $scope.showInformation = true;
+                    $scope.showOkBtn = true;
+                });
+
+            });
+        }
+
+    }, function errorCallback(response) {
+        $scope.title = "Trip failed to save";
+        $scope.information = "We were unable to determine whether you are logged. Please check your connectivity or try again later.";
+        $scope.type = progressBarTypes[0];
+    });
+
+    $scope.title;
+    $scope.information;
+    $scope.showProgressBar = false;
+    $scope.showInformation = false;
+    $scope.type = false;
+    $scope.showOkBtn = false;
+
+    $scope.ok = function () {
+        $modalInstance.dismiss('cancel');
+    };
 });

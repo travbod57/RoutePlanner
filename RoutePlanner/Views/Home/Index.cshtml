@@ -11,7 +11,7 @@
     @*<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-animate.js"></script>*@
     <script src="~/Scripts/angular-animate.min.js"></script>
     <script src="~/Scripts/angular-storage.min.js"></script>
-    <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.1.min.js"></script>
+    <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.3.min.js"></script>
     <script src="~/Scripts/custom/app.js"></script>
     <script src="~/Scripts/custom/PolyPathService.js"></script>
     <script src="~/Scripts/custom/controller.js"></script>
@@ -142,8 +142,10 @@
 
     <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="route.length == 0">Email Route</button>
     <button class="btn btn-primary" ng-click="Reset()" ng-disabled="route.length == 0">Reset Route</button>
-    <button class="btn btn-primary" ng-click="Save()" ng-disabled="route.length == 0 || routeForm.$invalid">Save Route</button>
+    <button class="btn btn-primary" ng-click="SaveTrip('lg')" ng-disabled="route.length == 0 || routeForm.$invalid">Save Route</button>
+
     <span>{{ route | json}}</span>
+
     <div login-modal-show modal-visible="ShowLoginDialog" class="modal fade">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -152,7 +154,7 @@
                     <h4 class="modal-title" id="myModalLabel">Please login or register</h4>
                 </div>
                 <div class="modal-body">
-                    In order to be able to save your route you will need to login to your account or register with us. If you would like to view an already saved trip please click here.
+                    In order to be able to save your route you will need to login to your account or register with us.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Continue</button>
@@ -212,6 +214,21 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="saveTripModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{ title }}</h3>
+        </div>
+        <div class="modal-body">
+           
+            <uib-progressbar class="progress-striped active" ng-show="showProgressBar" value="dynamic" type="{{type}}"></uib-progressbar>
+            <span ng-show="showInformation">{{ information }}</span>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-show="showOkBtn" ng-click="ok()">OK</button>
         </div>
     </script>
 

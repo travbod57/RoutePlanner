@@ -68,7 +68,7 @@
         _trip.currencyId = $scope.SelectedCurrencyDropdownValue.id;
 
         return jQuery.ajax({
-            url: CONFIG.SAVE_ROUTE_URL,
+            url: CONFIG.SAVE_TRIP_URL,
             type: "POST",
             dataType: "text",
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -78,7 +78,7 @@
                     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                 return str.join("&");
             },
-            data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(_trip) }
+            data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(_trip), isNewTrip: 0 }
         });
     }
 

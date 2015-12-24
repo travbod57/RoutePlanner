@@ -1,8 +1,3 @@
-﻿//jQuery(document).ready(function () {
-//    jQuery("input#startDate").datepicker({
-//        format: "dd-M-yyyy",
-//        clearBtn: true,
-//        autoclose: true,
-//        todayHighlight: true
-//    });
-//});
+﻿var travelTool = travelTool || {};
+travelTool.shared = travelTool.shared || {};
+travelTool.shared.controllers = travelTool.shared.controllers || {};

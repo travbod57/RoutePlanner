@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "My Trips";
+}
+@section scripts {
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/angular-resource.min.js"></script>
+    <script src="~/Scripts/angular-route.min.js"></script>
+    <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.3.min.js"></script>
+    <script src="~/Scripts/custom/travel-tool.js"></script>
+    <script src="~/Scripts/custom/shared/controllerFactory.js"></script>
+    <script src="~/Scripts/custom/my-trips/myTripsApp.js"></script>
+    <script src="~/Scripts/custom/my-trips/myTripsControllers.js"></script>
+}
+<div id="application" ng-app="MyTrips" ng-controller="myTripsCtrl" class="container ng-cloak">
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul>
+                <li ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/Scripts/custom/my-trips/templates/trip.html")'"></li>
+            </ul>
+       
+            <button ng-controller="NewTripCtrl" class="btn btn-primary" ng-click="NewTrip()">New Trip</button>
+        </div>
+    </div>
+</div>

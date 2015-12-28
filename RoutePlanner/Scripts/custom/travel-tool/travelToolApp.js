@@ -1,4 +1,27 @@
-﻿app.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $localStorage, $sessionStorage, CONFIG) {
+﻿
+var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogle-maps', 'ngAnimate', 'ngStorage'])
+.constant('CONFIG', {
+    "START_MARKER_ICON": "http://localhost:81/wp_thinkbackpacking/wp-content/themes/devdmbootstrap3-child/images/travel-tool/map-marker-icon-green-darker.png",
+    "NUMBER_MARKER_ICON": "http://localhost:81/wp_thinkbackpacking/wp-content/themes/devdmbootstrap3-child/images/travel-tool/map-marker-icon-blue-darker.png",
+    "END_MARKER_ICON": "http://localhost:81/wp_thinkbackpacking/wp-content/themes/devdmbootstrap3-child/images/travel-tool/map-marker-icon-red.png",
+    "GET_LOCATIONS_BY_TERM_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getLocationsByTerm",
+    "SEND_EMAIL_URL": "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
+    "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
+    "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
+    "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated"
+})
+.config(function (uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.20', //defaults to latest 3.X anyhow
+        libraries: 'weather,geometry,visualization'
+    });
+});
+
+
+travelToolApp.service('utilService', travelTool.shared.services.utils);
+
+travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $sessionStorage, CONFIG, utilService) {
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -23,27 +46,31 @@
 
     //$scope.Save = function () {
 
-        //$http({
-        //    method: 'POST',
-        //    url: "http://localhost:81/Slim/saveRoute",
-        //    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        //    transformRequest: function (obj) {
-        //        var str = [];
-        //        for (var p in obj)
-        //            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-        //        return str.join("&");
-        //    },
-        //    data: { routeData: angular.toJson($scope.route) }
-        //}).then(function (response) {
-        //    alert("this callback will be called asynchronously");
-        //    // this callback will be called asynchronously
-        //    // when the response is available
-        //}, function (response) {
-        //    alert(response + "called asynchronously if an error occurs");
-        //    // called asynchronously if an error occurs
-        //    // or server returns response with an error status.
-        //});
+    //$http({
+    //    method: 'POST',
+    //    url: "http://localhost:81/Slim/saveRoute",
+    //    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    //    transformRequest: function (obj) {
+    //        var str = [];
+    //        for (var p in obj)
+    //            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    //        return str.join("&");
+    //    },
+    //    data: { routeData: angular.toJson($scope.route) }
+    //}).then(function (response) {
+    //    alert("this callback will be called asynchronously");
+    //    // this callback will be called asynchronously
+    //    // when the response is available
+    //}, function (response) {
+    //    alert(response + "called asynchronously if an error occurs");
+    //    // called asynchronously if an error occurs
+    //    // or server returns response with an error status.
+    //});
     //};
+
+    $scope.GetTripId = function () {
+        alert(utilService.getQueryStringParameterByName('tripId'));
+    }
 
     function _saveDataLocally() {
 
@@ -99,7 +126,7 @@
                 },
                 nights: 0,
                 transportId: 1,
-                transportName: function() {
+                transportName: function () {
 
                     var transportItem = _transport[this.transportId];
 
@@ -183,9 +210,9 @@
 
     function InitialiseTrip() {
 
-        $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$'},{ id: 3, label: 'EURO', symbol: '€'},{ id: 4, label: "YEN", symbol: '¥'}];
+        $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
 
-        _transport = lookUp([{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea'}]);
+        _transport = lookUp([{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }]);
 
         //$http.get(CONFIG.GET_TRIP_URL, {
         //    params: {
@@ -261,12 +288,11 @@
 
     $scope.ReturnDate = function () {
 
-        if ($scope.startDate != '' && $scope.startDate != undefined)
-        {
+        if ($scope.startDate != '' && $scope.startDate != undefined) {
             var returnDate = moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days');
             _trip.endDate = returnDate.format("YYYY-MM-DD");
             return returnDate.format("DD-MMM-YYYY (ddd)");
-        }  
+        }
         else
             return "Please enter a start date";
     }
@@ -484,7 +510,7 @@
 });
 
 // to do: change to $http service
-app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
+travelToolApp.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
 
     $scope.ContactDetails = { details: { Email: "" } };
     $scope.route = route;
@@ -521,7 +547,7 @@ app.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
     };
 });
 
-app.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
+travelToolApp.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
 
     $scope.yes = function () {
         yes();
@@ -533,7 +559,7 @@ app.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
     };
 });
 
-app.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance, maxLocations) {
+travelToolApp.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance, maxLocations) {
 
     $scope.MaxLocations = maxLocations;
 
@@ -543,7 +569,7 @@ app.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance,
 
 });
 
-app.controller('SaveTripModalCtrl', function ($scope, $modalInstance, saveDataLocally, saveDataRemotely, authenticate) {
+travelToolApp.controller('SaveTripModalCtrl', function ($scope, $modalInstance, saveDataLocally, saveDataRemotely, authenticate) {
 
     var progressBarTypes = ['danger', 'info', 'warning', 'success'];
     var isUserLoggedIn = authenticate();
@@ -600,3 +626,10 @@ app.controller('SaveTripModalCtrl', function ($scope, $modalInstance, saveDataLo
         $modalInstance.dismiss('cancel');
     };
 });
+
+
+travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal'];
+travelToolApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
+
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http'];
+travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);

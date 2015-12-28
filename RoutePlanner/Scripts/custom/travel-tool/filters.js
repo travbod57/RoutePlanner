@@ -1,4 +1,4 @@
-﻿app.filter('displayReturnDateFilter', function ($filter) {
+﻿travelToolApp.filter('displayReturnDateFilter', function ($filter) {
     return function (tripLength, scope) {
 
         if (scope.startDate != "" && scope.startDate != undefined)
@@ -9,13 +9,13 @@
 })
 
 
-app.filter('float', function () {
+travelToolApp.filter('float', function () {
     return function (input) {
         return parseFloat(input).toFixed(2);
     };
 });
 
-app.filter('int', function () {
+travelToolApp.filter('int', function () {
     return function (input) {
         return parseInt(input, 10);
     };

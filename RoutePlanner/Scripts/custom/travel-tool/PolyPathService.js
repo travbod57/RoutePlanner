@@ -1,4 +1,4 @@
-﻿app.service('PolyPathService', ['$log', function ($log) {
+﻿travelToolApp.service('PolyPathService', ['$log', function ($log) {
 
     var polyLineCount = 0;
 

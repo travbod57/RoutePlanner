@@ -1,7 +1,10 @@
 ﻿
 <li class="my-trip-listed-item">
 
-    <h4 class="listed-item-header"><a href='planning/round-the-world-trip-planning-map?trip={{ trip.Id }}'>{{ trip.Name }}</a></h4>
+    <h4 class="listed-item-header">
+        <a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a>
+        <!--<a href='planning/round-the-world-trip-planning-map?trip={{ trip.Id }}'>{{ trip.Name }}</a>-->
+    </h4>
 
     <div class="body">
         {{ trip.NumberOfStops }}

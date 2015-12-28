@@ -1,5 +1,5 @@
 ﻿// directive for a single list
-app.directive('dndList', function () {
+travelToolApp.directive('dndList', function () {
 
     return function (scope, element, attrs) {
 
@@ -55,7 +55,7 @@ app.directive('dndList', function () {
     }
 });
 
-app.directive('datepicker', function () {
+travelToolApp.directive('datepicker', function () {
 
     var linkFn = function link(scope, element, attrs) {
         element.datepicker({
@@ -75,7 +75,7 @@ app.directive('datepicker', function () {
     }
 });
 
-app.directive('inputGroupBtnClick', function () {
+travelToolApp.directive('inputGroupBtnClick', function () {
 
     var linkFn = function link(scope, element, attrs) {
 
@@ -95,7 +95,7 @@ app.directive('inputGroupBtnClick', function () {
     }
 });
 
-app.directive("loginModalShow", function ($window) {
+travelToolApp.directive("loginModalShow", function ($window) {
     return {
         restrict: "A",
         scope: {
@@ -137,7 +137,7 @@ app.directive("loginModalShow", function ($window) {
 
 });
 
-app.directive('int', function () {
+travelToolApp.directive('int', function () {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -156,7 +156,7 @@ app.directive('int', function () {
     }
 });
 
-//app.directive('float', function () {
+//travelToolApp.directive('float', function () {
 //    return {
 //        restrict: 'A',
 //        require: 'ngModel',

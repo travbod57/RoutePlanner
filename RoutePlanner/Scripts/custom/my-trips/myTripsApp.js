@@ -12,7 +12,7 @@ myTripsApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-myTripsApp.controller("myTripsCtrl", function ($scope, $http, CONFIG, _) {
+myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, CONFIG, _) {
 
     $http.get(CONFIG.GET_MY_TRIPS_URL)
     .then(function successCallback(response) {
@@ -24,7 +24,24 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, CONFIG, _) {
         // or server returns response with an error status.
     });
 
-    $scope.deleteTrip = function(tripId) {
+    $scope.DeleteTrip = function (size, tripId) {
+
+        $uibModal.open({
+            animation: true,
+            templateUrl: 'deleteTripModalTemplate.html',
+            controller: 'deleteTripModalCtrl',
+            size: size,
+            resolve: {
+                yes: function () {
+                    return function () {
+                        deleteTrip(tripId);
+                    }
+                }
+            }
+        });
+    };
+
+    function deleteTrip(tripId) {
 
         jQuery.ajax({
             url: CONFIG.DELETE_TRIP,
@@ -44,7 +61,6 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, CONFIG, _) {
             alert('failed');
 
         });
-
     };
 });
 
@@ -53,6 +69,18 @@ myTripsApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
 
 travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
+
+myTripsApp.controller('deleteTripModalCtrl', function ($scope, $modalInstance, yes) {
+
+    $scope.yes = function () {
+        yes();
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.no = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
 
 // Register Directives
 

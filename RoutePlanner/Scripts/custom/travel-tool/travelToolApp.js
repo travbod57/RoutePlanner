@@ -24,6 +24,9 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
 
 travelToolApp.service('utilService', travelTool.shared.services.utils);
 
+travelTool.shared.services.underscore.$inject = ['$window'];
+travelToolApp.service('_', travelTool.shared.services.underscore);
+
 // Register Controllers
 
 travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $sessionStorage, CONFIG, utilService) {
@@ -129,7 +132,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 transportId: 1,
                 transportName: function () {
 
-                    var transportItem = _transport[this.transportId];
+                    var transportItem = _.findWhere(_transport, { id: this.transportId });
 
                     return transportItem.name;
                 },
@@ -225,7 +228,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
 
         // TDO: Use underscore here??
-        _transport = lookUp([{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }]);
+        _transport = [{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }];
 
         
 
@@ -439,18 +442,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         $scope.route = [];
         $scope.PolyLines = [];
     };
-
-    /* HELPERS */
-
-    function lookUp(array) {
-
-        var lookup = {};
-        for (var i = 0, len = array.length; i < len; i++) {
-            lookup[array[i].id] = array[i];
-        }
-
-        return lookup;
-    }
 
     /* MODAL */
 

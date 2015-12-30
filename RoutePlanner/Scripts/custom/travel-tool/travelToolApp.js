@@ -9,7 +9,8 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
     "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
     "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
-    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName="
+    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
+    "GET_TRIP_NAME": "http://localhost:81/wp_thinkbackpacking/Slim/getTripName?tripId="
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -31,6 +32,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     var _trip = {};
     var _transport;
 
+    $scope.TripName;
     $scope.ChosenLocation;
     $scope.SelectedRouteStop;
     $scope.startDate;
@@ -206,12 +208,23 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function InitialiseTrip() {
 
+        _trip.id = utilService.getQueryStringParameterByName('tripId');
+
+        $http.get(CONFIG.GET_TRIP_NAME + _trip.id)
+        .then(function successCallback(response) {
+
+            $scope.TripName = response.data;
+
+        }, function errorCallback(response) {
+
+        });
+
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
 
         // TDO: Use underscore here??
         _transport = lookUp([{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }]);
 
-        _trip.id = utilService.getQueryStringParameterByName('tripId');
+        
 
         //$http.get(CONFIG.GET_TRIP_URL, {
         //    params: {

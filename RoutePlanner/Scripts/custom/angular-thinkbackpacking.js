@@ -2,3 +2,4 @@
 travelTool.shared = travelTool.shared || {};
 travelTool.shared.controllers = travelTool.shared.controllers || {};
 travelTool.shared.services = travelTool.shared.services || {};
+travelTool.shared.directives = travelTool.shared.directives || {};

@@ -71,9 +71,6 @@
         CreateNewPolyLine: CreateNewPolyLine,
         UpdateStrokeColour: UpdateStrokeColour,
         MendPolyLines: MendPolyLines
-        // changeTransportType
-        // changeOrder
-        // remove
     };
 
 }])

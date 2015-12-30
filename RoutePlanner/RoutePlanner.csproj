@@ -202,6 +202,7 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\custom\angular-google-maps.min.js" />
     <Content Include="Scripts\custom\angular-simple-logger\index.js" />
+    <Content Include="Scripts\custom\shared\directives.js" />
     <Content Include="Scripts\custom\travel-tool\travelToolApp.js" />
     <Content Include="Scripts\custom\bootstrap.datepicker.min.js" />
     <Content Include="Scripts\custom\travel-tool\directives.js" />
@@ -210,7 +211,6 @@
     <Content Include="Scripts\custom\lodash.js" />
     <Content Include="Scripts\custom\my-trips\templates\trip.html" />
     <Content Include="Scripts\custom\shared\controllerFactory.js" />
-    <Content Include="Scripts\custom\my-trips\myTripsControllers.js" />
     <Content Include="Scripts\custom\my-trips\myTripsApp.js" />
     <Content Include="Scripts\custom\travel-tool\polyPathService.js" />
     <Content Include="Scripts\custom\shared\templates\newTripModal.html" />

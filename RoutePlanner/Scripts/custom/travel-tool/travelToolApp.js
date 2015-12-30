@@ -8,7 +8,8 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "SEND_EMAIL_URL": "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
     "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
-    "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated"
+    "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
+    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName="
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -68,10 +69,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     //});
     //};
 
-    $scope.GetTripId = function () {
-        alert(utilService.getQueryStringParameterByName('tripId'));
-    }
-
     function _saveDataLocally() {
 
         $scope.$storage['route'] = angular.toJson($scope.route);
@@ -90,7 +87,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         $scope.$storage['trip'] = undefined;
 
-        _trip.id = 1;
         _trip.startDate = moment($scope.startDate).format("YYYY-MM-DD");
         _trip.currencyId = $scope.SelectedCurrencyDropdownValue.id;
 
@@ -212,7 +208,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
 
+        // TDO: Use underscore here??
         _transport = lookUp([{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }]);
+
+        _trip.id = utilService.getQueryStringParameterByName('tripId');
 
         //$http.get(CONFIG.GET_TRIP_URL, {
         //    params: {
@@ -633,3 +632,6 @@ travelToolApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtr
 
 travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
+
+travelTool.shared.directives.UniqueTripName.$inject = ['$http', '$q', 'CONFIG'];
+travelToolApp.directive('uniqueTripName', travelTool.shared.directives.UniqueTripName);

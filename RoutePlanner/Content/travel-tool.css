@@ -46,7 +46,7 @@
 
     /* Email Modal Form */
 
-    form#emailRouteForm span.form-control-feedback {
+    form span.form-control-feedback {
 		position: absolute;
 		top: 0px;
 		right: 0px;

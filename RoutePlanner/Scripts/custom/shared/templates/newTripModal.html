@@ -1,10 +1,24 @@
 ﻿<div class="modal-header">
-    <h3 class="modal-title">Create Trip</h3>
+    <h3 class="modal-title">New Trip</h3>
 </div>
 <div class="modal-body">
-    <label>Trip Name</label>
-    <input class="form-control" ng-model="TripName" />
+    <form novalidate name="newTripFrm">
+        <div ng-class="{'has-error': !newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty && !newTripFrm.tripName.$pending, 'has-success': newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty && !newTripFrm.tripName.$pending, 'has-feedback': (!newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty || newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty || !newTripFrm.tripName.$pending)}">
+            
+            <input unique-trip-name required name="tripName" class="form-control" ng-model="TripName" ng-model-options="{ debounce: 250 }" minlength="5" placeholder="Type a trip name ..." />
+            <span ng-show="newTripFrm.tripName.$pending">Checking if this trip name is available...</span>
+
+            <div class="text-danger" ng-show="newTripFrm.tripName.$error.required && newTripFrm.tripName.$dirty">Please enter a Trip Name</div>
+            <div class="text-danger" ng-show="newTripFrm.tripName.$error.minlength && newTripFrm.tripName.$dirty">Your Trip Name must exceed 5 characters</div>
+            <div class="text-danger" ng-show="newTripFrm.tripName.$error.unique && newTripFrm.tripName.$dirty">This trip name has already been used!</div>
+
+            <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty && !newTripFrm.tripName.$pending"></span>
+            <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty && !newTripFrm.tripName.$pending"></span>
+
+        </div>
+    </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="newTripFrm.$invalid || newTripFrm.tripName.$pending">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>

@@ -1,5 +1,5 @@
 ﻿
-<li class="my-trip-listed-item">
+<div id="{{ trip.Id }}">
 
     <h4 class="listed-item-header">
         <a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a>
@@ -8,8 +8,10 @@
 
     <div class="body">
         {{ trip.NumberOfStops }}
+        <button class="btn btn-primary" ng-click="deleteTrip(trip.Id)">Delete</button>
     </div>
     <div class="footer">
         Created: {{ trip.CreatedDate }} | Last Modified: {{ trip.ModifiedDate }}
     </div>
-</li>
+
+</div>

@@ -184,3 +184,39 @@
     }
 
     /* End Marker Info Window */
+
+    /* My Trips */
+
+    .my-trip-listed-item:first-child
+    {
+	    margin-top: 20px;
+    }
+
+    .listed-item-header
+    {
+        margin-top:0;
+    }
+
+    div.trip-list ul li
+    {
+        list-style: none;
+    }
+
+    div.trip-list ul li
+    {
+        margin-bottom: 10px;
+    }
+
+    div.trip-list ul li
+    {
+        padding: 10px; 
+        border-bottom: 1px solid #e2e2e2;
+        border-top: 1px solid #e2e2e2;
+    }
+
+    .my-trip-listed-item
+    {
+        background: #f5f5f5;
+    }
+
+    /* End My Trips */

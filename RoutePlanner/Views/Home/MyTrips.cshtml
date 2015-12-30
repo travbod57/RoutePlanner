@@ -5,21 +5,23 @@
     <script src="~/Scripts/angular.min.js"></script>
     <script src="~/Scripts/angular-resource.min.js"></script>
     <script src="~/Scripts/angular-route.min.js"></script>
+    <script src="~/Scripts/underscore.min.js"></script>
     <script src="~/Scripts/custom/ui-bootstrap-custom-tpls-0.14.3.min.js"></script>
     <script src="~/Scripts/custom/angular-thinkbackpacking.js"></script>
     <script src="~/Scripts/custom/shared/controllerFactory.js"></script>
+    <script src="~/Scripts/custom/shared/serviceFactory.js"></script>
     <script src="~/Scripts/custom/shared/directives.js"></script>
     <script src="~/Scripts/custom/my-trips/myTripsApp.js"></script>
     <link href="~/Content/travel-tool.css" rel="stylesheet" />
 }
 <div id="application" ng-app="MyTrips" ng-controller="myTripsCtrl" class="container ng-cloak">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 trip-list">
 
             <ul>
-                <li ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/Scripts/custom/my-trips/templates/trip.html")'"></li>
+                <li class="my-trip-listed-item" ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/Scripts/custom/my-trips/templates/trip.html")'"></li>
             </ul>
-       
+
             <button ng-controller="NewTripCtrl" class="btn btn-primary" ng-click="NewTrip()">New Trip</button>
         </div>
     </div>

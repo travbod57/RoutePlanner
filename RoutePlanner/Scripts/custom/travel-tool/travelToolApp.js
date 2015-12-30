@@ -20,8 +20,11 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     });
 });
 
+// Register Services
 
 travelToolApp.service('utilService', travelTool.shared.services.utils);
+
+// Register Controllers
 
 travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $sessionStorage, CONFIG, utilService) {
 
@@ -639,12 +642,13 @@ travelToolApp.controller('SaveTripModalCtrl', function ($scope, $modalInstance, 
     };
 });
 
-
 travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal'];
 travelToolApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
 
 travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
+
+// Register Directives
 
 travelTool.shared.directives.UniqueTripName.$inject = ['$http', '$q', 'CONFIG'];
 travelToolApp.directive('uniqueTripName', travelTool.shared.directives.UniqueTripName);

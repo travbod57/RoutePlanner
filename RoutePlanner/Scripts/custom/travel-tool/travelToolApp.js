@@ -221,6 +221,14 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         // TODO: use AJAX call here
         _transport = [{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }];
 
+        var nowTemp = new Date();
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate() + 1, 0, 0, 0, 0);
+
+        
+
+        //var mtStartDate = moment(now);
+       // jQuery("#startDate").datepicker('setDate', '01-Jan-2016');
+        //$scope.StartDate = mtStartDate.format("DD-MMM-YYYY");
         
         $http.get(CONFIG.GET_TRIP_URL, {
             params: {
@@ -231,7 +239,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             // IF AUTHENTICATED retrieve from database
             _trip = response.data.Trip;
             $scope.TripName = _trip.Name;
-
+            
             $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: _trip.CurrencyId || 1 });
 
             $scope.route = response.data.Route;

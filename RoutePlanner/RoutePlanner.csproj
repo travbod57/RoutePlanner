@@ -279,6 +279,7 @@
     <Content Include="Slim\index.php" />
     <Content Include="Views\Home\MyTrips.cshtml" />
     <Content Include="Views\Home\AngularDatepicker.cshtml" />
+    <Content Include="Views\Home\BootstrapAngularDatepicker.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

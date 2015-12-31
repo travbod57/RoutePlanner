@@ -32,6 +32,12 @@ namespace RoutePlanner.Controllers
             return View();
         }
 
+        public ActionResult BootstrapAngularDatepicker()
+        {
+
+            return View();
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

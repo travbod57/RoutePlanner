@@ -9,8 +9,7 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
     "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
     "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
-    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
-    "GET_TRIP_NAME": "http://localhost:81/wp_thinkbackpacking/Slim/getTripName?tripId="
+    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName="
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -216,66 +215,54 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         _trip.id = utilService.getQueryStringParameterByName('tripId');
 
-        $http.get(CONFIG.GET_TRIP_NAME + _trip.id)
-        .then(function successCallback(response) {
-
-            $scope.TripName = response.data;
-
-        }, function errorCallback(response) {
-
-        });
-
+        // TODO: use AJAX call here
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
 
-        // TDO: Use underscore here??
+        // TODO: use AJAX call here
         _transport = [{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }];
 
         
+        $http.get(CONFIG.GET_TRIP_URL, {
+            params: {
+                tripId: _trip.id
+            }
+        }).then(function (response) {
 
-        //$http.get(CONFIG.GET_TRIP_URL, {
-        //    params: {
-        //        tripId: 1
-        //    }
-        //}).then(function (response) {
+            // IF AUTHENTICATED retrieve from database
+            _trip = response.data.Trip;
+            $scope.TripName = _trip.Name;
 
-        //    // retrieve from database
-        //    $scope._trip = response.data.Trip;
+            $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: _trip.CurrencyId || 1 });
 
-        //    var lookup = {};
-        //    for (var i = 0, len = $scope.CurrencyDropdownValues.length; i < len; i++) {
-        //        lookup[$scope.CurrencyDropdownValues[i].id] = $scope.CurrencyDropdownValues[i];
-        //    }
+            $scope.route = response.data.Route;
+            $scope.UpdateStopNumbering();
 
-        //    $scope.SelectedCurrencyDropdownValue = lookup[$scope._trip.CurrencyId];
+            if ($scope.route.length > 1) {
+                for (var i = 1; i < $scope.route.length; i++) {
+                    CreatePolyLine($scope.route[i].location);
+                }
+            }
 
-        //    $scope.route = response.data.Route;
-        //    $scope.UpdateStopNumbering();
+        }, function errorCallback(response) {
 
-        //    if ($scope.route.length > 1) {
-        //        for (var i = 1; i < $scope.route.length; i++) {
-        //            CreatePolyLine($scope.route[i].location);
-        //        }
-        //    }
+            // IF NOT AUTHENTICATED by WordPress then use Session Storage
+            if (response.status == '401') {
 
-        //}, function errorCallback(response) {
+                var sessionData = $scope.$storage['_trip'];
 
-        //    // if not logged into WordPress then use Session Storage
-        //    if (response.status == '401') {
-
-        //        var sessionData = $scope.$storage['_trip'];
-
-        //        if (sessionData != undefined) {
-        //            $scope.route = angular.fromJson(sessionData.route);
-        //            $scope.PolyLines = angular.fromJson(sessionData.polyLines);
-        //            //$scope.startDate = sessionData.startDate;
-        //        }
-        //        else
-        //        {
-        //            // load page for first time use
-        //            $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
-        //        }
-        //    }
-        //});
+                // If there is data in session storage then fetch it
+                if (sessionData != undefined) {
+                    $scope.route = angular.fromJson(sessionData.route);
+                    $scope.PolyLines = angular.fromJson(sessionData.polyLines);
+                    //$scope.startDate = sessionData.startDate;
+                }
+                else
+                {
+                    // load page for first time use
+                    $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
+                }
+            }
+        });
     }
 
     function CreatePolyLine(location) {

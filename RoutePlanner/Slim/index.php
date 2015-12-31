@@ -45,6 +45,38 @@ $env = $app->environment();
     $app->log->ERROR($e);
  });
  
+ // GET tripNameAlreadyExists
+ $app->get('/tripNameAlreadyExists', function () use ($app, $env) {
+    
+    try
+    {
+		$tripName = $_GET['tripName'];
+		
+		$userId = 1; //get_current_user_id();
+		
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+
+		$sql = "SELECT * FROM trip WHERE UserId = :userId AND Name = :tripName";
+		$statement = $pdo->prepare($sql);		
+		$statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+		$statement->bindValue(':tripName', $tripName, PDO::PARAM_STR);
+		$statement->execute();
+		
+		$result = $statement->rowCount();
+		
+		$response = $app->response();
+		$response->headers->set('Content-Type', 'application/text');
+		$response->headers->set('Access-Control-Allow-Origin', '*');
+		$response->headers->set('Access-Control-Allow-Methods', 'GET');
+
+		$response->body($result);
+     }
+     catch (\Exception $e) {
+		$app->error($e);
+     }
+});
+
+
 // GET isAuthenticated
  $app->get('/isAuthenticated', function () use ($app, $env) {
     
@@ -116,6 +148,53 @@ $env = $app->environment();
      }
 });
 
+// POST delete trip
+$app->post(
+    '/deleteTrip',
+    function () use ($app, $env) {
+	
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		
+		$tripId = $_POST['tripId'];
+		$userId = 1; //get_current_user_id();
+	
+		$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
+		$delete_trip_sql = "DELETE FROM trip WHERE Id = :tripId AND UserId = :userId";
+		
+		$stmt[0] = $pdo->prepare($delete_route_sql);
+		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		
+		$stmt[1] = $pdo->prepare($delete_trip_sql);
+		$stmt[1]->bindValue(':userId', $userId, PDO::PARAM_INT);
+		$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		
+		$app->log->INFO("UserId: " . $userId . ", tripId: " . $tripId);
+	
+		$pdo->beginTransaction();
+
+		try
+		{
+			$stmt[0]->execute();    
+			$stmt[1]->execute();  
+
+			$pdo->commit();     
+
+			$response = $app->response();
+			$response->headers->set('Content-Type', 'application/json');
+			$response->headers->set('Access-Control-Allow-Origin', '*');
+			$response->body(null);
+			
+			$app->log->INFO("success");
+		}
+		catch(PDOException $e)
+		{
+			$pdo->rollBack();
+			$app->error($e);
+		}    
+	}
+); 
+
+
 // POST save trip
 $app->post(
     '/saveTrip',
@@ -132,16 +211,19 @@ $app->post(
 		{
 			$app->log->INFO("new trip");
 		
-			$tripName = $_POST['tripName'];
+			$tripName = stripslashes($_POST['tripName']);
 			$userId = 1; //get_current_user_id();
 		
-			$insert_trip_sql = "INSERT INTO Trip (UserId, Name, CreatedDate) VALUES (:userId, :tripName, :createdDate)";
+			$insert_trip_sql = "INSERT INTO Trip (UserId, Name, CreatedDate, ModifiedDate) VALUES (:userId, :tripName, :createdDate, :modifiedDate)";
+			
+			$dateTimeNow = date("Y-m-d H:m:s");
 			
 			$stmt = $pdo->prepare($insert_trip_sql);
 			$stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
 			$stmt->bindValue(':tripName', $tripName, PDO::PARAM_STR);
-			$stmt->bindValue(':createdDate', date("Y-m-d H:m:s"), PDO::PARAM_STR);
-		
+			$stmt->bindValue(':createdDate', $dateTimeNow, PDO::PARAM_STR);
+			$stmt->bindValue(':modifiedDate', $dateTimeNow, PDO::PARAM_STR);
+			
 			//$app->log->INFO("UserId: " . $userId . ", Name: " . $tripName . "CreatedDate: " . date("Y-m-d H:m:s"));
 		
 			$pdo->beginTransaction();
@@ -183,7 +265,7 @@ $app->post(
 			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$stopNumberInc = 0;
-			$tripId = 1;
+			$tripId = $trip->id;
 				
 			$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
 			$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, DailyCost, TotalCost, TransportId) VALUES (:tripId, :locationId, :stopNumber, :nights, :dailyCost, :totalCost, :transportId)";
@@ -276,11 +358,15 @@ $app->post(
 // Get Trip
  $app->get('/getTrip', function () use ($app, $env) {
 		
-		//if (is_user_logged_in()) 
-		//{
+		$authenticated = false; //is_user_logged_in();
+		
+		if ($authenticated) 
+		{
+			$userId = 1; //get_current_user_id();
 			$tripId = $_GET['tripId'];
 			
-			$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId";
+			$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
+			
 			$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
 			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
@@ -290,6 +376,7 @@ $app->post(
 
 			$stmt[0] = $pdo->prepare($get_trip_sql);
 			$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+			$stmt[0]->bindValue(':userId', $userId, PDO::PARAM_INT);
 			$stmt[0]->execute();
 			$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
 
@@ -312,13 +399,13 @@ $app->post(
 			$tripResult->PolyLines = null;
 			
 			$json = json_encode($tripResult);
-		//}
-		//else
-		//{
-			//$app->response->setStatus(401);
-			//$unauthArray = array("You are not authorised");
-			//$json = json_encode($unauthArray);
-		//}
+		}
+		else
+		{
+			$app->response->setStatus(401);
+			$unauthArray = array("You are not authorised");
+			$json = json_encode($unauthArray);
+		}
 		
 		$response = $app->response();
 		$response->headers->set('Content-Type', 'application/json');

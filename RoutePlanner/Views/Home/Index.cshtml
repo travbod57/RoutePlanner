@@ -149,9 +149,6 @@
     <button class="btn btn-primary" ng-click="Reset()" ng-disabled="route.length == 0">Reset Route</button>
     <button class="btn btn-primary" ng-click="SaveTrip('lg')" ng-disabled="route.length == 0 || routeForm.$invalid">Save Trip</button>
     <button class="btn btn-primary" ng-controller="NewTripCtrl" ng-click="NewTrip()">New Trip</button>
-    <button class="btn btn-primary" ng-click="GetTripId()">GetTripId</button>
-
-    <span>{{ route | json}}</span>
 
     <div login-modal-show modal-visible="ShowLoginDialog" class="modal fade">
         <div class="modal-dialog" role="document">

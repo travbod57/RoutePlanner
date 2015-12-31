@@ -393,7 +393,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     }
 
     $scope.CalculateLocationCost = function (routeItem) {
-        routeItem.totalCost = (routeItem.nights * routeItem.location.DailyCost).toFixed(2);
+        routeItem.totalCost = (routeItem.nights * routeItem.dailyCost).toFixed(2);
     }
 
     //$scope.onMarkerClick = function (model) {

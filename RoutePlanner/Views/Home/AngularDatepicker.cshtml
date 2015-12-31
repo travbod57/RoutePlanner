@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Angular Datepicker";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+@section scripts {
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/Scripts/angular-route.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/angular-datepicker/angular-bootstrap-datepicker.js"></script>
+<link href="~/Content/angular-bootstrap-datepicker.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/moment.js"></script>
+
+<script>
+
+    var app = angular.module('demo', ['ng-bootstrap-datepicker']);
+    
+
+    app.controller('AppCtrl', function ($scope) {
+        $scope.date;
+
+
+        $scope.datepickerOptions = {
+
+            format: "dd-M-yyyy",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true
+        }
+
+        $scope.click = function () {
+
+            $scope.date;
+
+            var nowTemp = new Date();
+            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate() - 1, 0, 0, 0, 0);
+
+            $scope.date = now;
+            //alert($scope.date);
+        }
+    });
+
+
+</script>
+
+}
+
+
+
+    <div data-ng-app="demo">
+        <div data-ng-controller="AppCtrl">
+            <input id="datepicker" type="text" data-ng-datepicker data-oi-options="datepickerOptions" data-ng-model="date">
+            <input id="datepickerMirror" type="text" data-ng-model="date">
+
+            <button ng-click="click()">click me</button>
+        </div>
+        
+    </div>

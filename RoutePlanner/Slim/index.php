@@ -260,12 +260,12 @@ $app->post(
 
 			$trip = json_decode(stripslashes($tripData));
 			
-			$app->log->INFO("Id : " . $trip->id . "StartDate : " . $trip->startDate . " EndDate : " . $trip->endDate . "NumberOfStops : " . $trip->numberOfStops . "NumberOfNights : " . $trip->numberOfNights . "CurrencyId : " . $trip->currencyId . "ModifiedDate : " . date("Y-m-d H:m:s") . "TotalCost : " . $trip->totalCost);
+			$app->log->INFO("Id : " . $trip->Id . "StartDate : " . $trip->StartDate . " EndDate : " . $trip->EndDate . "NumberOfStops : " . $trip->numberOfStops . "NumberOfNights : " . $trip->numberOfNights . "CurrencyId : " . $trip->CurrencyId . "ModifiedDate : " . date("Y-m-d H:m:s") . "TotalCost : " . $trip->TotalCost);
 			
 			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$stopNumberInc = 0;
-			$tripId = $trip->id;
+			$tripId = $trip->Id;
 				
 			$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
 			$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, DailyCost, TotalCost, TransportId) VALUES (:tripId, :locationId, :stopNumber, :nights, :dailyCost, :totalCost, :transportId)";
@@ -277,14 +277,14 @@ $app->post(
 				
 			$sqlStatementCount = 1;
 			$stmt[$sqlStatementCount] = $pdo->prepare($update_trip_sql);
-			$stmt[$sqlStatementCount]->bindValue(':startDate', $trip->startDate, PDO::PARAM_STR);	
-			$stmt[$sqlStatementCount]->bindValue(':endDate', $trip->endDate, PDO::PARAM_STR);
+			$stmt[$sqlStatementCount]->bindValue(':startDate', $trip->StartDate, PDO::PARAM_STR);	
+			$stmt[$sqlStatementCount]->bindValue(':endDate', $trip->EndDate, PDO::PARAM_STR);
 			$stmt[$sqlStatementCount]->bindValue(':numberOfStops', $trip->numberOfStops, PDO::PARAM_INT);
 			$stmt[$sqlStatementCount]->bindValue(':numberOfNights', $trip->numberOfNights, PDO::PARAM_INT);
-			$stmt[$sqlStatementCount]->bindValue(':totalCost', $trip->totalCost);
-			$stmt[$sqlStatementCount]->bindValue(':currencyId', $trip->currencyId, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':totalCost', $trip->TotalCost);
+			$stmt[$sqlStatementCount]->bindValue(':currencyId', $trip->CurrencyId, PDO::PARAM_INT);
 			$stmt[$sqlStatementCount]->bindValue(':modifiedDate', date("Y-m-d H:m:s"), PDO::PARAM_STR);
-			$stmt[$sqlStatementCount]->bindValue(':tripId', $trip->id, PDO::PARAM_INT);
+			$stmt[$sqlStatementCount]->bindValue(':tripId', $trip->Id, PDO::PARAM_INT);
 			
 			for ($x = 0; $x < $arrRouteLength; $x++) {
 				
@@ -358,7 +358,7 @@ $app->post(
 // Get Trip
  $app->get('/getTrip', function () use ($app, $env) {
 		
-		$authenticated = false; //is_user_logged_in();
+		$authenticated = true; //is_user_logged_in();
 		
 		if ($authenticated) 
 		{

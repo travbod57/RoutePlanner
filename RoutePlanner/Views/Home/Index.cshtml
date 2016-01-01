@@ -76,7 +76,13 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label class="travel-tool">Start Date</label>
-                <input datepicker id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />
+                @*<input datepicker id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />*@
+                <p class="input-group">
+                    <input id="startDate" type="text" class="form-control margin-5" uib-datepicker-popup="{{format}}" placeholder="enter a start date ..." ng-model="StartDate" is-open="status.opened" datepicker-options="dateOptions" close-text="Close" on-open-focus="false" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default margin-5" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </p>
             </div>
         </div>
         <div class="col-md-3">

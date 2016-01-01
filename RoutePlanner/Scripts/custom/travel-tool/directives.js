@@ -55,26 +55,6 @@ travelToolApp.directive('dndList', function () {
     }
 });
 
-travelToolApp.directive('datepicker', function () {
-
-    var linkFn = function link(scope, element, attrs) {
-        element.datepicker({
-            format: "dd-M-yyyy",
-            clearBtn: true,
-            autoclose: true,
-            todayHighlight: true
-        }).on('clearDate', function (e) {
-
-            scope.$apply();
-        });
-    };
-
-    return {
-        restrict: 'A',
-        link: linkFn
-    }
-});
-
 travelToolApp.directive('inputGroupBtnClick', function () {
 
     var linkFn = function link(scope, element, attrs) {

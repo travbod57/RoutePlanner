@@ -78,12 +78,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function _saveDataLocally() {
 
-        $scope.$storage['route'] = angular.toJson($scope.route);
-        $scope.$storage['polyLines'] = angular.toJson($scope.PolyLines);
-
         _trip.route = angular.toJson($scope.route);
         _trip.polyLines = angular.toJson($scope.PolyLines);
-        _trip.startDate = startDate;
+        _trip.StartDate = $scope.StartDate;
+        _trip.selectedCurrencyValue = $scope.SelectedCurrencyDropdownValue;
 
         $scope.$storage['trip'] = _trip;
 
@@ -94,8 +92,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         $scope.$storage['trip'] = undefined;
 
-        _trip.startDate = moment($scope.startDate).format("YYYY-MM-DD");
-        _trip.currencyId = $scope.SelectedCurrencyDropdownValue.id;
+        _trip.StartDate = moment($scope.StartDate).format("YYYY-MM-DD");
+        _trip.CurrencyId = $scope.SelectedCurrencyDropdownValue.id;
 
         return jQuery.ajax({
             url: CONFIG.SAVE_TRIP_URL,
@@ -108,7 +106,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                 return str.join("&");
             },
-            data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(_trip), isNewTrip: 0 }
+            data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(_trip), isNewTrip: _trip.Id != 0 ? 0 : 1 }
         });
     }
 
@@ -221,15 +219,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         // TODO: use AJAX call here
         _transport = [{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }];
 
-        var nowTemp = new Date();
-        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate() + 1, 0, 0, 0, 0);
-
-        
-
-        //var mtStartDate = moment(now);
-       // jQuery("#startDate").datepicker('setDate', '01-Jan-2016');
-        //$scope.StartDate = mtStartDate.format("DD-MMM-YYYY");
-        
         $http.get(CONFIG.GET_TRIP_URL, {
             params: {
                 tripId: _trip.id
@@ -240,7 +229,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             _trip = response.data.Trip;
             $scope.TripName = _trip.Name;
             
+            // set a default if not retrieved
             $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: _trip.CurrencyId || 1 });
+            $scope.StartDate = _trip.StartDate;
 
             $scope.route = response.data.Route;
             $scope.UpdateStopNumbering();
@@ -256,13 +247,14 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             // IF NOT AUTHENTICATED by WordPress then use Session Storage
             if (response.status == '401') {
 
-                var sessionData = $scope.$storage['_trip'];
+                var sessionData = $scope.$storage['trip'];
 
                 // If there is data in session storage then fetch it
                 if (sessionData != undefined) {
                     $scope.route = angular.fromJson(sessionData.route);
                     $scope.PolyLines = angular.fromJson(sessionData.polyLines);
-                    //$scope.startDate = sessionData.startDate;
+                    $scope.StartDate = sessionData.startDate;
+                    $scope.SelectedCurrencyDropdownValue = sessionData.selectedCurrencyValue;
                 }
                 else
                 {
@@ -280,6 +272,36 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             PolyPathService.CreateNewPolyLine($scope.PolyLines, location, prevRoute);
         }
     }
+
+    /* DATE PICKER */
+
+    $scope.today = function () {
+        $scope.StartDate = new Date();
+    };
+
+    $scope.clear = function () {
+        $scope.StartDate = null;
+    };
+
+    $scope.open = function ($event) {
+        $scope.status.opened = true;
+    };
+
+    $scope.setDate = function (year, month, day) {
+        $scope.StartDate = new Date(year, month, day);
+    };
+
+    $scope.dateOptions = {
+        formatYear: 'yy',
+        startingDay: 1,
+        showWeeks: false,
+    };
+
+    $scope.format = 'dd-MMM-yyyy';
+
+    $scope.status = {
+        opened: false
+    };
 
     /* GETTERS */
 
@@ -301,9 +323,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.ReturnDate = function () {
 
-        if ($scope.startDate != '' && $scope.startDate != undefined) {
-            var returnDate = moment(jQuery("#startDate").datepicker('getDate')).add($scope.getTripLength(), 'Days');
-            _trip.endDate = returnDate.format("YYYY-MM-DD");
+        if ($scope.StartDate != '' && $scope.StartDate != undefined) {
+
+            var returnDate = moment($scope.StartDate).add($scope.getTripLength(), 'Days');
+            _trip.EndDate = returnDate.format("YYYY-MM-DD");
             return returnDate.format("DD-MMM-YYYY (ddd)");
         }
         else
@@ -316,9 +339,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         for (i = 0; i < $scope.route.length; i++)
             total += parseFloat($scope.route[i].totalCost);
 
-        _trip.totalCost = total.toFixed(2);
+        _trip.TotalCost = total.toFixed(2);
 
-        return _trip.totalCost;
+        return _trip.TotalCost;
     }
 
     $scope.getTripLength = function () {

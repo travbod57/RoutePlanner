@@ -236,11 +236,20 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             $scope.Route = response.data.Route;
             $scope.UpdateStopNumbering();
 
-            if ($scope.Route.length > 1) {
-                for (var i = 1; i < $scope.Route.length; i++) {
+            for (var i = 0; i < $scope.Route.length; i++) {
+
+                $scope.Route[i].transportId = parseInt($scope.Route[i].transportId);
+
+                if ($scope.Route.length > 1) {
                     CreatePolyLine($scope.Route[i].location);
                 }
             }
+
+            //if ($scope.Route.length > 1) {
+            //    for (var i = 1; i < $scope.Route.length; i++) {
+            //        CreatePolyLine($scope.Route[i].location);
+            //    }
+            //}
 
         }, function errorCallback(response) {
 

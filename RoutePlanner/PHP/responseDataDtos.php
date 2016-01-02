@@ -64,7 +64,6 @@ class Route {
 		$this->dailyCost = $routeData['DailyCost'];
 		$this->totalCost = $routeData['TotalCost'];
 		$this->transportId = $routeData['TransportId'];
-		//$this->transportName = $routeData['TransportName'];
 		$this->options = new Options($routeData);
 		$this->style = new Style();
 	}
@@ -76,7 +75,7 @@ class Route {
 	public $nights;
 	public $dailyCost;
 	public $totalCost;
-	public $transport;
+	public $transportId;
 	public $options;
 	public $style;
 }

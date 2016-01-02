@@ -46,7 +46,7 @@
         <div class="col-md-12">
             <div id="travel-tool-map" class="angular-google-map-container">
                 <ui-gmap-google-map center='map.center' zoom='map.zoom' options="map.options">
-                    <ui-gmap-markers models='route' idkey='id' coords="'coords'" options="'options'" icon="'icon'" events="markersEvents">
+                    <ui-gmap-markers models='Route' idkey='id' coords="'coords'" options="'options'" icon="'icon'" events="markersEvents">
                         <ui-gmap-windows show="show">
                             <div class="infoWindowContent" ng-non-bindable>
                                 <span><strong>{{location.Full_Name}}</strong></span>
@@ -64,7 +64,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label class="travel-tool">{{ route.length > 0 ? 'Add Location' : 'Add Starting Location' }}</label>
+                <label class="travel-tool">{{ Route.length > 0 ? 'Add Location' : 'Add Starting Location' }}</label>
                 <div class="input-group">
                     <input id="locationpicker" input-group-btn-click class="form-control margin-5" type="text" ng-model="ChosenLocation" typeahead-editable="false" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="location as location.Full_Name for location in getLocationsByTerm($viewValue)">
                     <span class="input-group-btn">
@@ -107,8 +107,8 @@
                             <th style="width: 100px;"></th>
                         </tr>
                     </thead>
-                    <tbody id="sortable" dnd-list="route">
-                        <tr class="sortable-row" ng-repeat="item in route" ng-click="TrackSelectedRouteStop(item)">
+                    <tbody id="sortable" dnd-list="Route">
+                        <tr class="sortable-row" ng-repeat="item in Route" ng-click="TrackSelectedRouteStop(item)">
                             <td style="width: 50px;"><div ng-class="item.stopNumberDivClass"><span ng-class="item.stopNumberSpanClass">{{ item.stop }}</span></div></td>
                             <td style="width: 300px;">{{item.location.Full_Name}}</td>
                             <td style="width: 100px;">
@@ -151,9 +151,9 @@
         </div>
     </div>
 
-    <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="route.length == 0">Email Route</button>
-    <button class="btn btn-primary" ng-click="Reset()" ng-disabled="route.length == 0">Reset Route</button>
-    <button class="btn btn-primary" ng-click="SaveTrip('lg')" ng-disabled="route.length == 0 || routeForm.$invalid">Save Trip</button>
+    <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="Route.length == 0">Email Route</button>
+    <button class="btn btn-primary" ng-click="Reset()" ng-disabled="Route.length == 0">Reset Route</button>
+    <button class="btn btn-primary" ng-click="SaveTrip('lg')" ng-disabled="Route.length == 0 || routeForm.$invalid">Save Trip</button>
     <button class="btn btn-primary" ng-controller="NewTripCtrl" ng-click="NewTrip()">New Trip</button>
 
     <div login-modal-show modal-visible="ShowLoginDialog" class="modal fade">

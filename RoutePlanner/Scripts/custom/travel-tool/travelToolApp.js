@@ -40,8 +40,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.TripName;
     $scope.ChosenLocation;
     $scope.SelectedRouteStop;
-    $scope.startDate;
-    $scope.route = [];
+    $scope.StartDate;
+    $scope.Route = [];
     $scope.PolyLines = [];
     $scope.MaxLocations = 50;
     $scope.ShowLoginDialog = false;
@@ -64,7 +64,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     //            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
     //        return str.join("&");
     //    },
-    //    data: { routeData: angular.toJson($scope.route) }
+    //    data: { routeData: angular.toJson($scope.Route) }
     //}).then(function (response) {
     //    alert("this callback will be called asynchronously");
     //    // this callback will be called asynchronously
@@ -78,10 +78,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function _saveDataLocally() {
 
-        _trip.route = angular.toJson($scope.route);
-        _trip.polyLines = angular.toJson($scope.PolyLines);
+        _trip.Route = angular.toJson($scope.Route);
+        _trip.PolyLines = angular.toJson($scope.PolyLines);
         _trip.StartDate = $scope.StartDate;
-        _trip.selectedCurrencyValue = $scope.SelectedCurrencyDropdownValue;
+        _trip.SelectedCurrencyDropdownValue = $scope.SelectedCurrencyDropdownValue;
 
         $scope.$storage['trip'] = _trip;
 
@@ -106,7 +106,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                 return str.join("&");
             },
-            data: { routeData: angular.toJson($scope.route), tripData: angular.toJson(_trip), isNewTrip: _trip.Id != 0 ? 0 : 1 }
+            data: { routeData: angular.toJson($scope.Route), tripData: angular.toJson(_trip), isNewTrip: _trip.Id != 0 ? 0 : 1 }
         });
     }
 
@@ -114,7 +114,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         if ($scope.ChosenLocation !== undefined) {
 
-            $scope.route.push({
+            $scope.Route.push({
                 id: $scope.ChosenLocation.Id,
                 location: $scope.ChosenLocation,
                 coords: {
@@ -161,13 +161,13 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         }
         else if (location.stop == 'End') {
             isLastLocation = true;
-            index = $scope.route.length - 1;
+            index = $scope.Route.length - 1;
         }
         else
             index = location.stop;
 
         // remove from route array
-        $scope.route.splice(index, 1);
+        $scope.Route.splice(index, 1);
 
         if (isFirstStop) {
             $scope.PolyLines.splice(0, 1); // remove first
@@ -180,7 +180,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             nextPolyPath.path[0].longitude = $scope.PolyLines[0].path[0].longitude;
             nextPolyPath.path[0].latitude = $scope.PolyLines[0].path[0].latitude;
 
-            var prevLocation = $scope.route[index - 1];
+            var prevLocation = $scope.Route[index - 1];
 
             PolyPathService.UpdateStrokeColour(prevLocation.transportId, nextPolyPath);
 
@@ -193,7 +193,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             nextPolyPath.path[0].longitude = prevPolyPath.path[1].longitude;
             nextPolyPath.path[0].latitude = prevPolyPath.path[1].latitude;
 
-            var prevLocation = $scope.route[index - 1];
+            var prevLocation = $scope.Route[index - 1];
 
             PolyPathService.UpdateStrokeColour(prevLocation.transportId, nextPolyPath);
 
@@ -233,12 +233,12 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: _trip.CurrencyId || 1 });
             $scope.StartDate = _trip.StartDate;
 
-            $scope.route = response.data.Route;
+            $scope.Route = response.data.Route;
             $scope.UpdateStopNumbering();
 
-            if ($scope.route.length > 1) {
-                for (var i = 1; i < $scope.route.length; i++) {
-                    CreatePolyLine($scope.route[i].location);
+            if ($scope.Route.length > 1) {
+                for (var i = 1; i < $scope.Route.length; i++) {
+                    CreatePolyLine($scope.Route[i].location);
                 }
             }
 
@@ -251,10 +251,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
                 // If there is data in session storage then fetch it
                 if (sessionData != undefined) {
-                    $scope.route = angular.fromJson(sessionData.route);
+                    $scope.Route = angular.fromJson(sessionData.route);
                     $scope.PolyLines = angular.fromJson(sessionData.polyLines);
                     $scope.StartDate = sessionData.startDate;
-                    $scope.SelectedCurrencyDropdownValue = sessionData.selectedCurrencyValue;
+                    $scope.SelectedCurrencyDropdownValue = sessionData.selectedCurrencyDropdownValue;
                 }
                 else
                 {
@@ -267,8 +267,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function CreatePolyLine(location) {
 
-        if ($scope.route.length > 1) {
-            var prevRoute = $scope.route[$scope.route.length - 2];
+        if ($scope.Route.length > 1) {
+            var prevRoute = $scope.Route[$scope.Route.length - 2];
             PolyPathService.CreateNewPolyLine($scope.PolyLines, location, prevRoute);
         }
     }
@@ -318,7 +318,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     };
 
     $scope.HasRoute = function () {
-        return $scope.route.length > 0 ? true : false;
+        return $scope.Route.length > 0 ? true : false;
     }
 
     $scope.ReturnDate = function () {
@@ -336,8 +336,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.getTotalRouteCost = function () {
         var total = 0;
 
-        for (i = 0; i < $scope.route.length; i++)
-            total += parseFloat($scope.route[i].totalCost);
+        for (i = 0; i < $scope.Route.length; i++)
+            total += parseFloat($scope.Route[i].totalCost);
 
         _trip.TotalCost = total.toFixed(2);
 
@@ -347,19 +347,19 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.getTripLength = function () {
         var total = 0;
 
-        for (i = 0; i < $scope.route.length; i++)
-            total += parseInt($scope.route[i].nights);
+        for (i = 0; i < $scope.Route.length; i++)
+            total += parseInt($scope.Route[i].nights);
 
-        _trip.numberOfNights = total;
+        _trip.NumberOfNights = total;
 
-        return _trip.numberOfNights;
+        return _trip.NumberOfNights;
     }
 
     $scope.getNumberOfStops = function () {
 
-        _trip.numberOfStops = $scope.route.length;
+        _trip.NumberOfStops = $scope.Route.length;
 
-        return _trip.numberOfStops;
+        return _trip.NumberOfStops;
     }
 
     /* FUNCTIONS */
@@ -380,10 +380,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.UpdateStopNumbering = function () {
 
-        for (i = 0; i < $scope.route.length; i++) {
+        for (i = 0; i < $scope.Route.length; i++) {
 
             var child = i + 1;
-            var routeItem = $scope.route[i];
+            var routeItem = $scope.Route[i];
 
             if (i == 0) {
                 routeItem.stop = 'Start';
@@ -392,7 +392,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 routeItem.options.labelClass = 'markerLabelStartStyle';
                 routeItem.icon = CONFIG.START_MARKER_ICON;
             }
-            else if (i == $scope.route.length - 1) {
+            else if (i == $scope.Route.length - 1) {
                 routeItem.stop = 'End';
                 routeItem.stopNumberDivClass = 'endCircle';
                 routeItem.stopNumberSpanClass = 'startEndCircleText';
@@ -420,7 +420,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.SwitchRoute = function (fromIndex, toIndex) {
 
-        PolyPathService.MendPolyLines($scope.PolyLines, $scope.route, fromIndex, toIndex);
+        PolyPathService.MendPolyLines($scope.PolyLines, $scope.Route, fromIndex, toIndex);
     }
 
     $scope.CalculateLocationCost = function (routeItem) {
@@ -457,7 +457,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     }
 
     $scope.Reset = function () {
-        $scope.route = [];
+        $scope.Route = [];
         $scope.PolyLines = [];
     };
 
@@ -472,7 +472,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             size: size,
             resolve: {
                 route: function () {
-                    return $scope.route;
+                    return $scope.Route;
                 }
             }
         });
@@ -488,7 +488,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             resolve: {
                 yes: function () {
                     return function () {
-                        $scope.route = [];
+                        $scope.Route = [];
                         $scope.PolyLines = [];
                     }
                 }
@@ -537,7 +537,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 travelToolApp.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
 
     $scope.ContactDetails = { details: { Email: "" } };
-    $scope.route = route;
+    $scope.Route = route;
     $scope.ok = function () {
 
         jQuery.ajax({

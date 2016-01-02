@@ -560,7 +560,7 @@ travelToolApp.controller('SendEmailModalCtrl', function ($scope, $modalInstance,
                     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                 return str.join("&");
             },
-            data: { address: $scope.ContactDetails.details.Email, routeData: angular.toJson($scope.route) }
+            data: { address: $scope.ContactDetails.details.Email, routeData: angular.toJson($scope.Route) }
         }).done(function () {
             $scope.$apply(function () {
                 $scope.showEmailError = false;

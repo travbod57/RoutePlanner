@@ -92,7 +92,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         $scope.$storage['trip'] = undefined;
 
-        _trip.StartDate = moment($scope.StartDate).format("YYYY-MM-DD");
+        _trip.StartDate = $scope.StartDate;
         _trip.CurrencyId = $scope.SelectedCurrencyDropdownValue.id;
 
         return jQuery.ajax({
@@ -230,7 +230,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             $scope.TripName = _trip.Name;
             
             // set a default if not retrieved
-            $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: _trip.CurrencyId || 1 });
+            $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: parseInt(_trip.CurrencyId) || 1 });
             $scope.StartDate = _trip.StartDate;
 
             $scope.Route = response.data.Route;

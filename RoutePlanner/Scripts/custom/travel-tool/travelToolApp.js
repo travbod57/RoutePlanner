@@ -136,7 +136,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                     return transportItem.name;
                 },
                 dailyCost: $scope.ChosenLocation.DailyCost,
-                totalCost: '',
+                totalCost: '0.00',
                 stopNumberDivClass: '',
                 stopNumberSpanClass: ''
             });

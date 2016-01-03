@@ -8,7 +8,6 @@
     };
 })
 
-
 travelToolApp.filter('float', function () {
     return function (input) {
         return parseFloat(input).toFixed(2);

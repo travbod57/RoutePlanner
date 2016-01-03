@@ -3,7 +3,7 @@
     "GET_MY_TRIPS_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getMyTrips",
     "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
     "DELETE_TRIP": "http://localhost:81/wp_thinkbackpacking/Slim/deleteTrip",
-    "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/my-trips/newTripModal.html",
+    "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/newTripModal.html",
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
     "TRIP_URL": "/RoutePlanner/Home/Index?tripId="
 });
@@ -90,3 +90,32 @@ myTripsApp.controller('deleteTripModalCtrl', function ($scope, $uibModalInstance
 
 travelTool.shared.directives.UniqueTripName.$inject = ['$http', '$q', 'CONFIG'];
 myTripsApp.directive('uniqueTripName', travelTool.shared.directives.UniqueTripName);
+
+// Register Filters
+
+myTripsApp.filter('standardDateFormat', function myDateFormat($filter) {
+    return function (text) {
+
+        if (text != null) {
+
+            var tempdate = new Date(text.replace(/-/g, "/"));
+            return $filter('date')(tempdate, "dd-MMM-yyyy");
+        }
+        else
+            return null;
+  }
+});
+
+myTripsApp.filter('auditDateFormat', function myDateFormat($filter) {
+    return function (text) {
+
+        if (text != null) {
+
+            var tempdate = new Date(text.replace(/-/g, "/"));
+            return $filter('date')(tempdate, "dd-MMM-yyyy 'at' HH:mm:ss");
+        }
+        else
+            return null;
+  }
+});
+

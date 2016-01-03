@@ -7,7 +7,13 @@
     </h4>
 
     <div class="body">
-        {{ trip.NumberOfStops }}
+
+        <table>
+            <tr><td class="col1">Stops</td><td class ="col2">{{ trip.NumberOfStops }}</td></tr>
+            <tr><td class="col1">Start Date</td><td class="col2">{{ trip.StartDate | standardDateFormat }}</td></tr>
+            <tr><td class="col1">End Date</td><td class="col2">{{ trip.EndDate | standardDateFormat }}</td></tr>
+            <tr><td class="col1">Total Cost</td><td class="col2">{{ trip.TotalCost }}</td></tr>
+        </table>
 
         <button type="button" class="btn btn-primary btn-sm" ng-click="DeleteTrip('lg', trip.Id)">
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
@@ -15,7 +21,7 @@
 
     </div>
     <div class="footer">
-        Created: {{ trip.CreatedDate }} | Last Modified: {{ trip.ModifiedDate }}
+        Created: {{ trip.CreatedDate | auditDateFormat }} | Last Modified: {{ trip.ModifiedDate | auditDateFormat }}
     </div>
 
 </div>

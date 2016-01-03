@@ -523,16 +523,16 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             if (hasTripName) {
 
                 // if trip name exists and authenticated, save to remote storage
-                OpenSaveTripModal();
+                OpenSaveTripModal(size);
             }
             else {
 
                 // if trip name DOES NOT exist and authenticated, ASK for trip name THEN SAVE to remote storage
-                var newTripModalInstance = $scope.NewTrip('lg', true);
+                var newTripModalInstance = $scope.NewTrip(size, true);
 
                 newTripModalInstance.result.then(function () {
 
-                    OpenSaveTripModal();
+                    OpenSaveTripModal(size);
 
                 }, function () {
                     // Cancel and don't save trip
@@ -556,7 +556,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         }  
     };
 
-    function OpenSaveTripModal() {
+    function OpenSaveTripModal(size) {
 
         var modalInstance = $uibModal.open({
             animation: true,
@@ -568,8 +568,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 saveDataRemotely: function () {
                     return _saveDataRemotely;
                 },
-                authenticate: function () {
-                    return _isAuthenticated;
+                isAuthenticated: function () {
+                    return authenticationService.isAuthenticated;
                 }
             }
         });
@@ -652,10 +652,10 @@ travelToolApp.controller('routeLengthExceededModalCtrl', function ($scope, $uibM
 
 });
 
-travelToolApp.controller('SaveTripModalCtrl', function ($scope, $uibModalInstance, saveDataRemotely, authenticate) {
+travelToolApp.controller('SaveTripModalCtrl', function ($scope, $uibModalInstance, saveDataRemotely, isAuthenticated) {
 
     var progressBarTypes = ['danger', 'info', 'warning', 'success'];
-    var isUserLoggedIn = authenticate();
+    var isUserLoggedIn = isAuthenticated();
 
     isUserLoggedIn.then(function (response) {
 

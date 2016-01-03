@@ -33,6 +33,7 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, CONFIG,
             animation: true,
             templateUrl: 'deleteTripModalTemplate.html',
             controller: 'deleteTripModalCtrl',
+            backdrop: 'static',
             size: size,
             resolve: {
                 yes: function () {
@@ -70,18 +71,18 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, CONFIG,
 travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];
 myTripsApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http', 'CONFIG'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', 'CONFIG'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
-myTripsApp.controller('deleteTripModalCtrl', function ($scope, $modalInstance, yes) {
+myTripsApp.controller('deleteTripModalCtrl', function ($scope, $uibModalInstance, yes) {
 
     $scope.yes = function () {
         yes();
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
     $scope.no = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 });
 

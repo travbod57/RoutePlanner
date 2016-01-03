@@ -24,7 +24,7 @@
                 <li class="my-trip-listed-item" ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/angularjs-templates/my-trips/trip.html")'"></li>
             </ul>
 
-            <button ng-controller="NewTripCtrl" class="btn btn-primary" ng-click="NewTrip()">New Trip</button>
+            <button ng-controller="NewTripCtrl" class="btn btn-primary" ng-click="NewTrip('lg', false)">New Trip</button>
         </div>
     </div>
 

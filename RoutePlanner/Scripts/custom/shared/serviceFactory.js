@@ -25,4 +25,17 @@
         return $window._; // assumes underscore has already been loaded on the page
     };
 
+    services.authentication = function ($http, CONFIG) {
+
+        var _isAuthenticated = function () {
+
+            return $http.get(CONFIG.IS_AUTHENTICATED_URL);
+        }
+
+        return {
+            isAuthenticated: _isAuthenticated
+        }
+
+    };
+
 })(travelTool.shared.services)

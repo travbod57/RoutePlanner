@@ -52,7 +52,7 @@ $env = $app->environment();
     {
 		$tripName = $_GET['tripName'];
 		
-		$userId = 1; //get_current_user_id();
+		$userId = get_current_user_id();
 		
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
 
@@ -87,8 +87,8 @@ $env = $app->environment();
 		$response->headers->set('Access-Control-Allow-Origin', '*');
 		$response->headers->set('Access-Control-Allow-Methods', 'GET, POST');
 
-		//$response->body(is_user_logged_in());
-		$response->body(1);
+		$response->body(is_user_logged_in());
+		//$response->body(1);
      }
      catch (\Exception $e) {
 		$app->error($e);
@@ -126,7 +126,7 @@ $env = $app->environment();
     
     try
     {
-		$userId = 1; //get_current_user_id();
+		$userId = get_current_user_id();
 			
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
 
@@ -156,7 +156,7 @@ $app->post(
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
 		
 		$tripId = $_POST['tripId'];
-		$userId = 1; //get_current_user_id();
+		$userId = get_current_user_id();
 	
 		$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
 		$delete_trip_sql = "DELETE FROM trip WHERE Id = :tripId AND UserId = :userId";
@@ -212,7 +212,7 @@ $app->post(
 			$app->log->INFO("new trip");
 		
 			$tripName = stripslashes($_POST['tripName']);
-			$userId = 1; //get_current_user_id();
+			$userId = get_current_user_id();
 		
 			$insert_trip_sql = "INSERT INTO Trip (UserId, Name, CreatedDate, ModifiedDate) VALUES (:userId, :tripName, :createdDate, :modifiedDate)";
 			
@@ -358,27 +358,29 @@ $app->post(
 // Get Trip
  $app->get('/getTrip', function () use ($app, $env) {
 		
-		$authenticated = false; //is_user_logged_in();
+		$wp_authenticated = is_user_logged_in();
 		
-		if ($authenticated) 
+		$userId = get_current_user_id();
+		$tripId = $_GET['tripId'];
+		
+		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			
+		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
+		
+		$stmt[0] = $pdo->prepare($get_trip_sql);
+		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		$stmt[0]->bindValue(':userId', $userId, PDO::PARAM_INT);
+		$stmt[0]->execute();
+		$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
+		
+		$trip_authenticated = !empty($tripData);
+		
+		if ($wp_authenticated && $trip_authenticated) 
 		{
-			$userId = 1; //get_current_user_id();
-			$tripId = $_GET['tripId'];
-			
-			$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
-			
-			$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
-			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			
 			$get_route_sql = "SELECT R.Id as RouteId, R.StopNumber, R.Nights, R.DailyCost, R.TotalCost,
-			L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Name as Transport
-			FROM Route R JOIN Location L ON L.Id = R.LocationId JOIN Transport T ON T.Id = R.TransportId WHERE R.TripId = :tripId"; // SELECT * FROM route WHERE TripId = :tripId
-
-			$stmt[0] = $pdo->prepare($get_trip_sql);
-			$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
-			$stmt[0]->bindValue(':userId', $userId, PDO::PARAM_INT);
-			$stmt[0]->execute();
-			$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
+			L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Id as TransportId
+			FROM Route R JOIN Location L ON L.Id = R.LocationId JOIN Transport T ON T.Id = R.TransportId WHERE R.TripId = :tripId";
 
 			$stmt[1] = $pdo->prepare($get_route_sql);
 			$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
@@ -417,7 +419,7 @@ $app->post(
 // POST sendEmail
 $app->post(
     '/sendEmail',
-    function () use ($app) {
+    function () use ($app, $env) {
 
     try
     {
@@ -431,13 +433,24 @@ $app->post(
 		$json = $_POST['routeData'];
 		
 		date_default_timezone_set('Europe/London');
-		$app->log->info("INFO - an email was sent to: " . $emailAddress . ", at: " . date("Y-m-d H:m:s"));
-		$app->log->info($json);
+		//$app->log->info("INFO - an email was sent to: " . $emailAddress . ", at: " . date("Y-m-d H:m:s"));
+		
 		// decode JSON
 		
 		$arrRoute = json_decode(stripslashes($json));
 		$arrRouteLength = count($arrRoute);
 		
+		// get transport options
+		
+		$get_transport_sql = "SELECT Id, Name FROM Transport";
+			
+		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		
+		$stmt[0] = $pdo->prepare($get_transport_sql);
+		$stmt[0]->execute();
+		$transportData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
+	
 		//create HTML email
 		
 		$html = "<html><head><style>table, p { font-family: 'Arial', Helvetica, sans-serif; font-size: 0.8em; }
@@ -462,24 +475,24 @@ $app->post(
 							$locationId = $locationValue;
 						if ($locationKey == "Full_Name")
 							$locationName = $locationValue;
-						if ($locationKey == "DailyCost")
-							$dailyCost = $locationValue;
 					}
 				}
 				else
 				{
+					if ($routeKey == "dailyCost")
+						$dailyCost = $routeValue;
 					if ($routeKey == "stop")
 						$stopNumber = $routeValue;
 					else if ($routeKey == "nights")
 						$nights = $routeValue;
 					else if ($routeKey == "totalCost")
 						$totalCost = $routeValue;
-					else if ($routeKey == "transport")
-						$transport = $routeValue;
+					else if ($routeKey == "transportId")
+						$transportId = $routeValue;
 				}
 			}
 			
-			$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . $totalCost . "</td> 	<td>" . $transport . "</td>";
+			$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . ((empty($totalCost)) ? "0.00" : $totalCost) . "</td> 	<td>" . $transportData[$transportId]['Name'] . "</td>";
 			$html .= "</tr>";
 		}
 		

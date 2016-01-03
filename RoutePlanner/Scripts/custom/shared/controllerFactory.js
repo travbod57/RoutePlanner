@@ -2,37 +2,47 @@
 
     controllers.newTripCtrl = function ($scope, $uibModal, CONFIG) {
 
-        $scope.NewTrip = function (size) {
+        $scope.NewTrip = function (size, saveTripAfterNameGiven) {
 
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: CONFIG.TMP_NEW_TRIP,
                 controller: 'NewTripModalCtrl',
-                size: size
+                backdrop: 'static',
+                size: size,
+                resolve: {
+                        saveTripAfterNameGiven: function () {
+                        return saveTripAfterNameGiven;
+                    }
+                }
             });
+
+            return modalInstance;
         };
     };
 
-    controllers.newTripModalCtrl = function ($scope, $modalInstance, $http, CONFIG) {
+    controllers.newTripModalCtrl = function ($scope, $uibModalInstance, $http, CONFIG, saveTripAfterNameGiven) {
 
         $scope.TripName;
 
         $scope.ok = function () {
-            
+
             jQuery.ajax({
                 url: CONFIG.SAVE_TRIP_URL,
                 type: "POST",
                 data: { isNewTrip: 1, tripName: $scope.TripName }
             }).done(function successCallback(response) {
-                
-                window.location.href = CONFIG.TRIP_URL + response;
 
+                if (saveTripAfterNameGiven)
+                    $uibModalInstance.close();
+                else
+                    window.location.href = CONFIG.TRIP_URL + response;
             });
 
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     };
 

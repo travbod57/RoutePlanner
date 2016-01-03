@@ -23,6 +23,7 @@
                 animation: true,
                 templateUrl: 'myModal.html',
                 controller: 'myModalCtrl',
+                backdrop: 'static',
                 size: size,
                 resolve: {
                     message: function () {
@@ -38,16 +39,16 @@
     });
 
     // to do: change to $http service
-    myApp.controller('myModalCtrl', function ($scope, $modalInstance, message) {
+    myApp.controller('myModalCtrl', function ($scope, $uibModalInstance, message) {
 
         $scope.message = message;
 
         $scope.ok = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     });
 

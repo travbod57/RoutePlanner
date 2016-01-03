@@ -154,26 +154,22 @@
     <button class="btn btn-primary" ng-click="Email('lg')" ng-disabled="Route.length == 0">Email Route</button>
     <button class="btn btn-primary" ng-click="Reset()" ng-disabled="Route.length == 0">Reset Route</button>
     <button class="btn btn-primary" ng-click="SaveTrip('lg')" ng-disabled="Route.length == 0 || routeForm.$invalid">Save Trip</button>
-    <button class="btn btn-primary" ng-controller="NewTripCtrl" ng-click="NewTrip()">New Trip</button>
+    <button class="btn btn-primary" ng-controller="NewTripCtrl" ng-click="NewTrip('lg', false)">New Trip</button>
 
-    <div login-modal-show modal-visible="ShowLoginDialog" class="modal fade">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Please login or register</h4>
-                </div>
-                <div class="modal-body">
-                    In order to be able to save your route you will need to login to your account or register with us.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Continue</button>
-                    <button type="button" class="btn btn-primary" ng-click="Login()">Login</button>
-                    <button type="button" class="btn btn-primary" ng-click="Register()">Register</button>
-                </div>
-            </div>
+    <script type="text/ng-template" id="loginModal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Please login or register</h4>
         </div>
-    </div>
+        <div class="modal-body">
+            In order to be able to save your route you will need to login to your account or register with us.
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" ng-click="Login()">Login</button>
+            <button type="button" class="btn btn-primary" ng-click="Register()">Register</button>
+            <button type="button" class="btn btn-warning" ng-click="Cancel()">Cancel</button>
+        </div>
+    </script>
 
     <script type="text/ng-template" id="sendEmailModal.html">
         <div class="modal-header">

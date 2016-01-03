@@ -11,7 +11,9 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
     "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
     "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/newTripModal.html",
-    "TRIP_URL": "/RoutePlanner/Home/Index?tripId="
+    "TRIP_URL": "/RoutePlanner/Home/Index?tripId=",
+    "LOGIN_URL": "http://localhost:81/wp_thinkbackpacking/login",
+    "REGISTER_URL": "http://localhost:81/wp_thinkbackpacking/register"
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -25,12 +27,17 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
 
 travelToolApp.service('utilService', travelTool.shared.services.utils);
 
+travelTool.shared.services.authentication.$inject = ['$http', 'CONFIG'];
+travelToolApp.service('authenticationService', travelTool.shared.services.authentication);
+
 travelTool.shared.services.underscore.$inject = ['$window'];
 travelToolApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $uibModal, $window, $sessionStorage, CONFIG, utilService) {
+travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService) {
+
+    $controller('NewTripCtrl', { $scope: $scope });
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -38,6 +45,15 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     var _trip = {};
     var _transport;
+    var _isAuthenticated;
+    
+    authenticationService.isAuthenticated().then(function (response) {
+
+        _isAuthenticated = response.data != 1 ? false : true;
+
+    }, function (response) {
+
+    });
 
     $scope.TripName;
     $scope.ChosenLocation;
@@ -206,11 +222,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         $scope.UpdateStopNumbering();
     }
 
-    function IsAuthenticated() {
-
-        return $http.get(CONFIG.IS_AUTHENTICATED_URL);
-    }
-
     function InitialiseTrip() {
 
         _trip.id = utilService.getQueryStringParameterByName('tripId');
@@ -247,12 +258,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 }
             }
 
-            //if ($scope.Route.length > 1) {
-            //    for (var i = 1; i < $scope.Route.length; i++) {
-            //        CreatePolyLine($scope.Route[i].location);
-            //    }
-            //}
-
         }, function errorCallback(response) {
 
             // IF NOT AUTHENTICATED by WordPress then use Session Storage
@@ -262,10 +267,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
                 // If there is data in session storage then fetch it
                 if (sessionData != undefined) {
-                    $scope.Route = angular.fromJson(sessionData.route);
-                    $scope.PolyLines = angular.fromJson(sessionData.polyLines);
+                    $scope.Route = angular.fromJson(sessionData.Route);
+                    $scope.PolyLines = angular.fromJson(sessionData.PolyLines);
                     $scope.StartDate = sessionData.startDate;
-                    $scope.SelectedCurrencyDropdownValue = sessionData.selectedCurrencyDropdownValue;
+                    $scope.SelectedCurrencyDropdownValue = sessionData.SelectedCurrencyDropdownValue;
                 }
                 else
                 {
@@ -480,6 +485,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             animation: true,
             templateUrl: 'sendEmailModal.html',
             controller: 'SendEmailModalCtrl',
+            backdrop: 'static',
             size: size,
             resolve: {
                 route: function () {
@@ -495,6 +501,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             animation: true,
             templateUrl: 'resetModalTemplate.html',
             controller: 'resetModalCtrl',
+            backdrop: 'static',
             size: size,
             resolve: {
                 yes: function () {
@@ -509,24 +516,64 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.SaveTrip = function (size) {
 
+        if (_isAuthenticated) {
+
+            var hasTripName = $scope.TripName != null;
+
+            if (hasTripName) {
+
+                // if trip name exists and authenticated, save to remote storage
+                OpenSaveTripModal();
+            }
+            else {
+
+                // if trip name DOES NOT exist and authenticated, ASK for trip name THEN SAVE to remote storage
+                var newTripModalInstance = $scope.NewTrip('lg', true);
+
+                newTripModalInstance.result.then(function () {
+
+                    OpenSaveTripModal();
+
+                }, function () {
+                    // Cancel and don't save trip
+                });
+            }
+        }
+        else {
+
+            // if NOT authenticated save data locally
+
+            _saveDataLocally();
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'loginModal.html',
+                controller: 'loginModalCtrl',
+                size: size
+            });
+            
+        }  
+    };
+
+    function OpenSaveTripModal() {
+
         var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'saveTripModal.html',
             controller: 'SaveTripModalCtrl',
+            backdrop: 'static',
             size: size,
             resolve: {
-                saveDataLocally: function () {
-                    return _saveDataLocally;
-                },
                 saveDataRemotely: function () {
                     return _saveDataRemotely;
                 },
                 authenticate: function () {
-                    return IsAuthenticated;
+                    return _isAuthenticated;
                 }
             }
         });
-    };
+    }
 
     function OpenRouteLengthExceeded(size) {
 
@@ -534,6 +581,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             animation: true,
             templateUrl: 'routeLengthExceededModalTemplate.html',
             controller: 'routeLengthExceededModalCtrl',
+            backdrop: 'static',
             size: size,
             resolve: {
                 maxLocations: function () {
@@ -545,7 +593,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 });
 
 // to do: change to $http service
-travelToolApp.controller('SendEmailModalCtrl', function ($scope, $modalInstance, route) {
+travelToolApp.controller('SendEmailModalCtrl', function ($scope, $uibModalInstance, route) {
 
     $scope.ContactDetails = { details: { Email: "" } };
     $scope.Route = route;
@@ -567,7 +615,7 @@ travelToolApp.controller('SendEmailModalCtrl', function ($scope, $modalInstance,
             $scope.$apply(function () {
                 $scope.showEmailError = false;
             });
-            $modalInstance.close();
+            $uibModalInstance.close();
         }).
         fail(function (jqXHR, textStatus, error) {
             $scope.$apply(function () {
@@ -578,44 +626,40 @@ travelToolApp.controller('SendEmailModalCtrl', function ($scope, $modalInstance,
     };
 
     $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 });
 
-travelToolApp.controller('resetModalCtrl', function ($scope, $modalInstance, yes) {
+travelToolApp.controller('resetModalCtrl', function ($scope, $uibModalInstance, yes) {
 
     $scope.yes = function () {
         yes();
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
     $scope.no = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 });
 
-travelToolApp.controller('routeLengthExceededModalCtrl', function ($scope, $modalInstance, maxLocations) {
+travelToolApp.controller('routeLengthExceededModalCtrl', function ($scope, $uibModalInstance, maxLocations) {
 
     $scope.MaxLocations = maxLocations;
 
     $scope.ok = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
 });
 
-travelToolApp.controller('SaveTripModalCtrl', function ($scope, $modalInstance, saveDataLocally, saveDataRemotely, authenticate) {
+travelToolApp.controller('SaveTripModalCtrl', function ($scope, $uibModalInstance, saveDataRemotely, authenticate) {
 
     var progressBarTypes = ['danger', 'info', 'warning', 'success'];
     var isUserLoggedIn = authenticate();
 
     isUserLoggedIn.then(function (response) {
 
-        if (response.data != 1) {
-            $modalInstance.dismiss('cancel');
-            saveDataLocally();
-        }
-        else {
+        if (response.data == 1) {
 
             $scope.type = progressBarTypes[1];
             $scope.showProgressBar = true;
@@ -658,14 +702,30 @@ travelToolApp.controller('SaveTripModalCtrl', function ($scope, $modalInstance, 
     $scope.showOkBtn = false;
 
     $scope.ok = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 });
+
+travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
+
+    $scope.Login = function () {
+        $window.location.href = CONFIG.LOGIN_URL;
+    };
+
+    $scope.Register = function () {
+        $window.location.href = CONFIG.REGISTER_URL;
+    };
+
+    $scope.Cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+});
+
 
 travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];
 travelToolApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http', 'CONFIG'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', 'CONFIG'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
 // Register Directives

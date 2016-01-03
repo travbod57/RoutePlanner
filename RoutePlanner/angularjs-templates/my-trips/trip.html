@@ -8,7 +8,11 @@
 
     <div class="body">
         {{ trip.NumberOfStops }}
-        <button class="btn btn-primary" ng-click="DeleteTrip('lg', trip.Id)">Delete</button>
+
+        <button type="button" class="btn btn-primary btn-sm" ng-click="DeleteTrip('lg', trip.Id)">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+        </button>
+
     </div>
     <div class="footer">
         Created: {{ trip.CreatedDate }} | Last Modified: {{ trip.ModifiedDate }}

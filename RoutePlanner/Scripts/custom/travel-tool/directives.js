@@ -75,48 +75,6 @@ travelToolApp.directive('inputGroupBtnClick', function () {
     }
 });
 
-travelToolApp.directive("loginModalShow", function ($window) {
-    return {
-        restrict: "A",
-        scope: {
-            modalVisible: "="
-        },
-        link: function (scope, element, attrs) {
-
-            //Hide or show the modal
-            scope.showModal = function (visible) {
-                if (visible) {
-                    element.modal("show");
-                }
-                else {
-                    element.modal("hide");
-                }
-            }
-
-            //Check to see if the modal-visible attribute exists
-            if (!jQuery("body").hasClass("logged-in")) {
-
-                //The attribute isn't defined, show the modal by default
-                scope.showModal(true);
-                scope.modalVisible = true;
-            }
-
-            //Watch for changes to the modal-visible attribute
-            scope.$watch("modalVisible", function (newValue, oldValue) {
-                scope.showModal(newValue);
-            });
-
-            //Update the visible value when the dialog is closed through UI actions (Ok, cancel, etc.)
-            element.bind("hide.bs.modal", function () {
-                scope.modalVisible = false;
-                if (!scope.$$phase && !scope.$root.$$phase)
-                    scope.$apply();
-            });
-        }
-    };
-
-});
-
 travelToolApp.directive('int', function () {
     return {
         restrict: 'A',

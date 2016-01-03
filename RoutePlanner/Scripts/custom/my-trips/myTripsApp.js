@@ -2,7 +2,10 @@
 .constant('CONFIG', {
     "GET_MY_TRIPS_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getMyTrips",
     "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
-    "DELETE_TRIP": "http://localhost:81/wp_thinkbackpacking/Slim/deleteTrip"
+    "DELETE_TRIP": "http://localhost:81/wp_thinkbackpacking/Slim/deleteTrip",
+    "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/my-trips/newTripModal.html",
+    "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
+    "TRIP_URL": "/RoutePlanner/Home/Index?tripId="
 });
 
 // Register Services
@@ -64,10 +67,10 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, CONFIG,
     };
 });
 
-travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal'];
+travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];
 myTripsApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http', 'CONFIG'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
 myTripsApp.controller('deleteTripModalCtrl', function ($scope, $modalInstance, yes) {

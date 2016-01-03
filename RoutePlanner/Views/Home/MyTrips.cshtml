@@ -21,7 +21,7 @@
             <div ng-if="MyTrips.length == 0">You have no trips</div>
 
             <ul>
-                <li class="my-trip-listed-item" ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/Scripts/custom/my-trips/templates/trip.html")'"></li>
+                <li class="my-trip-listed-item" ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/angularjs-templates/my-trips/trip.html")'"></li>
             </ul>
 
             <button ng-controller="NewTripCtrl" class="btn btn-primary" ng-click="NewTrip()">New Trip</button>

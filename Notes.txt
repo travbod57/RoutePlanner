@@ -7,3 +7,5 @@ Find and replace: overlayImage.appendChild(this.labelDiv_) with markerLayer.appe
 
 @@ to @ on ngPattern
 <?php echo is_user_logged_in(); ?> in the Save() button
+
+<img src="<?php echo home_url() . '/wp-content/themes/devdmbootstrap3-child/images/travel-tool/help.png'; ?>" />

@@ -9,7 +9,9 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
     "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
     "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
-    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName="
+    "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
+    "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/newTripModal.html",
+    "TRIP_URL": "/RoutePlanner/Home/Index?tripId="
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -660,10 +662,10 @@ travelToolApp.controller('SaveTripModalCtrl', function ($scope, $modalInstance, 
     };
 });
 
-travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal'];
+travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];
 travelToolApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$modalInstance', '$http', 'CONFIG'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
 // Register Directives

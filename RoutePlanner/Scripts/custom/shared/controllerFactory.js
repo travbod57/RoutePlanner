@@ -1,31 +1,31 @@
 ﻿(function (controllers) {
 
-    controllers.newTripCtrl = function ($scope, $uibModal) {
+    controllers.newTripCtrl = function ($scope, $uibModal, CONFIG) {
 
         $scope.NewTrip = function (size) {
 
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'http://localhost/RoutePlanner/Scripts/custom/shared/templates/newTripModal.html',
+                templateUrl: CONFIG.TMP_NEW_TRIP,
                 controller: 'NewTripModalCtrl',
                 size: size
             });
         };
     };
 
-    controllers.newTripModalCtrl = function ($scope, $modalInstance, $http) {
+    controllers.newTripModalCtrl = function ($scope, $modalInstance, $http, CONFIG) {
 
         $scope.TripName;
 
         $scope.ok = function () {
             
             jQuery.ajax({
-                url: "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
+                url: CONFIG.SAVE_TRIP_URL,
                 type: "POST",
                 data: { isNewTrip: 1, tripName: $scope.TripName }
             }).done(function successCallback(response) {
                 
-                window.location.href = "/RoutePlanner/Home/Index?tripId=" + response;
+                window.location.href = CONFIG.TRIP_URL + response;
 
             });
 

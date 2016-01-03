@@ -212,15 +212,13 @@
     <Content Include="Scripts\custom\travel-tool\filters.js" />
     <Content Include="Scripts\custom\google-maps.js" />
     <Content Include="Scripts\custom\lodash.js" />
-    <Content Include="Scripts\custom\my-trips\templates\trip.html" />
+    <Content Include="angularjs-templates\my-trips\trip.html" />
     <Content Include="Scripts\custom\shared\controllerFactory.js" />
     <Content Include="Scripts\custom\my-trips\myTripsApp.js" />
     <Content Include="Scripts\custom\travel-tool\polyPathService.js" />
-    <Content Include="Scripts\custom\shared\templates\newTripModal.html" />
+    <Content Include="angularjs-templates\shared\newTripModal.html" />
     <Content Include="Scripts\custom\shared\serviceFactory.js" />
     <Content Include="Scripts\custom\angular-thinkbackpacking.js" />
-    <Content Include="Scripts\custom\ui-bootstrap-custom-tpls-0.10.0.min.js" />
-    <Content Include="Scripts\custom\ui-bootstrap-custom-tpls-0.14.1.min.js" />
     <Content Include="Scripts\custom\ui-bootstrap-custom-tpls-0.14.3.min.js" />
     <Content Include="Scripts\custom\Utils.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -277,7 +275,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\AngularMaps.cshtml" />
-    <Content Include="Slim\index.php" />
+    <Content Include="PHP\Slim\index.php" />
     <Content Include="Views\Home\MyTrips.cshtml" />
     <Content Include="Views\Home\AngularDatepicker.cshtml" />
     <Content Include="Views\Home\BootstrapAngularDatepicker.cshtml" />

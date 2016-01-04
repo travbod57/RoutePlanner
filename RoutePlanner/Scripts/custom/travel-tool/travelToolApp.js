@@ -157,7 +157,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 stopNumberSpanClass: ''
             });
 
-            CreatePolyLine($scope.ChosenLocation);
+            CreatePolyLine($scope.Route.length - 1);
 
             $scope.UpdateStopNumbering();
 
@@ -253,11 +253,11 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
                 $scope.Route[i].transportId = parseInt($scope.Route[i].transportId);
 
-                if ($scope.Route.length > 1) {
-                    CreatePolyLine($scope.Route[i].location);
-                }
+                //if ($scope.Route.length > 1) {
+                    CreatePolyLine(i);
+                //}
             }
-
+            
         }, function errorCallback(response) {
 
             // IF NOT AUTHENTICATED by WordPress then use Session Storage
@@ -281,11 +281,11 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         });
     }
 
-    function CreatePolyLine(location) {
+    function CreatePolyLine(index) {
 
-        if ($scope.Route.length > 1) {
-            var prevRoute = $scope.Route[$scope.Route.length - 2];
-            PolyPathService.CreateNewPolyLine($scope.PolyLines, location, prevRoute);
+        if (index > 0) {
+            var prevRoute = $scope.Route[index - 1];
+            PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.Route[index].location, prevRoute);
         }
     }
 

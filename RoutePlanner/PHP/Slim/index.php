@@ -50,11 +50,13 @@ $env = $app->environment();
     
     try
     {
-		$tripName = $_GET['tripName'];
+		$tripName = trim(stripslashes($_GET['tripName']));
+		
+		$app->log->INFO($tripName);
 		
 		$userId = get_current_user_id();
 		
-		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
 		$sql = "SELECT * FROM trip WHERE UserId = :userId AND Name = :tripName";
 		$statement = $pdo->prepare($sql);		
@@ -102,7 +104,7 @@ $env = $app->environment();
     {
 		$searchTerm = '%' . $_GET['searchTerm'] . '%';
 			
-		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
 		$sql = "SELECT * FROM location WHERE Place LIKE :searchTerm LIMIT 0,8";
 		$statement = $pdo->prepare($sql);		
@@ -127,10 +129,10 @@ $env = $app->environment();
     try
     {
 		$userId = get_current_user_id();
-			
-		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
-
-		$sql = "SELECT * FROM trip WHERE UserId = :userId ORDER BY ModifiedDate DESC";
+			$app->log->INFO("userId: " . $userId);
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+		
+		$sql = "SELECT T.*, C.Symbol FROM trip T LEFT JOIN currency C ON T.CurrencyID = C.ID WHERE T.UserId = :userId ORDER BY ModifiedDate DESC";
 		
 		$statement = $pdo->prepare($sql);		
 		$statement->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -153,7 +155,7 @@ $app->post(
     '/deleteTrip',
     function () use ($app, $env) {
 	
-		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
 		$tripId = $_POST['tripId'];
 		$userId = get_current_user_id();
@@ -201,7 +203,7 @@ $app->post(
     function () use ($app, $env) {
 	
 		date_default_timezone_set('Europe/London');
-		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 					
 		$isNewTrip = $_POST['isNewTrip'];
 		
@@ -363,7 +365,7 @@ $app->post(
 		$userId = get_current_user_id();
 		$tripId = $_GET['tripId'];
 		
-		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
 		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
@@ -444,7 +446,7 @@ $app->post(
 		
 		$get_transport_sql = "SELECT Id, Name FROM Transport";
 			
-		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password']);
+		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		
 		$stmt[0] = $pdo->prepare($get_transport_sql);

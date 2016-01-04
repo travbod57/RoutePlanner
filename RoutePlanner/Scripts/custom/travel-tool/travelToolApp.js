@@ -13,7 +13,8 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/newTripModal.html",
     "TRIP_URL": "/RoutePlanner/Home/Index?tripId=",
     "LOGIN_URL": "http://localhost:81/wp_thinkbackpacking/login",
-    "REGISTER_URL": "http://localhost:81/wp_thinkbackpacking/register"
+    "REGISTER_URL": "http://localhost:81/wp_thinkbackpacking/register",
+    "MY_TRIPS_URL": "http://localhost:81/RoutePlanner/MyTrips"
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -253,9 +254,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
                 $scope.Route[i].transportId = parseInt($scope.Route[i].transportId);
 
-                //if ($scope.Route.length > 1) {
-                    CreatePolyLine(i);
-                //}
+                CreatePolyLine(i);
             }
             
         }, function errorCallback(response) {
@@ -263,19 +262,24 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             // IF NOT AUTHENTICATED by WordPress then use Session Storage
             if (response.status == '401') {
 
-                var sessionData = $scope.$storage['trip'];
-
-                // If there is data in session storage then fetch it
-                if (sessionData != undefined) {
-                    $scope.Route = angular.fromJson(sessionData.Route);
-                    $scope.PolyLines = angular.fromJson(sessionData.PolyLines);
-                    $scope.StartDate = sessionData.startDate;
-                    $scope.SelectedCurrencyDropdownValue = sessionData.SelectedCurrencyDropdownValue;
+                if (response.data[0] == "Trip_Unauthorised") {
+                    $window.location.href = CONFIG.MY_TRIPS_URL;
                 }
-                else
-                {
-                    // load page for first time use
-                    $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
+                else if (response.data[0] == "WP_Unauthorised") {
+
+                    var sessionData = $scope.$storage['trip'];
+
+                    // If there is data in session storage then fetch it
+                    if (sessionData != undefined) {
+                        $scope.Route = angular.fromJson(sessionData.Route);
+                        $scope.PolyLines = angular.fromJson(sessionData.PolyLines);
+                        $scope.StartDate = sessionData.startDate;
+                        $scope.SelectedCurrencyDropdownValue = sessionData.SelectedCurrencyDropdownValue;
+                    }
+                    else {
+                        // load page for first time use
+                        $scope.SelectedCurrencyDropdownValue = $scope.CurrencyDropdownValues[0];
+                    }
                 }
             }
         });

@@ -28,6 +28,25 @@
 		text-shadow: 0 2px white, 0 3px #777;
 	}
 
+    .sort-arrows {
+	    float: right;
+		font-size: 18px;
+		line-height: 1;
+		color: #000;
+		text-shadow: 0 1px 0 #fff;
+		opacity: .2;
+		margin-top: 2px;
+		margin-right: 5px;
+	}
+	
+	.sort-arrows:hover {
+	    color: #000;
+		text-decoration: none;
+		cursor: -webkit-grab; 
+		cursor: -moz-grab;
+		opacity: .5;
+	}
+
     /* End General */
 
     /* Google Map */

@@ -17,6 +17,17 @@
         cursor: pointer;
     }
 
+    h1#tripName  {
+		font-family: 'Passion One', cursive;
+		margin-bottom: 18px;
+		color: #343434;
+		font-weight: normal;  
+		font-size: 36px;
+		line-height: 42px;
+		text-transform: uppercase;
+		text-shadow: 0 2px white, 0 3px #777;
+	}
+
     /* End General */
 
     /* Google Map */

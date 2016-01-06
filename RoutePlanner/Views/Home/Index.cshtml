@@ -124,9 +124,9 @@
                             <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                             <td style="width: 300px;">
                                 <div class="btn-group">
-                                    <label class="btn btn-primary" ng-model="item.transportId" uib-btn-radio="1" ng-change="OnChangeTransport(this)" uncheckable>Air</label>
-                                    <label class="btn btn-primary" ng-model="item.transportId" uib-btn-radio="2" ng-change="OnChangeTransport(this)" uncheckable>Land</label>
-                                    <label class="btn btn-primary" ng-model="item.transportId" uib-btn-radio="3" ng-change="OnChangeTransport(this)" uncheckable>Sea</label>
+                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="1" ng-change="OnChangeTransport(this)">Air</label>
+                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="2" ng-change="OnChangeTransport(this)">Land</label>
+                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="3" ng-change="OnChangeTransport(this)">Sea</label>
                                 </div>
                             </td>
                             <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i><i class="glyphicon glyphicon-sort sort-arrows"></i>{{ item.departureDate}}</td>
@@ -169,6 +169,33 @@
     </button>
 
     <script type="text/ng-template" id="loginModal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Please login</h4>
+        </div>
+        <div class="modal-body">
+            You have tried to access a trip but you are not logged in.
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" ng-click="Login()">Login</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="tripUnauthorisedModal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Unauthorised</h4>
+        </div>
+        <div class="modal-body">
+            You are not authorised to view this trip.
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" ng-click="MyTrips()">My Trips</button>
+            <button type="button" class="btn btn-primary" ng-click="NewTrip()">New Trip</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="loginOrRegisterModal.html">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel">Please login or register</h4>

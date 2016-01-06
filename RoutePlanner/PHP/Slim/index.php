@@ -365,6 +365,7 @@ $app->post(
 		$userId = get_current_user_id();
 		$tripId = $_GET['tripId'];
 		
+
 		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
@@ -404,10 +405,22 @@ $app->post(
 			
 			$json = json_encode($tripResult);
 		}
-		else
+		else if (!$wp_authenticated && $tripId != "")
 		{
 			$app->response->setStatus(401);
-			$unauthArray = array("You are not authorised");
+			$unauthArray = array("WP_Unauthorised");
+			$json = json_encode($unauthArray);
+		}
+		else if ($tripId == "")
+		{
+			$app->response->setStatus(401);
+			$unauthArray = array("TripId_Not_Provided");
+			$json = json_encode($unauthArray);
+		}
+		else if (!$trip_authenticated)
+		{
+			$app->response->setStatus(401);
+			$unauthArray = array("Trip_Unauthorised");
 			$json = json_encode($unauthArray);
 		}
 		
@@ -580,13 +593,14 @@ $app->post(
 		//$mail->Username = "alexjwilliams57@gmail.com";
 		//$mail->Password = "eae.b-hJ";
 		$mail->Host = "thinkbackpacking.com";
-		$mail->Username = "contact@thinkbackpacking.com";
+		$mail->Username = "alex@thinkbackpacking.com";
 		$mail->Password = "Dinosaur89";
+		$mail->AddReplyTo($email, $name);
 		$mail->SetFrom("contact@thinkbackpacking.com", 'thinkbackpacking');
 		$mail->Subject = "Contact from " . $name;
 		$mail->Body = "$html";
 		$mail->AddAddress($to);
-                $mail->AddBCC($bccAddress);
+        $mail->AddBCC($bccAddress);
 		
 		if(!$mail->Send())
 			echo "Mailer Error: " . $mail->ErrorInfo;

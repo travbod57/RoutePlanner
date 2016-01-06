@@ -262,10 +262,31 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             // IF NOT AUTHENTICATED by WordPress then use Session Storage
             if (response.status == '401') {
 
+                // Authorised but not for the trip
                 if (response.data[0] == "Trip_Unauthorised") {
-                    $window.location.href = CONFIG.MY_TRIPS_URL;
+                    
+                    var tripUnauthorisedModalInstance = OpenTripUnauthorisedModal('lg');
+
+                    tripUnauthorisedModalInstance.result.then(function () {
+
+                        $scope.NewTrip('lg', true);
+
+                    }, function () {
+                        // Cancel and don't save trip
+                    });
+
+                } // unauthorised but trying to get to a valid trip URL
+                else if (response.data[0] == "WP_Unauthorised" && _trip.id != "") {
+
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'loginModal.html',
+                        controller: 'loginModalCtrl',
+                        backdrop: 'static',
+                        size: 'lg'
+                    });
                 }
-                else if (response.data[0] == "WP_Unauthorised") {
+                else if (response.data[0] == "WP_Unauthorised" || response.data[0] == "TripId_Not_Provided") {
 
                     var sessionData = $scope.$storage['trip'];
 
@@ -552,8 +573,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             var modalInstance = $uibModal.open({
                 animation: true,
                 backdrop: 'static',
-                templateUrl: 'loginModal.html',
-                controller: 'loginModalCtrl',
+                templateUrl: 'loginOrRegisterModal.html',
+                controller: 'loginOrRegisterModalCtrl',
                 size: size
             });
             
@@ -594,6 +615,20 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             }
         });
     }
+
+    function OpenTripUnauthorisedModal(size) {
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'tripUnauthorisedModal.html',
+            controller: 'tripUnauthorisedModalCtrl',
+            backdrop: 'static',
+            size: size
+        });
+
+        return modalInstance;
+    }
+
 });
 
 // to do: change to $http service
@@ -710,7 +745,7 @@ travelToolApp.controller('SaveTripModalCtrl', function ($scope, $uibModalInstanc
     };
 });
 
-travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
+travelToolApp.controller('loginOrRegisterModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
 
     $scope.Login = function () {
         $window.location.href = CONFIG.LOGIN_URL;
@@ -724,6 +759,25 @@ travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalI
         $uibModalInstance.dismiss('cancel');
     };
 });
+
+travelToolApp.controller('tripUnauthorisedModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
+
+    $scope.MyTrips = function () {
+        $window.location.href = CONFIG.MY_TRIPS_URL;
+    };
+
+    $scope.NewTrip = function () {
+        $uibModalInstance.close();
+    };
+});
+
+travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
+
+    $scope.Login = function () {
+        $window.location.href = CONFIG.LOGIN_URL;
+    };
+});
+
 
 
 travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];

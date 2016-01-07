@@ -265,15 +265,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 // Authorised but not for the trip
                 if (response.data[0] == "Trip_Unauthorised") {
                     
-                    var tripUnauthorisedModalInstance = OpenTripUnauthorisedModal('lg');
-
-                    tripUnauthorisedModalInstance.result.then(function () {
-
-                        $scope.NewTrip('lg', true);
-
-                    }, function () {
-                        // Cancel and don't save trip
-                    });
+                    OpenTripUnauthorisedModal('lg');
 
                 } // unauthorised but trying to get to a valid trip URL
                 else if (response.data[0] == "WP_Unauthorised" && _trip.id != "") {
@@ -625,8 +617,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             backdrop: 'static',
             size: size
         });
-
-        return modalInstance;
     }
 
 });
@@ -766,9 +756,6 @@ travelToolApp.controller('tripUnauthorisedModalCtrl', function ($scope, $window,
         $window.location.href = CONFIG.MY_TRIPS_URL;
     };
 
-    $scope.NewTrip = function () {
-        $uibModalInstance.close();
-    };
 });
 
 travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {

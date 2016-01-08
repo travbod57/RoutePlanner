@@ -15,10 +15,20 @@ myTripsApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, CONFIG, _) {
+myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $sessionStorage, CONFIG, _) {
+
+    $controller('NewTripCtrl', { $scope: $scope });
 
     $http.get(CONFIG.GET_MY_TRIPS_URL)
     .then(function successCallback(response) {
+        
+        $scope.$storage = $sessionStorage;
+
+        var trip = $scope.$storage['trip'];
+        
+        if (trip != undefined) {
+            response.data.splice(0, 0, { Id: trip.id, Name: "", StartDate: trip.StartDate, EndDate: trip.EndDate, TotalCost: trip.TotalCost });
+        }    
 
         $scope.MyTrips = response.data;
 

@@ -284,10 +284,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
                     // If there is data in session storage then fetch it
                     if (sessionData != undefined) {
-                        $scope.Route = angular.fromJson(sessionData.Route);
-                        $scope.PolyLines = angular.fromJson(sessionData.PolyLines);
-                        $scope.StartDate = sessionData.startDate;
-                        $scope.SelectedCurrencyDropdownValue = sessionData.SelectedCurrencyDropdownValue;
+                        _loadTripFromSessionStorage(sessionData);
                     }
                     else {
                         // load page for first time use
@@ -304,6 +301,13 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             var prevRoute = $scope.Route[index - 1];
             PolyPathService.CreateNewPolyLine($scope.PolyLines, $scope.Route[index].location, prevRoute);
         }
+    }
+
+    function _loadTripFromSessionStorage(sessionData) {
+        $scope.Route = angular.fromJson(sessionData.Route);
+        $scope.PolyLines = angular.fromJson(sessionData.PolyLines);
+        $scope.StartDate = sessionData.startDate;
+        $scope.SelectedCurrencyDropdownValue = sessionData.SelectedCurrencyDropdownValue;
     }
 
     /* DATE PICKER */

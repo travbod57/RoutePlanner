@@ -275,6 +275,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                         templateUrl: 'loginModal.html',
                         controller: 'loginModalCtrl',
                         backdrop: 'static',
+                        keyboard: false,
                         size: 'lg'
                     });
                 }
@@ -507,6 +508,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             templateUrl: 'sendEmailModal.html',
             controller: 'SendEmailModalCtrl',
             backdrop: 'static',
+            keyboard: false,
             size: size,
             resolve: {
                 route: function () {
@@ -569,6 +571,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             var modalInstance = $uibModal.open({
                 animation: true,
                 backdrop: 'static',
+                keyboard: false,
                 templateUrl: 'loginOrRegisterModal.html',
                 controller: 'loginOrRegisterModalCtrl',
                 size: size
@@ -584,6 +587,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             templateUrl: 'saveTripModal.html',
             controller: 'SaveTripModalCtrl',
             backdrop: 'static',
+            keyboard: false,
             size: size,
             resolve: {
                 saveDataRemotely: function () {
@@ -603,6 +607,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             templateUrl: 'routeLengthExceededModalTemplate.html',
             controller: 'routeLengthExceededModalCtrl',
             backdrop: 'static',
+            keyboard: false,
             size: size,
             resolve: {
                 maxLocations: function () {
@@ -619,6 +624,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             templateUrl: 'tripUnauthorisedModal.html',
             controller: 'tripUnauthorisedModalCtrl',
             backdrop: 'static',
+            keyboard: false,
             size: size
         });
     }

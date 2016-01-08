@@ -9,6 +9,7 @@
                 templateUrl: CONFIG.TMP_NEW_TRIP,
                 controller: 'NewTripModalCtrl',
                 backdrop: 'static',
+                keyboard: false,
                 size: size,
                 resolve: {
                         saveTripAfterNameGiven: function () {

@@ -26,7 +26,14 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
 
 // Register Services
 
+travelTool.shared.services.utils.$inject = ['$sessionStorage'];
 travelToolApp.service('utilService', travelTool.shared.services.utils);
+
+travelTool.shared.services.data.$inject = ['$http', 'CONFIG'];
+travelToolApp.service('dataService', travelTool.shared.services.data);
+
+travelTool.shared.services.modals.$inject = ['$http', '$uibModal', 'CONFIG'];
+travelToolApp.service('modalsService', travelTool.shared.services.modals);
 
 travelTool.shared.services.authentication.$inject = ['$http', 'CONFIG'];
 travelToolApp.service('authenticationService', travelTool.shared.services.authentication);
@@ -36,9 +43,7 @@ travelToolApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService) {
-
-    $controller('NewTripCtrl', { $scope: $scope });
+travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService, modalsService) {
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -105,28 +110,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         $scope.$storage['trip'] = _trip;
 
         $scope.ShowLoginDialog = true;
-    }
-
-    function _saveDataRemotely() {
-
-        $scope.$storage['trip'] = undefined;
-
-        _trip.StartDate = $scope.StartDate;
-        _trip.CurrencyId = $scope.SelectedCurrencyDropdownValue.id;
-
-        return jQuery.ajax({
-            url: CONFIG.SAVE_TRIP_URL,
-            type: "POST",
-            dataType: "text",
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            transformRequest: function (obj) {
-                var str = [];
-                for (var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                return str.join("&");
-            },
-            data: { routeData: angular.toJson($scope.Route), tripData: angular.toJson(_trip), isNewTrip: _trip.Id != 0 ? 0 : 1 }
-        });
     }
 
     $scope.Choose = function () {
@@ -225,7 +208,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function InitialiseTrip() {
 
-        _trip.id = utilService.getQueryStringParameterByName('tripId');
+        _trip.Id = utilService.getQueryStringParameterByName('tripId');
 
         // TODO: use AJAX call here
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
@@ -235,7 +218,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         $http.get(CONFIG.GET_TRIP_URL, {
             params: {
-                tripId: _trip.id
+                tripId: _trip.Id
             }
         }).then(function (response) {
 
@@ -268,7 +251,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                     OpenTripUnauthorisedModal('lg');
 
                 } // unauthorised but trying to get to a valid trip URL
-                else if (response.data[0] == "WP_Unauthorised" && _trip.id != "") {
+                else if (response.data[0] == "WP_Unauthorised" && _trip.Id != "") {
 
                     var modalInstance = $uibModal.open({
                         animation: true,
@@ -307,9 +290,16 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     function _loadTripFromSessionStorage(sessionData) {
         $scope.Route = angular.fromJson(sessionData.Route);
         $scope.PolyLines = angular.fromJson(sessionData.PolyLines);
-        $scope.StartDate = sessionData.startDate;
+        $scope.StartDate = sessionData.StartDate;
         $scope.SelectedCurrencyDropdownValue = sessionData.SelectedCurrencyDropdownValue;
     }
+
+    function _buildTripForTransfer() {
+
+        _trip.SelectedCurrencyDropdownValue = $scope.SelectedCurrencyDropdownValue;
+        _trip.StartDate = $scope.StartDate;
+        _trip.Route = $scope.Route;
+    };
 
     /* DATE PICKER */
 
@@ -499,6 +489,18 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         $scope.PolyLines = [];
     };
 
+    $scope.NewTrip = function (size, saveTripOnOk) {
+
+        var trip = {};
+        trip.Id = 0;
+
+        modalsService.newTrip(size, saveTripOnOk, trip);
+
+        // $scope.$storage['trip'] = undefined;
+
+
+    };
+
     /* MODAL */
 
     $scope.Email = function (size) {
@@ -541,24 +543,36 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         if (_isAuthenticated) {
 
-            var hasTripName = $scope.TripName != null;
-
-            if (hasTripName) {
+            if (_trip.Id != undefined) {
 
                 // if trip name exists and authenticated, save to remote storage
-                OpenSaveTripModal(size);
+                _buildTripForTransfer();
+
+                modalsService.saveTrip(size, _trip);
             }
             else {
 
                 // if trip name DOES NOT exist and authenticated, ASK for trip name THEN SAVE to remote storage
-                var newTripModalInstance = $scope.NewTrip(size, true);
+                // when doming from trip planner info page????
 
-                newTripModalInstance.result.then(function () {
+                _trip.Id = 0;
+                _trip.SessionStorage = 1;
+                _buildTripForTransfer();
 
-                    OpenSaveTripModal(size);
+                var newTripModalInstance = modalsService.newTrip(size, false, _trip);
+
+                newTripModalInstance.result.then(function (tripName) {
+
+                    _trip.Name = tripName;
+                    
+                    var saveTripModalInstance = modalsService.saveTrip(size, _trip);
+
+                    saveTripModalInstance.result.then(function (trip) {
+                        window.location.href = CONFIG.TRIP_URL + trip.Id;
+                    });
 
                 }, function () {
-                    // Cancel and don't save trip
+                    // Cancel and no new trip or transfer
                 });
             }
         }
@@ -579,26 +593,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             
         }  
     };
-
-    function OpenSaveTripModal(size) {
-
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'saveTripModal.html',
-            controller: 'SaveTripModalCtrl',
-            backdrop: 'static',
-            keyboard: false,
-            size: size,
-            resolve: {
-                saveDataRemotely: function () {
-                    return _saveDataRemotely;
-                },
-                isAuthenticated: function () {
-                    return authenticationService.isAuthenticated;
-                }
-            }
-        });
-    }
 
     function OpenRouteLengthExceeded(size) {
 
@@ -691,60 +685,6 @@ travelToolApp.controller('routeLengthExceededModalCtrl', function ($scope, $uibM
 
 });
 
-travelToolApp.controller('SaveTripModalCtrl', function ($scope, $uibModalInstance, saveDataRemotely, isAuthenticated) {
-
-    var progressBarTypes = ['danger', 'info', 'warning', 'success'];
-    var isUserLoggedIn = isAuthenticated();
-
-    isUserLoggedIn.then(function (response) {
-
-        if (response.data == 1) {
-
-            $scope.type = progressBarTypes[1];
-            $scope.showProgressBar = true;
-            $scope.title = "Saving trip ...";
-
-            var promise = saveDataRemotely();
-
-            promise.done(function () {
-                $scope.type = progressBarTypes[3];
-                $scope.title = "Trip saved successfully";
-                $scope.information = "You can now continue adding more locations";
-            }).
-            fail(function (jqXHR, textStatus, error) {
-                $scope.title = "Trip failed to save";
-                $scope.information = "Please check your connectivity or try again later.";
-                $scope.type = progressBarTypes[0];
-            })
-            .then(function () {
-
-                $scope.$apply(function () {
-                    $scope.showProgressBar = false;
-                    $scope.showInformation = true;
-                    $scope.showOkBtn = true;
-                });
-
-            });
-        }
-
-    }, function errorCallback(response) {
-        $scope.title = "Trip failed to save";
-        $scope.information = "We were unable to determine whether you are logged. Please check your connectivity or try again later.";
-        $scope.type = progressBarTypes[0];
-    });
-
-    $scope.title;
-    $scope.information;
-    $scope.showProgressBar = false;
-    $scope.showInformation = false;
-    $scope.type = false;
-    $scope.showOkBtn = false;
-
-    $scope.ok = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-});
-
 travelToolApp.controller('loginOrRegisterModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
 
     $scope.Login = function () {
@@ -775,13 +715,11 @@ travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalI
     };
 });
 
-
-
-travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];
-travelToolApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
-
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', 'CONFIG'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
+
+travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'authenticationService', 'dataService', 'trip'];
+travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
 // Register Directives
 

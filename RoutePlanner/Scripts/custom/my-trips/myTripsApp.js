@@ -1,4 +1,4 @@
-﻿var myTripsApp = angular.module('MyTrips', ['ui.bootstrap'])
+﻿var myTripsApp = angular.module('MyTrips', ['ui.bootstrap', 'ngStorage'])
 .constant('CONFIG', {
     "GET_MY_TRIPS_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getMyTrips",
     "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
@@ -10,18 +10,26 @@
 
 // Register Services
 
+travelTool.shared.services.utils.$inject = ['$sessionStorage'];
+myTripsApp.service('utilService', travelTool.shared.services.utils);
+
+travelTool.shared.services.data.$inject = ['$http', 'CONFIG'];
+myTripsApp.service('dataService', travelTool.shared.services.data);
+
+travelTool.shared.services.modals.$inject = ['$http', '$uibModal', 'CONFIG'];
+myTripsApp.service('modalsService', travelTool.shared.services.modals);
+
 travelTool.shared.services.underscore.$inject = ['$window'];
 myTripsApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $sessionStorage, CONFIG, _) {
-
-    $controller('NewTripCtrl', { $scope: $scope });
+myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $sessionStorage, utilService, modalsService, CONFIG, _) {
 
     $http.get(CONFIG.GET_MY_TRIPS_URL)
     .then(function successCallback(response) {
         
+        // TODO : is this necessary
         $scope.$storage = $sessionStorage;
 
         var trip = $scope.$storage['trip'];
@@ -76,12 +84,15 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
 
         });
     };
+
+    $scope.NewTrip = function (size, saveTripOnOk) {
+
+        var trip = utilService.transformSessionTrip();
+        modalsService.newTrip(size, saveTripOnOk, trip);
+    };
 });
 
-travelTool.shared.controllers.newTripCtrl.$inject = ['$scope', '$uibModal', 'CONFIG'];
-myTripsApp.controller('NewTripCtrl', travelTool.shared.controllers.newTripCtrl);
-
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', 'CONFIG'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
 myTripsApp.controller('deleteTripModalCtrl', function ($scope, $uibModalInstance, yes) {

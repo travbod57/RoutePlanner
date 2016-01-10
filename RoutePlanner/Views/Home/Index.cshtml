@@ -124,9 +124,9 @@
                             <td style="width: 100px;">{{ item.totalCost | currency: SelectedCurrencyDropdownValue.symbol }}</td>
                             <td style="width: 300px;">
                                 <div class="btn-group">
-                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="1" ng-change="OnChangeTransport(this)">Air</label>
-                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="2" ng-change="OnChangeTransport(this)">Land</label>
-                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="3" ng-change="OnChangeTransport(this)">Sea</label>
+                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="1" ng-change="OnChangeTransport(item, $index)">Air</label>
+                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="2" ng-change="OnChangeTransport(item, $index)">Land</label>
+                                    <label class="btn btn-primary btn-sm" ng-model="item.transportId" uib-btn-radio="3" ng-change="OnChangeTransport(item, $index)">Sea</label>
                                 </div>
                             </td>
                             <td style="width: 100px;"><i class="glyphicon glyphicon-remove-sign close" ng-click="Remove(item)"></i><i class="glyphicon glyphicon-sort sort-arrows"></i>{{ item.departureDate}}</td>

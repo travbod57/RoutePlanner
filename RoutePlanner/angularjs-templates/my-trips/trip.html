@@ -2,8 +2,8 @@
 <div id="{{ trip.Id }}">
 
     <h4 class="listed-item-header">
-        <span ng-if="trip.Id == ''"><a href='javascript:void(0);' ng-click="NewTrip('lg', true)">Create this trip</a></span>
-        <span ng-if="trip.Id != ''"><a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a></span>
+        <span ng-if="trip.Id == undefined"><a href='javascript:void(0);' ng-click="NewTrip('lg', true)">Create this trip</a></span>
+        <span ng-if="trip.Id != undefined"><a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a></span>
 
         <!--<a href='planning/round-the-world-trip-planning-map?trip={{ trip.Id }}'>{{ trip.Name }}</a>-->
     </h4>

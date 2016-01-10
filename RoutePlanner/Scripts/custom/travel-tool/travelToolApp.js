@@ -296,7 +296,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function _buildTripForTransfer() {
 
-        _trip.SelectedCurrencyDropdownValue = $scope.SelectedCurrencyDropdownValue;
+        _trip.CurrencyId = $scope.SelectedCurrencyDropdownValue.id;
         _trip.StartDate = $scope.StartDate;
         _trip.Route = $scope.Route;
     };
@@ -470,17 +470,12 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         }
     };
 
-    $scope.OnChangeTransport = function (val) {
-
-        if (val.item.stop == 'Start')
-            index = 0;
-        else if (val.item.stop != 'End')
-            index = val.item.stop;
+    $scope.OnChangeTransport = function (routeItem, index) {
 
         if ($scope.PolyLines.length > index) {
             var polyPath = $scope.PolyLines[index];
 
-            PolyPathService.UpdateStrokeColour(val.item.transportId, polyPath);
+            PolyPathService.UpdateStrokeColour(routeItem.transportId, polyPath);
         }
     }
 

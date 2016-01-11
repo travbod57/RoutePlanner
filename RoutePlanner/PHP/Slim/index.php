@@ -347,7 +347,7 @@ $app->post(
 				$response = $app->response();
 				$response->headers->set('Content-Type', 'application/json');
 				$response->headers->set('Access-Control-Allow-Origin', '*');
-				$response->body("Success");
+				$response->body($tripId);
 			}
 			catch(PDOException $e)
 			{

@@ -52,7 +52,7 @@ $env = $app->environment();
     {
 		$tripName = trim(stripslashes($_GET['tripName']));
 	
-		$userId = 1; //get_current_user_id();
+		$userId = get_current_user_id();
 		
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
@@ -126,7 +126,7 @@ $env = $app->environment();
     
     try
     {
-		$userId = 1; //get_current_user_id();
+		$userId = get_current_user_id();
 
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
@@ -156,7 +156,7 @@ $app->post(
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
 		$tripId = $_POST['tripId'];
-		$userId = 1; //get_current_user_id();
+		$userId = get_current_user_id();
 		$dateTimeNow = date("Y-m-d H:m:s");
 		
 		$delete_route_sql = "UPDATE route SET DeletedDate = :deletedDate WHERE TripId = :tripId";
@@ -243,7 +243,7 @@ $app->post(
 				$tripId = $pdo->lastInsertId();
 				
 				// insert the Route for the Trip using hte Id of the Trip just added
-				prepareRoute($pdo, $stmt, $sqlStatementCount, $tripId, $route);
+				prepareRoute($pdo, $stmt, $sqlStatementCount, $tripId, $route, $dateTimeNow);
 				
 				$stmtLength = count($stmt);
 				
@@ -309,6 +309,7 @@ $app->post(
 			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$tripId = $trip->Id;
+			$dateTimeNow = date("Y-m-d H:m:s");	
 				
 			$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
 			$update_trip_sql = "UPDATE Trip SET StartDate = :startDate, EndDate = :endDate, NumberOfStops = :numberOfStops, NumberOfNights = :numberOfNights, TotalCost = :totalCost, CurrencyId = :currencyId, ModifiedDate = :modifiedDate WHERE Id = :tripId";
@@ -325,10 +326,10 @@ $app->post(
 			$stmt[$sqlStatementCount]->bindValue(':numberOfNights', $trip->NumberOfNights, PDO::PARAM_INT);
 			$stmt[$sqlStatementCount]->bindValue(':totalCost', $trip->TotalCost);
 			$stmt[$sqlStatementCount]->bindValue(':currencyId', $trip->CurrencyId, PDO::PARAM_INT);
-			$stmt[$sqlStatementCount]->bindValue(':modifiedDate', date("Y-m-d H:m:s"), PDO::PARAM_STR);
+			$stmt[$sqlStatementCount]->bindValue(':modifiedDate', $dateTimeNow, PDO::PARAM_STR);
 			$stmt[$sqlStatementCount]->bindValue(':tripId', $trip->Id, PDO::PARAM_INT);
 			
-			prepareRoute($pdo, $stmt, $sqlStatementCount, $tripId, $route);
+			prepareRoute($pdo, $stmt, $sqlStatementCount, $tripId, $route, $dateTimeNow);
 
 			$pdo->beginTransaction();
 
@@ -357,10 +358,10 @@ $app->post(
     }
 ); 
 
-function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route) {
+function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route, $dateTimeNow) {
 
 	$routeLength = count($route);
-	$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, DailyCost, TotalCost, TransportId) VALUES (:tripId, :locationId, :stopNumber, :nights, :dailyCost, :totalCost, :transportId)";
+	$add_route_sql = "INSERT INTO route (TripId, LocationId, StopNumber, Nights, DailyCost, TotalCost, TransportId, CreatedDate) VALUES (:tripId, :locationId, :stopNumber, :nights, :dailyCost, :totalCost, :transportId, :createdDate)";
 	
 	for ($x = 0; $x < $routeLength; $x++) {
 				
@@ -402,6 +403,7 @@ function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route) {
 		$stmt[$sqlStatementCount]->bindValue(':dailyCost', $dailyCost);
 		$stmt[$sqlStatementCount]->bindValue(':totalCost', $totalCost);
 		$stmt[$sqlStatementCount]->bindValue(':transportId', $transportId, PDO::PARAM_INT);	
+		$stmt[$sqlStatementCount]->bindValue(':createdDate', $dateTimeNow, PDO::PARAM_STR);
 	}
 }
 

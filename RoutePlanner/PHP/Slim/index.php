@@ -126,8 +126,8 @@ $env = $app->environment();
     
     try
     {
-		$userId = get_current_user_id();
-			$app->log->INFO("userId: " . $userId);
+		$userId = 1; //get_current_user_id();
+
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
 		$sql = "SELECT T.*, C.Symbol FROM trip T LEFT JOIN currency C ON T.CurrencyID = C.ID WHERE T.UserId = :userId ORDER BY ModifiedDate DESC";
@@ -156,17 +156,20 @@ $app->post(
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
 		$tripId = $_POST['tripId'];
-		$userId = get_current_user_id();
-	
-		$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
-		$delete_trip_sql = "DELETE FROM trip WHERE Id = :tripId AND UserId = :userId";
+		$userId = 1; //get_current_user_id();
+		$dateTimeNow = date("Y-m-d H:m:s");
+		
+		$delete_route_sql = "UPDATE route SET DeletedDate = :deletedDate WHERE TripId = :tripId";
+		$delete_trip_sql = "UPDATE trip SET DeletedDate = :deletedDate WHERE Id = :tripId AND UserId = :userId";
 		
 		$stmt[0] = $pdo->prepare($delete_route_sql);
 		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		$stmt[0]->bindValue(':deletedDate', $dateTimeNow, PDO::PARAM_STR);
 		
 		$stmt[1] = $pdo->prepare($delete_trip_sql);
 		$stmt[1]->bindValue(':userId', $userId, PDO::PARAM_INT);
 		$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		$stmt[1]->bindValue(':deletedDate', $dateTimeNow, PDO::PARAM_STR);
 		
 		$app->log->INFO("UserId: " . $userId . ", tripId: " . $tripId);
 	

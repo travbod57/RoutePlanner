@@ -10,17 +10,17 @@
 
 // Register Services
 
+travelTool.shared.services.underscore.$inject = ['$window'];
+myTripsApp.service('_', travelTool.shared.services.underscore);
+
 travelTool.shared.services.utils.$inject = ['$sessionStorage'];
 myTripsApp.service('utilService', travelTool.shared.services.utils);
 
-travelTool.shared.services.data.$inject = ['$http', 'CONFIG'];
+travelTool.shared.services.data.$inject = ['$http', 'CONFIG', '_'];
 myTripsApp.service('dataService', travelTool.shared.services.data);
 
 travelTool.shared.services.modals.$inject = ['$http', '$uibModal', 'CONFIG'];
 myTripsApp.service('modalsService', travelTool.shared.services.modals);
-
-travelTool.shared.services.underscore.$inject = ['$window'];
-myTripsApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
@@ -29,7 +29,6 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
     $http.get(CONFIG.GET_MY_TRIPS_URL)
     .then(function successCallback(response) {
         
-        // TODO : is this necessary
         $scope.$storage = $sessionStorage;
 
         var trip = $scope.$storage['trip'];
@@ -47,41 +46,12 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
 
     $scope.DeleteTrip = function (size, tripId) {
 
-        $uibModal.open({
-            animation: true,
-            templateUrl: 'deleteTripModalTemplate.html',
-            controller: 'deleteTripModalCtrl',
-            backdrop: 'static',
-            size: size,
-            resolve: {
-                yes: function () {
-                    return function () {
-                        deleteTrip(tripId);
-                    }
-                }
-            }
-        });
-    };
+        var deleteTripModalInstance = modalsService.deleteTrip(size, tripId);
 
-    function deleteTrip(tripId) {
-
-        jQuery.ajax({
-            url: CONFIG.DELETE_TRIP,
-            type: "POST",
-            dataType: "text",
-            data: { tripId: tripId }
-        }).done(function () {
+        deleteTripModalInstance.result.then(function () {
 
             var indexOfDeletedTrip = _.findIndex($scope.MyTrips, { Id: tripId });
-
-            $scope.$apply(function () {
-                $scope.MyTrips.splice(indexOfDeletedTrip, 1);
-            });
-
-        }).
-        fail(function (jqXHR, textStatus, error) {
-            alert('failed');
-
+            $scope.MyTrips.splice(indexOfDeletedTrip, 1);
         });
     };
 
@@ -95,17 +65,8 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
 travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
-myTripsApp.controller('deleteTripModalCtrl', function ($scope, $uibModalInstance, yes) {
-
-    $scope.yes = function () {
-        yes();
-        $uibModalInstance.dismiss('cancel');
-    };
-
-    $scope.no = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-});
+travelTool.shared.controllers.deleteTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'dataService', 'CONFIG', 'tripId'];
+myTripsApp.controller('DeleteTripModalCtrl', travelTool.shared.controllers.deleteTripModalCtrl);
 
 // Register Directives
 

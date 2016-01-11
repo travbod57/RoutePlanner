@@ -94,4 +94,33 @@
 
     };
 
+    controllers.deleteTripModalCtrl = function ($scope, $uibModalInstance, $sessionStorage, dataService, CONFIG, tripId) {
+
+        $scope.yes = function () {
+
+            var promise = dataService.deleteTrip(tripId);
+
+            if (promise == undefined) {
+
+                $scope.$storage = $sessionStorage;
+                delete $scope.$storage['trip'];
+
+                $uibModalInstance.close();
+            }
+            else {
+                promise.done(function () {
+                    $uibModalInstance.close();
+                }).
+                fail(function (jqXHR, textStatus, error) {
+                    $uibModalInstance.dismiss('cancel');
+                });
+            }
+        };
+
+        $scope.no = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
+
 })(travelTool.shared.controllers)

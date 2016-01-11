@@ -65,7 +65,7 @@
 
     };
 
-    services.data = function ($http, CONFIG) {
+    services.data = function ($http, CONFIG, _) {
 
         var _saveTripRemotely = function (trip) {
 
@@ -86,8 +86,24 @@
             });
         }
 
+        var _deleteTrip = function (tripId) {
+
+            if (tripId == undefined) {
+                return undefined;
+            }
+            else {
+                return jQuery.ajax({
+                    url: CONFIG.DELETE_TRIP,
+                    type: "POST",
+                    dataType: "text",
+                    data: { tripId: tripId }
+                });
+            }
+        };
+
         return {
-            saveTripRemotely: _saveTripRemotely
+            saveTripRemotely: _saveTripRemotely,
+            deleteTrip: _deleteTrip
         }
 
     };
@@ -135,9 +151,28 @@
             return modalInstance;
         };
 
+        var _deleteTrip = function (size, tripId) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'deleteTripModalTemplate.html',
+                controller: 'DeleteTripModalCtrl',
+                backdrop: 'static',
+                size: size,
+                resolve: {
+                    tripId: function () {
+                        return tripId;
+                    }
+                }
+            });
+
+            return modalInstance;
+        }
+
         return {
             newTrip: _newTrip,
-            saveTrip: _saveTrip
+            saveTrip: _saveTrip,
+            deleteTrip : _deleteTrip
         }
     };
 

@@ -232,6 +232,18 @@
         list-style: none;
     }
 
+    div.trip-list ul li div.trip-header-create
+    {
+        color: #953b39; 
+        font-size: 1.2em;
+    }
+    
+    div.trip-list ul li div.trip-header-created
+    {
+        color: #468847; 
+        font-size: 1.2em;
+    }
+
     div.trip-list ul li
     {
         margin-bottom: 10px;

@@ -1,12 +1,13 @@
 ﻿
 <div id="{{ trip.Id }}">
 
-    <h4 class="listed-item-header">
-        <span ng-if="trip.Id == undefined"><a href='javascript:void(0);' ng-click="NewTrip('lg', true)">Create this trip</a></span>
-        <span ng-if="trip.Id != undefined"><a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a></span>
+    <div class="trip-header-create" ng-if="trip.Id == undefined">
+        <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> <a href='javascript:void(0);' ng-click="NewTrip('lg', true)">Create this trip</a>
+    </div>
 
-        <!--<a href='planning/round-the-world-trip-planning-map?trip={{ trip.Id }}'>{{ trip.Name }}</a>-->
-    </h4>
+    <div class="trip-header-created" ng-if="trip.Id != undefined">
+        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> <a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a>
+    </div>
 
     <div class="body">
 
@@ -22,7 +23,7 @@
         </button>
 
     </div>
-    <div class="footer">
+    <div class="footer" ng-if="trip.Id != undefined">
         Created: {{ trip.CreatedDate | auditDateFormat }} | Last Modified: {{ trip.ModifiedDate | auditDateFormat }}
     </div>
 

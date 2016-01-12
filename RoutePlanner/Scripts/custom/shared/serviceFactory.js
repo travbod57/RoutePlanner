@@ -128,7 +128,7 @@
             saveTripRemotely: _saveTripRemotely,
             deleteTrip: _deleteTrip,
             myTrips: _myTrips,
-            getTrip: _getTrips,
+            getTrip: _getTrip,
             getLocationsByTerm: _getLocationsByTerm
         }
 
@@ -195,10 +195,94 @@
             return modalInstance;
         }
 
+        var _loginModal = function (size) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'loginModal.html',
+                controller: 'loginModalCtrl',
+                backdrop: 'static',
+                keyboard: false,
+                size: 'lg'
+            });
+
+            return modalInstance;
+        }
+
+        var _email = function (size, route) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'sendEmailModal.html',
+                controller: 'SendEmailModalCtrl',
+                backdrop: 'static',
+                keyboard: false,
+                size: size,
+                resolve: {
+                    route: function () {
+                        return route;
+                    }
+                }
+            });
+
+            return modalInstance;
+        };
+
+        var _reset = function (size) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'resetModalTemplate.html',
+                controller: 'resetModalCtrl',
+                backdrop: 'static',
+                size: size
+            });
+
+            return modalInstance;
+        };
+
+        var _loginOrRegister = function (size) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                keyboard: false,
+                templateUrl: 'loginOrRegisterModal.html',
+                controller: 'loginOrRegisterModalCtrl',
+                size: size
+            });
+
+            return modalInstance;
+        };
+
+        var _routeLengthExceededModal = function (size, maxLocations) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'routeLengthExceededModalTemplate.html',
+                controller: 'routeLengthExceededModalCtrl',
+                backdrop: 'static',
+                keyboard: false,
+                size: size,
+                resolve: {
+                    maxLocations: function () {
+                        return maxLocations;
+                    }
+                }
+            });
+
+            return modalInstance;
+        };
+
         return {
             newTrip: _newTrip,
             saveTrip: _saveTrip,
-            deleteTrip : _deleteTrip
+            deleteTrip: _deleteTrip,
+            loginModal: _loginModal,
+            email:_email,
+            reset: _reset,
+            loginOrRegister: _loginOrRegister,
+            routeLengthExceededModal: _routeLengthExceededModal
         }
     };
 

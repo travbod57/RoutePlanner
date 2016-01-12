@@ -251,14 +251,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 } // unauthorised but trying to get to a valid trip URL
                 else if (response.data[0] == "WP_Unauthorised" && _trip.Id != "") {
 
-                    var modalInstance = $uibModal.open({
-                        animation: true,
-                        templateUrl: 'loginModal.html',
-                        controller: 'loginModalCtrl',
-                        backdrop: 'static',
-                        keyboard: false,
-                        size: 'lg'
-                    });
+                    modalsService.loginModal('lg');
+
                 }
                 else if (response.data[0] == "WP_Unauthorised" || response.data[0] == "TripId_Not_Provided") {
 
@@ -473,11 +467,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         }
     }
 
-    $scope.Reset = function () {
-        $scope.Route = [];
-        $scope.PolyLines = [];
-    };
-
     $scope.NewTrip = function (size, saveTripOnOk) {
 
         var trip = {};
@@ -494,37 +483,16 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.Email = function (size) {
 
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'sendEmailModal.html',
-            controller: 'SendEmailModalCtrl',
-            backdrop: 'static',
-            keyboard: false,
-            size: size,
-            resolve: {
-                route: function () {
-                    return $scope.Route;
-                }
-            }
-        });
+        modalsService.email(size, $scope.Route);
     };
 
     $scope.Reset = function (size) {
 
-        $uibModal.open({
-            animation: true,
-            templateUrl: 'resetModalTemplate.html',
-            controller: 'resetModalCtrl',
-            backdrop: 'static',
-            size: size,
-            resolve: {
-                yes: function () {
-                    return function () {
-                        $scope.Route = [];
-                        $scope.PolyLines = [];
-                    }
-                }
-            }
+        var resetModalInstance = modalsService.reset(size);
+
+        resetModalInstance.result.then(function () {
+            $scope.Route = [];
+            $scope.PolyLines = [];
         });
     };
 
@@ -571,33 +539,15 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
             _saveDataLocally();
 
-            var modalInstance = $uibModal.open({
-                animation: true,
-                backdrop: 'static',
-                keyboard: false,
-                templateUrl: 'loginOrRegisterModal.html',
-                controller: 'loginOrRegisterModalCtrl',
-                size: size
-            });
+            modalsService.loginOrRegister('lg');
             
         }  
     };
 
     function OpenRouteLengthExceeded(size) {
 
-        $uibModal.open({
-            animation: true,
-            templateUrl: 'routeLengthExceededModalTemplate.html',
-            controller: 'routeLengthExceededModalCtrl',
-            backdrop: 'static',
-            keyboard: false,
-            size: size,
-            resolve: {
-                maxLocations: function () {
-                    return $scope.MaxLocations;
-                }
-            }
-        });
+        modalsService.routeLengthExceededModal(size, $scope.MaxLocations);
+
     }
 
     function OpenTripUnauthorisedModal(size) {
@@ -652,11 +602,10 @@ travelToolApp.controller('SendEmailModalCtrl', function ($scope, $uibModalInstan
     };
 });
 
-travelToolApp.controller('resetModalCtrl', function ($scope, $uibModalInstance, yes) {
+travelToolApp.controller('resetModalCtrl', function ($scope, $uibModalInstance) {
 
     $scope.yes = function () {
-        yes();
-        $uibModalInstance.dismiss('cancel');
+        $uibModalInstance.close();
     };
 
     $scope.no = function () {

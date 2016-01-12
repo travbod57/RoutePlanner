@@ -274,6 +274,20 @@
             return modalInstance;
         };
 
+        var _tripUnauthorisedModal = function (size) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'tripUnauthorisedModal.html',
+                controller: 'tripUnauthorisedModalCtrl',
+                backdrop: 'static',
+                keyboard: false,
+                size: size
+            });
+            
+            return modalInstance;
+        }
+
         return {
             newTrip: _newTrip,
             saveTrip: _saveTrip,
@@ -282,7 +296,8 @@
             email:_email,
             reset: _reset,
             loginOrRegister: _loginOrRegister,
-            routeLengthExceededModal: _routeLengthExceededModal
+            routeLengthExceededModal: _routeLengthExceededModal,
+            tripUnauthorisedModal: _tripUnauthorisedModal
         }
     };
 

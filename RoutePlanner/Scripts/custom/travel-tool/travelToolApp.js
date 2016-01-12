@@ -552,17 +552,16 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     function OpenTripUnauthorisedModal(size) {
 
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'tripUnauthorisedModal.html',
-            controller: 'tripUnauthorisedModalCtrl',
-            backdrop: 'static',
-            keyboard: false,
-            size: size
-        });
+        modalsService.tripUnauthorisedModal(size);
     }
 
 });
+
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
+travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
+
+travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'authenticationService', 'dataService', 'trip'];
+travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
 // to do: change to $http service
 travelToolApp.controller('SendEmailModalCtrl', function ($scope, $uibModalInstance, route) {
@@ -652,12 +651,6 @@ travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalI
         $window.location.href = CONFIG.LOGIN_URL;
     };
 });
-
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
-travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
-
-travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'authenticationService', 'dataService', 'trip'];
-travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
 // Register Directives
 

@@ -200,7 +200,7 @@
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'loginModal.html',
-                controller: 'loginModalCtrl',
+                controller: 'LoginModalCtrl',
                 backdrop: 'static',
                 keyboard: false,
                 size: 'lg'
@@ -233,7 +233,7 @@
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'resetModalTemplate.html',
-                controller: 'resetModalCtrl',
+                controller: 'ResetModalCtrl',
                 backdrop: 'static',
                 size: size
             });
@@ -248,7 +248,7 @@
                 backdrop: 'static',
                 keyboard: false,
                 templateUrl: 'loginOrRegisterModal.html',
-                controller: 'loginOrRegisterModalCtrl',
+                controller: 'LoginOrRegisterModalCtrl',
                 size: size
             });
 
@@ -260,7 +260,7 @@
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'routeLengthExceededModalTemplate.html',
-                controller: 'routeLengthExceededModalCtrl',
+                controller: 'RouteLengthExceededModalCtrl',
                 backdrop: 'static',
                 keyboard: false,
                 size: size,
@@ -279,7 +279,7 @@
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'tripUnauthorisedModal.html',
-                controller: 'tripUnauthorisedModalCtrl',
+                controller: 'TripUnauthorisedModalCtrl',
                 backdrop: 'static',
                 keyboard: false,
                 size: size

@@ -563,94 +563,23 @@ travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTr
 travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'authenticationService', 'dataService', 'trip'];
 travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
-// to do: change to $http service
-travelToolApp.controller('SendEmailModalCtrl', function ($scope, $uibModalInstance, route) {
+travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'route'];
+travelToolApp.controller('SendEmailModalCtrl', travelTool.shared.controllers.sendEmailModalCtrl);
 
-    $scope.ContactDetails = { details: { Email: "" } };
-    $scope.Route = route;
-    $scope.ok = function () {
+travelTool.shared.controllers.resetModalCtrl.$inject = ['$scope', '$uibModalInstance'];
+travelToolApp.controller('ResetModalCtrl', travelTool.shared.controllers.resetModalCtrl);
 
-        jQuery.ajax({
-            url: "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
-            type: "POST",
-            dataType: "text",
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            transformRequest: function (obj) {
-                var str = [];
-                for (var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                return str.join("&");
-            },
-            data: { address: $scope.ContactDetails.details.Email, routeData: angular.toJson($scope.Route) }
-        }).done(function () {
-            $scope.$apply(function () {
-                $scope.showEmailError = false;
-            });
-            $uibModalInstance.close();
-        }).
-        fail(function (jqXHR, textStatus, error) {
-            $scope.$apply(function () {
-                $scope.showEmailError = true;
-            });
+travelTool.shared.controllers.routeLengthExceededModalCtrl.$inject = ['$scope', '$uibModalInstance', 'MaxLocations'];
+travelToolApp.controller('RouteLengthExceededModalCtrl', travelTool.shared.controllers.routeLengthExceededModalCtrl);
 
-        });
-    };
+travelTool.shared.controllers.loginOrRegisterModalCtrl.$inject = ['$scope', '$window', '$uibModalInstance', 'CONFIG'];
+travelToolApp.controller('LoginOrRegisterModalCtrl', travelTool.shared.controllers.loginOrRegisterModalCtrl);
 
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-});
+travelTool.shared.controllers.tripUnauthorisedModalCtrl.$inject = ['$scope', '$window', '$uibModalInstance', 'CONFIG'];
+travelToolApp.controller('TripUnauthorisedModalCtrl', travelTool.shared.controllers.tripUnauthorisedModalCtrl);
 
-travelToolApp.controller('resetModalCtrl', function ($scope, $uibModalInstance) {
-
-    $scope.yes = function () {
-        $uibModalInstance.close();
-    };
-
-    $scope.no = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-});
-
-travelToolApp.controller('routeLengthExceededModalCtrl', function ($scope, $uibModalInstance, maxLocations) {
-
-    $scope.MaxLocations = maxLocations;
-
-    $scope.ok = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-
-});
-
-travelToolApp.controller('loginOrRegisterModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
-
-    $scope.Login = function () {
-        $window.location.href = CONFIG.LOGIN_URL;
-    };
-
-    $scope.Register = function () {
-        $window.location.href = CONFIG.REGISTER_URL;
-    };
-
-    $scope.Cancel = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-});
-
-travelToolApp.controller('tripUnauthorisedModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
-
-    $scope.MyTrips = function () {
-        $window.location.href = CONFIG.MY_TRIPS_URL;
-    };
-
-});
-
-travelToolApp.controller('loginModalCtrl', function ($scope, $window, $uibModalInstance, CONFIG) {
-
-    $scope.Login = function () {
-        $window.location.href = CONFIG.LOGIN_URL;
-    };
-});
+travelTool.shared.controllers.loginModalCtrl.$inject = ['$scope', '$window', '$uibModalInstance', 'CONFIG'];
+travelToolApp.controller('LoginModalCtrl', travelTool.shared.controllers.loginModalCtrl);
 
 // Register Directives
 

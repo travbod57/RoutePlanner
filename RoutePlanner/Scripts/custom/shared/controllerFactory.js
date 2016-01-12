@@ -122,5 +122,91 @@
         };
     };
 
+    controllers.sendEmailModalCtrl = function ($scope, $uibModalInstance, route) {
+
+        $scope.ContactDetails = { details: { Email: "" } };
+        $scope.Route = route;
+        $scope.ok = function () {
+
+            jQuery.ajax({
+                url: "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
+                type: "POST",
+                dataType: "text",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                transformRequest: function (obj) {
+                    var str = [];
+                    for (var p in obj)
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
+                data: { address: $scope.ContactDetails.details.Email, routeData: angular.toJson($scope.Route) }
+            }).done(function () {
+                $scope.$apply(function () {
+                    $scope.showEmailError = false;
+                });
+                $uibModalInstance.close();
+            }).
+            fail(function (jqXHR, textStatus, error) {
+                $scope.$apply(function () {
+                    $scope.showEmailError = true;
+                });
+
+            });
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
+    controllers.resetModalCtrl = function ($scope, $uibModalInstance) {
+
+        $scope.yes = function () {
+            $uibModalInstance.close();
+        };
+
+        $scope.no = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
+    controllers.routeLengthExceededModalCtrl = function ($scope, $uibModalInstance, maxLocations) {
+
+        $scope.MaxLocations = maxLocations;
+
+        $scope.ok = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
+    controllers.loginOrRegisterModalCtrl = function ($scope, $window, $uibModalInstance, CONFIG) {
+
+        $scope.Login = function () {
+            $window.location.href = CONFIG.LOGIN_URL;
+        };
+
+        $scope.Register = function () {
+            $window.location.href = CONFIG.REGISTER_URL;
+        };
+
+        $scope.Cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
+    controllers.tripUnauthorisedModalCtrl = function ($scope, $window, $uibModalInstance, CONFIG) {
+
+        $scope.MyTrips = function () {
+            $window.location.href = CONFIG.MY_TRIPS_URL;
+        };
+
+    };
+
+    controllers.loginModalCtrl = function ($scope, $window, $uibModalInstance, CONFIG) {
+
+        $scope.Login = function () {
+            $window.location.href = CONFIG.LOGIN_URL;
+        };
+    };
 
 })(travelTool.shared.controllers)

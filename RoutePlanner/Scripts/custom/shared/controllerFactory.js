@@ -122,25 +122,15 @@
         };
     };
 
-    controllers.sendEmailModalCtrl = function ($scope, $uibModalInstance, route) {
+    controllers.sendEmailModalCtrl = function ($scope, $uibModalInstance, dataService, route) {
 
         $scope.ContactDetails = { details: { Email: "" } };
         $scope.Route = route;
         $scope.ok = function () {
 
-            jQuery.ajax({
-                url: "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
-                type: "POST",
-                dataType: "text",
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                transformRequest: function (obj) {
-                    var str = [];
-                    for (var p in obj)
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: { address: $scope.ContactDetails.details.Email, routeData: angular.toJson($scope.Route) }
-            }).done(function () {
+            var promise = dataService.sendEmail($scope.ContactDetails.details.Email, $scope.Route);
+
+            promise.done(function () {
                 $scope.$apply(function () {
                     $scope.showEmailError = false;
                 });

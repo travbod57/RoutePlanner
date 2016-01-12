@@ -14,7 +14,8 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "TRIP_URL": "/RoutePlanner/Home/Index?tripId=",
     "LOGIN_URL": "http://localhost:81/wp_thinkbackpacking/login",
     "REGISTER_URL": "http://localhost:81/wp_thinkbackpacking/register",
-    "MY_TRIPS_URL": "http://localhost:81/RoutePlanner/MyTrips"
+    "MY_TRIPS_URL": "http://localhost:81/RoutePlanner/MyTrips",
+    "EMAIL_ROUTE_URL": "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail"
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -563,7 +564,7 @@ travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTr
 travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'authenticationService', 'dataService', 'trip'];
 travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
-travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'route'];
+travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'dataService', 'route'];
 travelToolApp.controller('SendEmailModalCtrl', travelTool.shared.controllers.sendEmailModalCtrl);
 
 travelTool.shared.controllers.resetModalCtrl.$inject = ['$scope', '$uibModalInstance'];

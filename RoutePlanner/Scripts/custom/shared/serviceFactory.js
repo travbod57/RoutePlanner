@@ -124,12 +124,30 @@
             });
         };
 
+        var _sendEmail = function (emailAddress, route) {
+
+            return jQuery.ajax({
+                url: CONFIG.EMAIL_ROUTE_URL,
+                type: "POST",
+                dataType: "text",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                transformRequest: function (obj) {
+                    var str = [];
+                    for (var p in obj)
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
+                data: { address: emailAddress, routeData: angular.toJson(route) }
+            });
+        }
+
         return {
             saveTripRemotely: _saveTripRemotely,
             deleteTrip: _deleteTrip,
             myTrips: _myTrips,
             getTrip: _getTrip,
-            getLocationsByTerm: _getLocationsByTerm
+            getLocationsByTerm: _getLocationsByTerm,
+            sendEmail: _sendEmail
         }
 
     };

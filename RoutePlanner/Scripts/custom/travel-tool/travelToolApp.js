@@ -43,7 +43,7 @@ travelToolApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService, modalsService) {
+travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService, modalsService, dataService) {
 
     uiGmapGoogleMapApi.then(function (maps) {
         $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
@@ -216,11 +216,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         // TODO: use AJAX call here
         _transport = [{ id: 1, name: 'Air' }, { id: 2, name: 'Land' }, { id: 3, name: 'Sea' }];
 
-        $http.get(CONFIG.GET_TRIP_URL, {
-            params: {
-                tripId: _trip.Id
-            }
-        }).then(function (response) {
+        var promise = dataService.getTrip(_trip.Id);
+        
+        promise.then(function (response) {
 
             // IF AUTHENTICATED retrieve from database
             _trip = response.data.Trip;
@@ -333,12 +331,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     /* GETTERS */
 
-    $scope.getLocationsByTerm = function (val) {
-        return $http.get(CONFIG.GET_LOCATIONS_BY_TERM_URL, {
-            params: {
-                searchTerm: val
-            }
-        }).then(function (response) {
+    $scope.getLocationsByTerm = function (term) {
+        return dataService.getLocationsByTerm(term).then(function (response) {
             return response.data.map(function (item) {
                 return item;
             });

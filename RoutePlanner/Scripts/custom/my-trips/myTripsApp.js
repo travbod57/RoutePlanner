@@ -24,10 +24,11 @@ myTripsApp.service('modalsService', travelTool.shared.services.modals);
 
 // Register Controllers
 
-myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $sessionStorage, utilService, modalsService, CONFIG, _) {
+myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $sessionStorage, utilService, modalsService, dataService, CONFIG, _) {
 
-    $http.get(CONFIG.GET_MY_TRIPS_URL)
-    .then(function successCallback(response) {
+    var promise = dataService.myTrips();
+
+    promise.then(function successCallback(response) {
         
         $scope.$storage = $sessionStorage;
 

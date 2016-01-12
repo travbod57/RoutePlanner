@@ -101,9 +101,35 @@
             }
         };
 
+        var _myTrips = function () {
+
+            return $http.get(CONFIG.GET_MY_TRIPS_URL);
+        };
+
+        var _getTrip = function (tripId) {
+
+            return $http.get(CONFIG.GET_TRIP_URL, {
+                params: {
+                    tripId: tripId
+                }
+            });
+        };
+
+        var _getLocationsByTerm = function (term) {
+
+            return $http.get(CONFIG.GET_LOCATIONS_BY_TERM_URL, {
+                params: {
+                    searchTerm: term
+                }
+            });
+        };
+
         return {
             saveTripRemotely: _saveTripRemotely,
-            deleteTrip: _deleteTrip
+            deleteTrip: _deleteTrip,
+            myTrips: _myTrips,
+            getTrip: _getTrips,
+            getLocationsByTerm: _getLocationsByTerm
         }
 
     };

@@ -4,9 +4,12 @@
 
         $scope.$storage = $sessionStorage;
         $scope.TripName;
+        $scope.DisableOk = false;
 
         $scope.ok = function () {
-
+            
+            $scope.DisableOk = true;
+            
             trip.Name = $scope.TripName;
 
             if (saveTripOnOk) {
@@ -21,6 +24,8 @@
                     }
                     else
                         $uibModalInstance.close(response);
+                }).fail(function() {
+                    $scope.DisableOk = false;
                 });
             }
             else {

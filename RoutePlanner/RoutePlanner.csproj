@@ -239,6 +239,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="SQL\traveltool.sql" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -164,7 +164,7 @@
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save Trip
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Trip
     </button>
 
@@ -233,7 +233,7 @@
 
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="emailRouteForm.$invalid">Send</button>
+            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="emailRouteForm.$invalid || DisableSend">Send</button>
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>

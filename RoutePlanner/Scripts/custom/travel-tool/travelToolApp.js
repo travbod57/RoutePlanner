@@ -46,21 +46,10 @@ travelToolApp.service('_', travelTool.shared.services.underscore);
 
 travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService, modalsService, dataService) {
 
-    uiGmapGoogleMapApi.then(function (maps) {
-        $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
-    });
+    _setup();
 
     var _trip = {};
     var _transport;
-    var _isAuthenticated;
-    
-    authenticationService.isAuthenticated().then(function (response) {
-
-        _isAuthenticated = response.data != 1 ? false : true;
-
-    }, function (response) {
-
-    });
 
     $scope.TripName;
     $scope.ChosenLocation;
@@ -72,8 +61,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.ShowLoginDialog = false;
     $scope.$storage = $sessionStorage;
     $scope.SelectedCurrencyDropdownValue;
+    $scope.IsAuthenticated; 
 
-    InitialiseTrip();
+    _initialiseTrip();
 
     /* ACTIONS */
 
@@ -144,7 +134,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                     stopNumberSpanClass: ''
                 });
 
-                CreatePolyLine($scope.Route.length - 1);
+                _createPolyLine($scope.Route.length - 1);
 
                 $scope.UpdateStopNumbering();
 
@@ -212,7 +202,22 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         $scope.UpdateStopNumbering();
     }
 
-    function InitialiseTrip() {
+    function _setup() {
+
+        uiGmapGoogleMapApi.then(function (maps) {
+            $scope.map = { center: { latitude: 15, longitude: 0 }, zoom: 2, options: { minZoom: 2 } };
+        });
+
+        authenticationService.isAuthenticated().then(function (response) {
+
+            $scope.IsAuthenticated = response.data != 1 ? false : true;
+
+        }, function (response) {
+
+        });
+    };
+
+    function _initialiseTrip() {
 
         _trip.Id = utilService.getQueryStringParameterByName('tripId');
 
@@ -241,7 +246,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
                 $scope.Route[i].transportId = parseInt($scope.Route[i].transportId);
 
-                CreatePolyLine(i);
+                _createPolyLine(i);
             }
             
         }, function errorCallback(response) {
@@ -277,7 +282,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         });
     }
 
-    function CreatePolyLine(index) {
+    function _createPolyLine(index) {
 
         if (index > 0) {
             var prevRoute = $scope.Route[index - 1];
@@ -504,7 +509,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.SaveTrip = function (size) {
 
-        if (_isAuthenticated) {
+        if ($scope.IsAuthenticated) {
 
             if (_trip.Id != undefined) {
 

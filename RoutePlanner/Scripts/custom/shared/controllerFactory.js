@@ -133,6 +133,8 @@
         $scope.Route = route;
         $scope.ok = function () {
 
+            $scope.DisableSend = true;
+
             var promise = dataService.sendEmail($scope.ContactDetails.details.Email, $scope.Route);
 
             promise.done(function () {
@@ -144,6 +146,7 @@
             fail(function (jqXHR, textStatus, error) {
                 $scope.$apply(function () {
                     $scope.showEmailError = true;
+                    $scope.DisableSend = false;
                 });
 
             });

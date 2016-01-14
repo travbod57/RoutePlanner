@@ -130,7 +130,7 @@ $env = $app->environment();
 
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
-		$sql = "SELECT T.*, C.Symbol FROM trip T LEFT JOIN currency C ON T.CurrencyID = C.ID WHERE T.UserId = :userId ORDER BY ModifiedDate DESC";
+		$sql = "SELECT T.*, C.Symbol FROM trip T LEFT JOIN currency C ON T.CurrencyID = C.ID WHERE T.UserId = :userId AND T.DeletedDate IS NULL ORDER BY ModifiedDate DESC";
 		
 		$statement = $pdo->prepare($sql);		
 		$statement->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -155,45 +155,72 @@ $app->post(
 	
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		
-		$tripId = $_POST['tripId'];
+		$wp_authenticated = is_user_logged_in();
+		
 		$userId = get_current_user_id();
-		$dateTimeNow = date("Y-m-d H:m:s");
+		$tripId = $_POST['tripId'];
 		
-		$delete_route_sql = "UPDATE route SET DeletedDate = :deletedDate WHERE TripId = :tripId";
-		$delete_trip_sql = "UPDATE trip SET DeletedDate = :deletedDate WHERE Id = :tripId AND UserId = :userId";
+		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
 		
-		$stmt[0] = $pdo->prepare($delete_route_sql);
+		$stmt[0] = $pdo->prepare($get_trip_sql);
 		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
-		$stmt[0]->bindValue(':deletedDate', $dateTimeNow, PDO::PARAM_STR);
+		$stmt[0]->bindValue(':userId', $userId, PDO::PARAM_INT);
+		$stmt[0]->execute();
+		$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
 		
-		$stmt[1] = $pdo->prepare($delete_trip_sql);
-		$stmt[1]->bindValue(':userId', $userId, PDO::PARAM_INT);
-		$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
-		$stmt[1]->bindValue(':deletedDate', $dateTimeNow, PDO::PARAM_STR);
+		$trip_authenticated = !empty($tripData);
 		
-		$app->log->INFO("UserId: " . $userId . ", tripId: " . $tripId);
-	
-		$pdo->beginTransaction();
-
-		try
+		if ($wp_authenticated && $trip_authenticated)
 		{
-			$stmt[0]->execute();    
-			$stmt[1]->execute();  
+			$dateTimeNow = date("Y-m-d H:m:s");
+			
+			$delete_route_sql = "UPDATE route SET DeletedDate = :deletedDate WHERE TripId = :tripId";
+			$delete_trip_sql = "UPDATE trip SET DeletedDate = :deletedDate WHERE Id = :tripId AND UserId = :userId";
+			
+			$stmt[1] = $pdo->prepare($delete_route_sql);
+			$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+			$stmt[1]->bindValue(':deletedDate', $dateTimeNow, PDO::PARAM_STR);
+			
+			$stmt[2] = $pdo->prepare($delete_trip_sql);
+			$stmt[2]->bindValue(':userId', $userId, PDO::PARAM_INT);
+			$stmt[2]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+			$stmt[2]->bindValue(':deletedDate', $dateTimeNow, PDO::PARAM_STR);
+			
+			$app->log->INFO("UserId: " . $userId . ", tripId: " . $tripId);
+		
+			$pdo->beginTransaction();
 
-			$pdo->commit();     
+			try
+			{
+				$stmt[1]->execute();    
+				$stmt[2]->execute();  
 
+				$pdo->commit();     
+
+				$response = $app->response();
+				$response->headers->set('Content-Type', 'application/json');
+				$response->headers->set('Access-Control-Allow-Origin', '*');
+				$response->body(null);
+				
+				$app->log->INFO("success");
+			}
+			catch(PDOException $e)
+			{
+				$pdo->rollBack();
+				$app->error($e);
+			}    
+		}
+		else
+		{
+			$app->response->setStatus(401);
+			$unauthArray = array("Trip_Unauthorised");
+			$json = json_encode($unauthArray);
+		
 			$response = $app->response();
 			$response->headers->set('Content-Type', 'application/json');
 			$response->headers->set('Access-Control-Allow-Origin', '*');
-			$response->body(null);
-			
-			$app->log->INFO("success");
+			$response->body($json);
 		}
-		catch(PDOException $e)
-		{
-			$pdo->rollBack();
-			$app->error($e);
-		}    
 	}
 ); 
 
@@ -250,8 +277,6 @@ $app->post(
 				for ($y = 1; $y < $stmtLength; $y++) {
 
 					$stmt[$y]->execute();
-					
-					$app->log->INFO("loop: " . $y);
 				}
 
 				$pdo->commit();     

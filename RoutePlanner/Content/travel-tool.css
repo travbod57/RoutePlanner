@@ -242,6 +242,8 @@
     {
         color: #468847; 
         font-size: 1.2em;
+        border: solid 1px #468847;
+        padding: 3px;
     }
 
     div.trip-list ul li

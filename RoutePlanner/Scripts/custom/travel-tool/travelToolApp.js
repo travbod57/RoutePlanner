@@ -116,37 +116,42 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.Choose = function () {
 
         if ($scope.ChosenLocation !== undefined) {
+                
+            if ($scope.Route.length + 1 <= $scope.MaxLocations) {
 
-            $scope.Route.push({
-                id: $scope.ChosenLocation.Id,
-                location: $scope.ChosenLocation,
-                coords: {
-                    latitude: $scope.ChosenLocation.Latitude,
-                    longitude: $scope.ChosenLocation.Longitude
-                },
-                options: {
-                    labelAnchor: '15 45'
-                    //animation: google.maps.Animation.DROP
-                },
-                nights: 0,
-                transportId: 1,
-                transportName: function () {
+                $scope.Route.push({
+                    id: $scope.ChosenLocation.Id,
+                    location: $scope.ChosenLocation,
+                    coords: {
+                        latitude: $scope.ChosenLocation.Latitude,
+                        longitude: $scope.ChosenLocation.Longitude
+                    },
+                    options: {
+                        labelAnchor: '15 45'
+                        //animation: google.maps.Animation.DROP
+                    },
+                    nights: 0,
+                    transportId: 1,
+                    transportName: function () {
 
-                    var transportItem = _.findWhere(_transport, { id: this.transportId });
+                        var transportItem = _.findWhere(_transport, { id: this.transportId });
 
-                    return transportItem.name;
-                },
-                dailyCost: $scope.ChosenLocation.DailyCost,
-                totalCost: '0.00',
-                stopNumberDivClass: '',
-                stopNumberSpanClass: ''
-            });
+                        return transportItem.name;
+                    },
+                    dailyCost: $scope.ChosenLocation.DailyCost,
+                    totalCost: '0.00',
+                    stopNumberDivClass: '',
+                    stopNumberSpanClass: ''
+                });
 
-            CreatePolyLine($scope.Route.length - 1);
+                CreatePolyLine($scope.Route.length - 1);
 
-            $scope.UpdateStopNumbering();
+                $scope.UpdateStopNumbering();
 
-            $scope.ChosenLocation = undefined;
+                $scope.ChosenLocation = undefined;
+            }
+            else
+                OpenRouteLengthExceeded('lg');
         }
     }
 
@@ -570,7 +575,7 @@ travelToolApp.controller('SendEmailModalCtrl', travelTool.shared.controllers.sen
 travelTool.shared.controllers.resetModalCtrl.$inject = ['$scope', '$uibModalInstance'];
 travelToolApp.controller('ResetModalCtrl', travelTool.shared.controllers.resetModalCtrl);
 
-travelTool.shared.controllers.routeLengthExceededModalCtrl.$inject = ['$scope', '$uibModalInstance', 'MaxLocations'];
+travelTool.shared.controllers.routeLengthExceededModalCtrl.$inject = ['$scope', '$uibModalInstance', 'maxLocations'];
 travelToolApp.controller('RouteLengthExceededModalCtrl', travelTool.shared.controllers.routeLengthExceededModalCtrl);
 
 travelTool.shared.controllers.loginOrRegisterModalCtrl.$inject = ['$scope', '$window', '$uibModalInstance', 'CONFIG'];

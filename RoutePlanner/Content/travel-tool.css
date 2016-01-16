@@ -258,6 +258,27 @@
         border-top: 1px solid #e2e2e2;
     }
 
+    div.trip-list ul li div.header
+    {
+        margin-bottom: 10px;
+        background-color: #FFFFFF;
+    }
+
+    div.trip-list ul li div.body
+    {
+        margin-bottom: 10px;
+    }
+
+    div.trip-list ul li div.footer
+    {
+        margin-bottom: 10px;
+    }
+
+    div.trip-list ul li table
+    {
+        width: 100%; 
+    }
+
     div.trip-list ul li table td
     {
         padding: 5px 10px 5px 5px; 
@@ -266,12 +287,13 @@
     div.trip-list ul li table td.col1
     {
         background: #EAEAEA;
+        width: 80px;
     }
 
     div.trip-list ul li table td.col2
     {
         background: #f5f5f5;
-        width: 100px;
+        padding-left: 10px;
     }
 
     

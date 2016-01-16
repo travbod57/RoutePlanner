@@ -1,11 +1,11 @@
 ﻿
 <div id="{{ trip.Id }}">
 
-    <div class="trip-header-create" ng-if="trip.Id == undefined">
+    <div class="header trip-header-create" ng-if="trip.Id == undefined">
         <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> <a href='javascript:void(0);' ng-click="NewTrip('lg', true)">Create this trip</a>
     </div>
 
-    <div class="trip-header-created" ng-if="trip.Id != undefined">
+    <div class="header trip-header-created" ng-if="trip.Id != undefined">
         <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> <a href='/RoutePlanner/Home/Index?tripId={{ trip.Id }}'>{{ trip.Name }}</a>
     </div>
 
@@ -15,16 +15,23 @@
             <tr><td class="col1">Stops</td><td class ="col2">{{ trip.NumberOfStops }}</td></tr>
             <tr><td class="col1">Start Date</td><td class="col2">{{ trip.StartDate | standardDateFormat }}</td></tr>
             <tr><td class="col1">End Date</td><td class="col2">{{ trip.EndDate | standardDateFormat }}</td></tr>
-            <tr><td class="col1">Total Cost</td><td class="col2"><span ng-if="trip.TotalCost != 0.00">{{ trip.Symbol }}{{ trip.TotalCost }}</span></td></tr>
+            <tr>
+                <td class="col1">Total Cost</td>
+                <td class="col2">
+                    <span ng-if="trip.TotalCost != 0.00">{{ trip.Symbol }}{{ trip.TotalCost }}</span>
+                    <span ng-if="trip.TotalCost == 0.00">-</span>
+                </td>
+            </tr>
         </table>
-
-        <button type="button" class="btn btn-primary btn-sm" ng-click="DeleteTrip('lg', trip.Id)">
-            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
-        </button>
 
     </div>
     <div class="footer" ng-if="trip.Id != undefined">
-        Created: {{ trip.CreatedDate | auditDateFormat }} | Last Modified: {{ trip.ModifiedDate | auditDateFormat }}
+
+        <button type="button" class="btn btn-primary btn-xs" ng-click="DeleteTrip('lg', trip.Id)">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+        </button>
+
+        <!--Created: {{ trip.CreatedDate | auditDateFormat }} | Last Modified: {{ trip.ModifiedDate | auditDateFormat }}-->
     </div>
 
 </div>

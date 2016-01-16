@@ -20,6 +20,11 @@
         <div class="col-md-12 trip-list">
 
             <div ng-if="MyTrips.length == 0">You have no trips</div>
+            <div ng-if="MyTrips.length > 0">You have {{ MyTrips.length }} trip(s)</div>
+
+            <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Trip
+            </button>
 
             <ul>
                 <li class="my-trip-listed-item" ng-repeat="trip in MyTrips" ng-include="'@Url.Content("~/angularjs-templates/my-trips/trip.html")'"></li>

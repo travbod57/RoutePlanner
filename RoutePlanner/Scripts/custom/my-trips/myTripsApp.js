@@ -85,7 +85,7 @@ myTripsApp.filter('standardDateFormat', function myDateFormat($filter) {
             return $filter('date')(tempdate, "dd-MMM-yyyy");
         }
         else
-            return null;
+            return "-";
   }
 });
 
@@ -98,7 +98,6 @@ myTripsApp.filter('auditDateFormat', function myDateFormat($filter) {
             return $filter('date')(tempdate, "dd-MMM-yyyy 'at' HH:mm:ss");
         }
         else
-            return null;
+            return "-";
   }
 });
-

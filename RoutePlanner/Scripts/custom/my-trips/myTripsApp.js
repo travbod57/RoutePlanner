@@ -13,7 +13,7 @@
 travelTool.shared.services.underscore.$inject = ['$window'];
 myTripsApp.service('_', travelTool.shared.services.underscore);
 
-travelTool.shared.services.utils.$inject = ['$sessionStorage'];
+travelTool.shared.services.utils.$inject = ['$localStorage'];
 myTripsApp.service('utilService', travelTool.shared.services.utils);
 
 travelTool.shared.services.data.$inject = ['$http', 'CONFIG', '_'];
@@ -24,13 +24,13 @@ myTripsApp.service('modalsService', travelTool.shared.services.modals);
 
 // Register Controllers
 
-myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $sessionStorage, utilService, modalsService, dataService, CONFIG, _) {
+myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $localStorage, utilService, modalsService, dataService, CONFIG, _) {
 
     var promise = dataService.myTrips();
 
     promise.then(function successCallback(response) {
         
-        $scope.$storage = $sessionStorage;
+        $scope.$storage = $localStorage;
 
         var trip = $scope.$storage['trip'];
         
@@ -63,10 +63,10 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
     };
 });
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
-travelTool.shared.controllers.deleteTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'dataService', 'CONFIG', 'tripId'];
+travelTool.shared.controllers.deleteTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'dataService', 'CONFIG', 'tripId'];
 myTripsApp.controller('DeleteTripModalCtrl', travelTool.shared.controllers.deleteTripModalCtrl);
 
 // Register Directives

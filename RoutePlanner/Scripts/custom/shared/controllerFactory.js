@@ -1,8 +1,8 @@
 ﻿(function (controllers) {
 
-    controllers.newTripModalCtrl = function ($scope, $uibModalInstance, $http, $sessionStorage, dataService, CONFIG, saveTripOnOk, trip) {
+    controllers.newTripModalCtrl = function ($scope, $uibModalInstance, $http, $localStorage, dataService, CONFIG, saveTripOnOk, trip) {
 
-        $scope.$storage = $sessionStorage;
+        $scope.$storage = $localStorage;
         $scope.TripName;
         $scope.DisableOk = false;
 
@@ -38,9 +38,9 @@
         };
     };
 
-    controllers.saveTripModalCtrl = function ($scope, $uibModalInstance, $sessionStorage, authenticationService, dataService, trip) {
+    controllers.saveTripModalCtrl = function ($scope, $uibModalInstance, $localStorage, authenticationService, dataService, trip) {
 
-        $scope.$storage = $sessionStorage;
+        $scope.$storage = $localStorage;
 
         var progressBarTypes = ['danger', 'info', 'warning', 'success'];
         var isUserLoggedIn = authenticationService.isAuthenticated();
@@ -99,7 +99,7 @@
 
     };
 
-    controllers.deleteTripModalCtrl = function ($scope, $uibModalInstance, $sessionStorage, dataService, CONFIG, tripId) {
+    controllers.deleteTripModalCtrl = function ($scope, $uibModalInstance, $localStorage, dataService, CONFIG, tripId) {
 
         $scope.yes = function () {
 
@@ -107,7 +107,7 @@
 
             if (promise == undefined) {
 
-                $scope.$storage = $sessionStorage;
+                $scope.$storage = $localStorage;
                 delete $scope.$storage['trip'];
 
                 $uibModalInstance.close();

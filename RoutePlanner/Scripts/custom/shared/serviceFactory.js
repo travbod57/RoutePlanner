@@ -1,6 +1,6 @@
 ﻿(function (services) {
 
-    services.utils = function ($sessionStorage) {
+    services.utils = function ($localStorage) {
 
         var _getQueryStringParameterByName = function (name) {
 
@@ -18,7 +18,7 @@
         var _transformSessionTrip = function () {
 
             var trip;
-            var sessionTrip = $sessionStorage['trip'];
+            var sessionTrip = $localStorage['trip'];
 
             if (sessionTrip != undefined) {
 
@@ -69,6 +69,11 @@
 
         var _saveTripRemotely = function (trip) {
 
+            var dateTimeNowInMilli = new Date().getTime() / 1000;
+
+            trip.CreatedDate = trip.Id == undefined ? dateTimeNowInMilli : null;
+            trip.ModifiedDate = dateTimeNowInMilli;
+
             return jQuery.ajax({
                 url: CONFIG.SAVE_TRIP_URL,
                 type: "POST",
@@ -92,11 +97,14 @@
                 return undefined;
             }
             else {
+
+                var dateTimeNowInMilli = new Date().getTime() / 1000;
+
                 return jQuery.ajax({
                     url: CONFIG.DELETE_TRIP,
                     type: "POST",
                     dataType: "text",
-                    data: { tripId: tripId }
+                    data: { tripId: tripId, deletedDate: dateTimeNowInMilli }
                 });
             }
         };

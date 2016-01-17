@@ -12,6 +12,7 @@
     <div class="body">
 
         <table>
+            <tr><td class="col1">Created</td><td class="col2">{{ trip.CreatedDate | auditDateFormat}}</td></tr>
             <tr><td class="col1">Stops</td><td class ="col2">{{ trip.NumberOfStops }}</td></tr>
             <tr><td class="col1">Start Date</td><td class="col2">{{ trip.StartDate | standardDateFormat }}</td></tr>
             <tr><td class="col1">End Date</td><td class="col2">{{ trip.EndDate | standardDateFormat }}</td></tr>

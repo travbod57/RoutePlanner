@@ -27,7 +27,7 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
 
 // Register Services
 
-travelTool.shared.services.utils.$inject = ['$sessionStorage'];
+travelTool.shared.services.utils.$inject = ['$localStorage'];
 travelToolApp.service('utilService', travelTool.shared.services.utils);
 
 travelTool.shared.services.data.$inject = ['$http', 'CONFIG'];
@@ -44,7 +44,7 @@ travelToolApp.service('_', travelTool.shared.services.underscore);
 
 // Register Controllers
 
-travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $sessionStorage, CONFIG, utilService, authenticationService, modalsService, dataService) {
+travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $log, uiGmapGoogleMapApi, PolyPathService, $controller, $uibModal, $window, $localStorage, CONFIG, utilService, authenticationService, modalsService, dataService) {
 
     _setup();
 
@@ -59,7 +59,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.PolyLines = [];
     $scope.MaxLocations = 50;
     $scope.ShowLoginDialog = false;
-    $scope.$storage = $sessionStorage;
+    $scope.$storage = $localStorage;
     $scope.SelectedCurrencyDropdownValue;
     $scope.IsAuthenticated; 
 
@@ -481,12 +481,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.NewTrip = function (size, saveTripOnOk) {
 
         var trip = {};
-        trip.Id = 0;
 
         modalsService.newTrip(size, saveTripOnOk, trip);
-
-        // $scope.$storage['trip'] = undefined;
-
 
     };
 
@@ -523,7 +519,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                 // if trip name DOES NOT exist and authenticated, ASK for trip name THEN SAVE to remote storage
                 // when doming from trip planner info page????
 
-                _trip.Id = 0;
                 _trip.SessionStorage = 1;
                 _buildTripForTransfer();
 
@@ -568,10 +563,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
 });
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$sessionStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
-travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$sessionStorage', 'authenticationService', 'dataService', 'trip'];
+travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'authenticationService', 'dataService', 'trip'];
 travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
 travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'dataService', 'route'];

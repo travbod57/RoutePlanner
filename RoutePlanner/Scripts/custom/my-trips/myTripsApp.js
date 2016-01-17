@@ -26,16 +26,19 @@ myTripsApp.service('modalsService', travelTool.shared.services.modals);
 
 myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $localStorage, utilService, modalsService, dataService, CONFIG, _) {
 
+    $scope.NumberOfTrips;
+
     var promise = dataService.myTrips();
 
     promise.then(function successCallback(response) {
         
         $scope.$storage = $localStorage;
+        $scope.NumberOfTrips = response.data.length;
 
         var trip = $scope.$storage['trip'];
         
         if (trip != undefined) {
-            response.data.splice(0, 0, { Id: trip.id, Name: "", StartDate: trip.StartDate, EndDate: trip.EndDate, TotalCost: trip.TotalCost });
+            response.data.splice(0, 0, { Id: trip.id, Name: "", StartDate: trip.StartDate, EndDate: trip.EndDate, TotalCost: trip.TotalCost, NumberOfStops: trip.NumberOfStops, Symbol: trip.SelectedCurrencyDropdownValue.symbol });
         }    
 
         $scope.MyTrips = response.data;
@@ -53,6 +56,7 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
 
             var indexOfDeletedTrip = _.findIndex($scope.MyTrips, { Id: tripId });
             $scope.MyTrips.splice(indexOfDeletedTrip, 1);
+            $scope.NumberOfTrips--;
         });
     };
 

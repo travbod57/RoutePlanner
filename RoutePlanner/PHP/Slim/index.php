@@ -56,7 +56,7 @@ $env = $app->environment();
 		
 		$pdo = new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
-		$sql = "SELECT * FROM trip WHERE UserId = :userId AND Name = :tripName";
+		$sql = "SELECT * FROM trip WHERE UserId = :userId AND Name = :tripName AND DeletedDate IS NULL";
 		$statement = $pdo->prepare($sql);		
 		$statement->bindValue(':userId', $userId, PDO::PARAM_INT);
 		$statement->bindValue(':tripName', $tripName, PDO::PARAM_STR);

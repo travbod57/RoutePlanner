@@ -162,7 +162,7 @@
 
     services.modals = function ($http, $uibModal, CONFIG) {
 
-        var _newTrip = function (size, saveTripOnOk, trip) {
+        var _newTrip = function (size, saveTripOnOk, trip, saveTripFromStorage) {
 
                 var modalInstance = $uibModal.open({
                     animation: true,
@@ -177,6 +177,9 @@
                         },
                         trip: function () {
                             return trip;
+                        },
+                        saveTripFromStorage: function () {
+                            return saveTripFromStorage;
                         }
                     }
                 });

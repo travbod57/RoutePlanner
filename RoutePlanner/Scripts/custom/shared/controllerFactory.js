@@ -1,10 +1,25 @@
 ﻿(function (controllers) {
 
-    controllers.newTripModalCtrl = function ($scope, $uibModalInstance, $http, $localStorage, dataService, CONFIG, saveTripOnOk, trip) {
+    controllers.newTripModalCtrl = function ($scope, $uibModalInstance, $http, $localStorage, dataService, CONFIG, saveTripOnOk, trip, saveTripFromStorage) {
+
+        var nameTrip = "Name Trip";
+        var newTrip = "New Trip";
 
         $scope.$storage = $localStorage;
         $scope.TripName;
         $scope.DisableOk = false;
+        $scope.Instruction;
+
+        // locally stored trip needs to ask for a name rather than state new trip
+        if (trip.SessionStorage != undefined) {
+
+            if (trip.SessionStorage == 1)
+                $scope.Instruction = nameTrip;
+            else
+                $scope.Instruction = newTrip;
+        }
+        else
+            $scope.Instruction = newTrip;
 
         $scope.ok = function () {
             
@@ -19,7 +34,10 @@
                 promise.done(function successCallback(response) {
 
                     if (saveTripOnOk) {
-                        delete $scope.$storage['trip'];
+
+                        if (saveTripFromStorage)
+                            delete $scope.$storage['trip'];
+
                         window.location.href = CONFIG.TRIP_URL + response;
                     }
                     else

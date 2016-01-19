@@ -2,7 +2,7 @@
 <div id="{{ trip.Id }}">
 
     <div class="header trip-header-create" ng-if="trip.Id == undefined">
-        <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> <a href='javascript:void(0);' ng-click="NewTrip('lg', true)">Create this trip</a>
+        <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> <a href='javascript:void(0);' ng-click="NewTrip('lg', true, true)">Create this trip</a>
     </div>
 
     <div class="header trip-header-created" ng-if="trip.Id != undefined">

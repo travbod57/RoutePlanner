@@ -482,7 +482,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         var trip = {};
 
-        modalsService.newTrip(size, saveTripOnOk, trip);
+        modalsService.newTrip(size, saveTripOnOk, trip, false);
 
     };
 
@@ -563,7 +563,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
 });
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip', 'saveTripFromStorage'];
 travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
 travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'authenticationService', 'dataService', 'trip'];

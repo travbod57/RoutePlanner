@@ -57,14 +57,20 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
         });
     };
 
-    $scope.NewTrip = function (size, saveTripOnOk) {
+    $scope.NewTrip = function (size, saveTripOnOk, saveTripFromStorage) {
 
-        var trip = utilService.transformSessionTrip();
-        modalsService.newTrip(size, saveTripOnOk, trip);
+        var trip;
+        
+        if (saveTripFromStorage)
+            trip = utilService.transformSessionTrip();
+        else
+            trip = {};
+        
+        modalsService.newTrip(size, saveTripOnOk, trip, saveTripFromStorage);
     };
 });
 
-travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip'];
+travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip', 'saveTripFromStorage'];
 myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripModalCtrl);
 
 travelTool.shared.controllers.deleteTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'dataService', 'CONFIG', 'tripId'];

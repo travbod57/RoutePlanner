@@ -26,14 +26,11 @@ myTripsApp.service('modalsService', travelTool.shared.services.modals);
 
 myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $controller, $localStorage, utilService, modalsService, dataService, CONFIG, _) {
 
-    $scope.NumberOfTrips;
-
     var promise = dataService.myTrips();
 
     promise.then(function successCallback(response) {
         
-        $scope.$storage = $localStorage;
-        $scope.NumberOfTrips = response.data.length;
+        $scope.$storage = $localStorage;        
 
         var trip = $scope.$storage['trip'];
         

@@ -122,12 +122,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
                     },
                     nights: 0,
                     transportId: 1,
-                    transportName: function () {
-
-                        var transportItem = _.findWhere(_transport, { id: this.transportId });
-
-                        return transportItem.name;
-                    },
+                    transportName: _.findWhere(_transport, { id: 1 }).name,
                     dailyCost: $scope.ChosenLocation.DailyCost,
                     totalCost: '0.00',
                     stopNumberDivClass: '',
@@ -470,6 +465,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     };
 
     $scope.OnChangeTransport = function (routeItem, index) {
+
+        routeItem.transportName = _.findWhere(_transport, { id: routeItem.transportId }).name;
 
         if ($scope.PolyLines.length > index) {
             var polyPath = $scope.PolyLines[index];

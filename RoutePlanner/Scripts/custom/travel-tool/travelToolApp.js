@@ -95,7 +95,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
         _trip.Route = angular.toJson($scope.Route);
         _trip.PolyLines = angular.toJson($scope.PolyLines);
-        _trip.StartDate = moment($scope.StartDate).format("YYYY-MM-DD");
+        _trip.StartDate = $scope.StartDate != undefined ? moment($scope.StartDate).format("YYYY-MM-DD") : null;
         _trip.SelectedCurrencyDropdownValue = $scope.SelectedCurrencyDropdownValue;
 
         $scope.$storage['trip'] = _trip;

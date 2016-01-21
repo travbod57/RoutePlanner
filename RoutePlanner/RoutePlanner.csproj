@@ -201,7 +201,7 @@
     <Content Include="Scripts\angular-resource.min.js.map" />
     <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
-    <Content Include="PHP\responseDataDtos.php" />
+    <Content Include="PHP\ResponseDataDtos.php" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\custom\angular-google-maps.min.js" />
     <Content Include="Scripts\custom\angular-simple-logger\index.js" />

@@ -3,12 +3,16 @@
 
  */
 require 'Slim/Slim.php';
-require 'responseDataDtos.php';
-require_once($_SERVER["DOCUMENT_ROOT"] . 'wp_thinkbackpacking/wp-blog-header.php'); /* For wordpress authentication to work */ // if required then stripslashes needed on hte post of json array data
+require 'ResponseDataDtos.php';
+
+require_once('../wp-config.php');
+$wp->init(); $wp->parse_request(); $wp->query_posts();
+$wp->register_globals(); $wp->send_headers();
+
 require_once('../phpMailer/class.phpmailer.php');
 require_once('../phpMailer/class.smtp.php'); // optional, gets called from within class.phpmailer.php if not already loaded
 	
-//$app->log->INFO($_SERVER["DOCUMENT_ROOT"] . 'wp_thinkbackpacking/wp-blog-header.php');
+
 
 \Slim\Slim::registerAutoloader();
 
@@ -28,7 +32,7 @@ $app = new \Slim\Slim(array(
     'log.level' => \Slim\Log::DEBUG,
     'log.writer' => $logWriter
 ));
-
+//$app->log->INFO($_SERVER["DOCUMENT_ROOT"] . '/wp-blog-header.php');
 $env = $app->environment();
 
 /**
@@ -142,6 +146,8 @@ $env = $app->environment();
 		$response->headers->set('Content-Type', 'application/json');
 		$response->headers->set('Access-Control-Allow-Origin', '*');
 		$response->body($json);
+		
+		$app->log->INFO("my trips");
      }
      catch (\Exception $e) {
 		$app->error($e);
@@ -161,7 +167,7 @@ $app->post(
 		$tripId = $_POST['tripId'];
 		$deletedDate = $_POST['deletedDate'];
 		
-		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
+		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as turrencyName FROM trip T LEFT JOIN currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
 		
 		$stmt[0] = $pdo->prepare($get_trip_sql);
 		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
@@ -244,7 +250,7 @@ $app->post(
 		if ($trip->Id == 0 && $trip->SessionStorage == 1) // Save a New Trip from Session Storage from MyTrips page
 		{
 			$app->log->INFO("new trip from session storage");
-			$insert_trip_sql = "INSERT INTO Trip (UserId, Name, StartDate, EndDate, NumberOfStops, NumberOfNights, TotalCost, CurrencyId, CreatedDate, ModifiedDate) VALUES (:userId, :name, :startDate, :endDate, :numberOfStops, :numberOfNights, :totalCost, :currencyId, :createdDate, :modifiedDate)";
+			$insert_trip_sql = "INSERT INTO trip (UserId, Name, StartDate, EndDate, NumberOfStops, NumberOfNights, TotalCost, CurrencyId, CreatedDate, ModifiedDate) VALUES (:userId, :name, :startDate, :endDate, :numberOfStops, :numberOfNights, :totalCost, :currencyId, :createdDate, :modifiedDate)";
 
 			$sqlStatementCount = 0;
 			$stmt[$sqlStatementCount] = $pdo->prepare($insert_trip_sql);
@@ -295,7 +301,7 @@ $app->post(
 		{
 			$app->log->INFO("new trip");
 		
-			$insert_trip_sql = "INSERT INTO Trip (UserId, Name, CreatedDate, ModifiedDate) VALUES (:userId, :tripName, :createdDate, :modifiedDate)";
+			$insert_trip_sql = "INSERT INTO trip (UserId, Name, CreatedDate, ModifiedDate) VALUES (:userId, :tripName, :createdDate, :modifiedDate)";
 			
 			$stmt = $pdo->prepare($insert_trip_sql);
 			$stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -332,7 +338,7 @@ $app->post(
 			$tripId = $trip->Id;
 				
 			$delete_route_sql = "DELETE FROM route WHERE TripId = :tripId";
-			$update_trip_sql = "UPDATE Trip SET StartDate = :startDate, EndDate = :endDate, NumberOfStops = :numberOfStops, NumberOfNights = :numberOfNights, TotalCost = :totalCost, CurrencyId = :currencyId, ModifiedDate = :modifiedDate WHERE Id = :tripId";
+			$update_trip_sql = "UPDATE trip SET StartDate = :startDate, EndDate = :endDate, NumberOfStops = :numberOfStops, NumberOfNights = :numberOfNights, TotalCost = :totalCost, CurrencyId = :currencyId, ModifiedDate = :modifiedDate WHERE Id = :tripId";
 		
 			$sqlStatementCount = 0;
 			$stmt[$sqlStatementCount] = $pdo->prepare($delete_route_sql);
@@ -440,7 +446,7 @@ function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route, $dateT
 		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
-		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM Trip T LEFT JOIN Currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
+		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM trip T LEFT JOIN currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
 		
 		$stmt[0] = $pdo->prepare($get_trip_sql);
 		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
@@ -453,8 +459,8 @@ function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route, $dateT
 		if ($wp_authenticated && $trip_authenticated) 
 		{
 			$get_route_sql = "SELECT R.Id as RouteId, R.StopNumber, R.Nights, R.DailyCost, R.TotalCost,
-			L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Id as TransportId
-			FROM Route R JOIN Location L ON L.Id = R.LocationId JOIN Transport T ON T.Id = R.TransportId WHERE R.TripId = :tripId ORDER BY StopNumber ASC";
+			L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Id as TransportId, T.Name as TransportName
+			FROM route R JOIN location L ON L.Id = R.LocationId JOIN transport T ON T.Id = R.TransportId WHERE R.TripId = :tripId ORDER BY StopNumber ASC";
 
 			$stmt[1] = $pdo->prepare($get_route_sql);
 			$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
@@ -528,7 +534,7 @@ $app->post(
 		
 		// get transport options
 		
-		$get_transport_sql = "SELECT Id, Name FROM Transport";
+		$get_transport_sql = "SELECT Id, Name FROM transport";
 			
 		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -578,7 +584,7 @@ $app->post(
 				}
 			}
 			
-			$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . ((empty($totalCost)) ? "0.00" : $totalCost) . "</td> 	<td>" . $transportData[$transportId]['Name'] . "</td>";
+			$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . ((empty($totalCost)) ? "0.00" : $totalCost) . "</td> 	<td>" . $transportData[$transportId-1]['Name'] . "</td>";
 			$html .= "</tr>";
 		}
 		
@@ -697,3 +703,5 @@ $app->post(
  * and returns the HTTP response to the HTTP client.
  */
 $app->run();
+
+?>

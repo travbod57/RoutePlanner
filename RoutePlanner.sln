@@ -9,8 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoutePlanner.Tests", "Route
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4AC3806-E81D-45A8-8515-D5A66C713FA7}"
 	ProjectSection(SolutionItems) = preProject
+		Deployment.txt = Deployment.txt
 		Notes.txt = Notes.txt
-		..\..\..\Users\Alex\Desktop\ThinkbackpackingDeploymentSteps.txt = ..\..\..\Users\Alex\Desktop\ThinkbackpackingDeploymentSteps.txt
 	EndProjectSection
 EndProject
 Global

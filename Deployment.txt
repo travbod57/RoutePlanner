@@ -1,0 +1,29 @@
+============
+Deploy steps
+============
+
+File System
+
+* Angular .js files - update TravelTool.js, MyTrips.js the Config URLS
+* Trip.html - update the URL for link to travel tool
+
+Wordpress
+
+* Updraft to backup LIVE
+* Updraft to backup DEV
+* Restore DEV to LIVE
+
+PhpMyAdmin
+
+* DB - rename the options table value
+* DB - apply any SQL update scripts
+
+Wordpress
+
+* WP Admin - rename under general settings
+* WP Admin - login/Logout redirects subscriber role alteration
+
+Slim
+
+* Index.php - some hard coded locations still exist - log location
+* Environment.php - change connection details

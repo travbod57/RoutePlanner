@@ -239,6 +239,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="SQL\Migrations\2016_01_23.sql" />
     <Content Include="SQL\traveltool.sql" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

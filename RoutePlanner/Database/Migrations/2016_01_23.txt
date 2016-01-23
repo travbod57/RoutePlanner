@@ -1,0 +1,7 @@
+#Fixes Nepal being named incorrectly
+
+UPDATE `location` SET Full_Name = CONCAT(Full_Name, 'l') WHERE Country = 'Nepa'
+UPDATE `location` SET Country = 'Nepal' WHERE Country = 'Nepa'
+
+#Fixes Updates Los Angeles Daily Cost
+UPDATE `location` SET DailyCost = '0.00' WHERE Place = 'Los Angeles'

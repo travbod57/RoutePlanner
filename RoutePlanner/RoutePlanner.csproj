@@ -180,6 +180,7 @@
     <Content Include="Content\images\markers\map-marker-icon-green-darker.png" />
     <Content Include="Content\images\markers\map-marker-icon-red.png" />
     <Content Include="Content\travel-tool.css" />
+    <Content Include="Database\TextFile1.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

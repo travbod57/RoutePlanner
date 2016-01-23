@@ -229,7 +229,7 @@
                     <div class="text-danger margin-top-10" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
 
                     <div ng-show="showEmailError" class="margin-top-10"><p>You're email failed to send. Please try again later</p></div>
-                    <uib-progressbar class="progress-striped active margin-top-10" ng-show="showProgressBar" value="dynamic" type="{{type}}"></uib-progressbar>
+                    <uib-progressbar class="progress-striped active margin-top-10" ng-show="showProgressBar" value="dynamic" type="{{type}}">sending...</uib-progressbar>
 
                     <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
                     <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>

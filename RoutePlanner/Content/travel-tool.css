@@ -1,5 +1,9 @@
 ﻿    /* General */
 
+    .margin-top-10 {
+		margin-top: 10px;
+    }
+
     .margin-5 {
         margin-top: 5px;
         margin-bottom: 5px;

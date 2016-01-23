@@ -147,17 +147,21 @@
 
     controllers.sendEmailModalCtrl = function ($scope, $uibModalInstance, dataService, route) {
 
+        var progressBarTypes = ['danger', 'info', 'warning', 'success'];
+
         $scope.ContactDetails = { details: { Email: "" } };
         $scope.Route = route;
         $scope.ok = function () {
 
             $scope.DisableSend = true;
+            $scope.showProgressBar = true;
 
             var promise = dataService.sendEmail($scope.ContactDetails.details.Email, $scope.Route);
 
             promise.done(function () {
                 $scope.$apply(function () {
                     $scope.showEmailError = false;
+                    $scope.showProgressBar = false;
                 });
                 $uibModalInstance.close();
             }).
@@ -165,6 +169,7 @@
                 $scope.$apply(function () {
                     $scope.showEmailError = true;
                     $scope.DisableSend = false;
+                    $scope.showProgressBar = false;
                 });
 
             });

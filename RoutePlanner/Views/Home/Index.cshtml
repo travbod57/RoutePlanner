@@ -225,10 +225,11 @@
                 <div class="form-group" ng-class="{'has-error': !emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-success': emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-feedback': (!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty || emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty)}">
 
                     <input type="text" name="Email" placeholder="enter your email" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
-                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.required && emailRouteForm.Email.$dirty">Please enter your email address</div>
-                    <div class="text-danger" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
+                    <div class="text-danger margin-top-10" ng-show="emailRouteForm.Email.$error.required && emailRouteForm.Email.$dirty">Please enter your email address</div>
+                    <div class="text-danger margin-top-10" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
 
-                    <div ng-show="showEmailError"><p>You're email failed to send. Please try again later</p></div>
+                    <div ng-show="showEmailError" class="margin-top-10"><p>You're email failed to send. Please try again later</p></div>
+                    <uib-progressbar class="progress-striped active margin-top-10" ng-show="showProgressBar" value="dynamic" type="{{type}}"></uib-progressbar>
 
                     <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
                     <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>

@@ -50,6 +50,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     var _trip = {};
     var _transport;
+    var _token;
 
     $scope.TripName;
     $scope.ChosenLocation;
@@ -62,6 +63,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     $scope.$storage = $localStorage;
     $scope.SelectedCurrencyDropdownValue;
     $scope.IsAuthenticated; 
+    $scope.IsReadOnly = false;
 
     _initialiseTrip();
 
@@ -215,6 +217,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     function _initialiseTrip() {
 
         _trip.Id = utilService.getQueryStringParameterByName('tripId');
+        _token = utilService.getQueryStringParameterByName('token');
 
         // TODO: use AJAX call here
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
@@ -225,6 +228,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         var promise = dataService.getTrip(_trip.Id);
         
         promise.then(function (response) {
+
+            if (_token != undefined)
+                $scope.IsReadOnly = true;
 
             // IF AUTHENTICATED retrieve from database
             _trip = response.data.Trip;
@@ -487,7 +493,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     $scope.Email = function (size) {
 
-        modalsService.email(size, $scope.Route);
+        _buildTripForTransfer();
+        modalsService.email(size, _trip.Id);
     };
 
     $scope.Reset = function (size) {
@@ -566,7 +573,7 @@ travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTr
 travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'authenticationService', 'dataService', 'trip'];
 travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
-travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'dataService', 'route'];
+travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'dataService', 'tripId'];
 travelToolApp.controller('SendEmailModalCtrl', travelTool.shared.controllers.sendEmailModalCtrl);
 
 travelTool.shared.controllers.resetModalCtrl.$inject = ['$scope', '$uibModalInstance'];

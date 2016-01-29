@@ -73,7 +73,7 @@
                 <div class="input-group">
                     <input id="locationpicker" input-group-btn-click class="form-control margin-5" type="text" ng-model="ChosenLocation" typeahead-editable="false" placeholder="start typing a location ..." typeahead-template-url="customTemplate.html" autocomplete="off" typeahead-min-length="2" typeahead-wait-ms="1" uib-typeahead="location as location.Full_Name for location in getLocationsByTerm($viewValue)">
                     <span class="input-group-btn">
-                        <button id="locationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()">Choose</button>
+                        <button id="locationSelector" class="btn btn-primary margin-5" type="button" ng-click="Choose()" ng-disabled="IsReadOnly">Choose</button>
                     </span>
                 </div>
             </div>
@@ -156,15 +156,15 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="Email('lg')" ng-disabled="Route.length == 0">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="Email('lg')" ng-disabled="Route.length == 0 || IsReadOnly">
         <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Email Route
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="Reset()" ng-disabled="Route.length == 0">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="Reset()" ng-disabled="Route.length == 0 || IsReadOnly">
         <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Reset Route
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="SaveTrip('lg')" ng-disabled="Route.length == 0 || routeForm.$invalid">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="SaveTrip('lg')" ng-disabled="Route.length == 0 || routeForm.$invalid || IsReadOnly">
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save Trip
     </button>
 

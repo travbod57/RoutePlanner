@@ -272,7 +272,7 @@ $app->post(
 				// Insert trip and return the Id of the Trip to use for the route
 				$stmt[0]->execute();
 				$tripId = $pdo->lastInsertId();
-				
+
 				// insert the Route for the Trip using hte Id of the Trip just added
 				prepareRoute($pdo, $stmt, $sqlStatementCount, $tripId, $route, date('Y-m-d H:i:s', $trip->ModifiedDate));
 				
@@ -308,7 +308,7 @@ $app->post(
 			$stmt->bindValue(':tripName', $trip->Name, PDO::PARAM_STR);
 			$stmt->bindValue(':createdDate', date('Y-m-d H:i:s', $trip->CreatedDate), PDO::PARAM_STR);
 			$stmt->bindValue(':modifiedDate', date('Y-m-d H:i:s', $trip->ModifiedDate), PDO::PARAM_STR);
-			
+
 			$pdo->beginTransaction();
 
 			try
@@ -441,22 +441,26 @@ function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route, $dateT
 		
 		$userId = get_current_user_id();
 		$tripId = $_GET['tripId'];
-		
+		$token = $_GET['token'];
 
 		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
-		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM trip T LEFT JOIN currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
+		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName FROM trip T LEFT JOIN currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND (T.UserId = :userId OR 1 = (SELECT COUNT(1) FROM accesstoken WHERE TripId = :tripId AND Token = :token))";
 		
 		$stmt[0] = $pdo->prepare($get_trip_sql);
 		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
 		$stmt[0]->bindValue(':userId', $userId, PDO::PARAM_INT);
+		$stmt[0]->bindValue(':token', $token, PDO::PARAM_STR);
+		
 		$stmt[0]->execute();
 		$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
 		
 		$trip_authenticated = !empty($tripData);
-		
-		if ($wp_authenticated && $trip_authenticated) 
+		$app->log->INFO($trip_authenticated);
+		$app->log->INFO(count($tripData));
+		// access to trip data allowed if trip data returned so Authenticated with a WP UserId or supplied a valid Trip Token
+		if ($trip_authenticated) 
 		{
 			$get_route_sql = "SELECT R.Id as RouteId, R.StopNumber, R.Nights, R.DailyCost, R.TotalCost,
 			L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Id as TransportId, T.Name as TransportName
@@ -481,7 +485,7 @@ function prepareRoute(&$pdo, &$stmt, $sqlStatementCount, $tripId, $route, $dateT
 			$tripResult->PolyLines = null;
 			
 			$json = json_encode($tripResult);
-		}
+		} // not authorised to WP but tried to enter a Trip Id into the URL
 		else if (!$wp_authenticated && $tripId != "")
 		{
 			$app->response->setStatus(401);
@@ -513,121 +517,175 @@ $app->post(
     '/sendEmail',
     function () use ($app, $env) {
 
-    try
-    {
-
-	
-		// receive data - JSON, email address
-		//$json = '[ { "id": "1", "location": { "Id": "1", "Name": "USA", "DailyCost": "20.00", "Latitude": "1.00000000", "Longitude": "-1.00000000" }, "coords": { //"latitude": "1.00000000", "longitude": "-1.00000000" }, "nights": 0, "transport": "Air", "totalCost": 0, "stop": 1 }, { "id": "533", "location": { "Id": "533", //"Name": "London, United Kingdom", "DailyCost": "0.00", "Latitude": "51.50000000", "Longitude": "-0.08333300" }, "coords": { "latitude": "51.50000000", //"longitude": "-0.08333300" }, "nights": 0, "transport": "Air", "totalCost": 0, "stop": 2 }, { "id": "310", "location": { "Id": "310", "Name": "Canberra, //Australia", "DailyCost": "0.00", "Latitude": "-35.26666641", "Longitude": "100.00000000" }, "coords": { "latitude": "-35.26666641", "longitude": "100.00000000" }, //"nights": 0, "transport": "Air", "totalCost": 0, "stop": 3 }, { "id": "388", "location": { "Id": "388", "Name": "Paris, France", "DailyCost": "0.00", "Latitude": //"48.86666489", "Longitude": "2.33333302" }, "coords": { "latitude": "48.86666489", "longitude": "2.33333302" }, "nights": 0, "transport": "Air", "totalCost": 0, //"stop": 4 } ]';
+		global $current_user;
+		get_currentuserinfo();
+		
+		$tripId = $_POST['tripId'];
+		$userId = get_current_user_id();
+		
+		$username = $current_user->display_name == null ? "Backpacker" : $current_user->display_name;
 		
 		$emailAddress = $_POST['address'];
 		$bccAddress = "alexwilliams57@hotmail.com";
-		$json = $_POST['routeData'];
+
+		$accessGUID = getGUID();
 		
-		date_default_timezone_set('Europe/London');
-		//$app->log->info("INFO - an email was sent to: " . $emailAddress . ", at: " . date("Y-m-d H:m:s"));
-		
-		// decode JSON
-		
-		$arrRoute = json_decode(stripslashes($json));
-		$arrRouteLength = count($arrRoute);
-		
-		// get transport options
-		
-		$get_transport_sql = "SELECT Id, Name FROM transport";
-			
 		$pdo=new PDO($env['DB_Name'],$env['DB_Username'],$env['DB_Password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 		$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		
-		$stmt[0] = $pdo->prepare($get_transport_sql);
-		$stmt[0]->execute();
-		$transportData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
-	
-		//create HTML email
+		$get_trip_sql = "SELECT T.Id, T.Name, T.StartDate, T.EndDate, T.NumberOfStops, T.NumberOfNights, T.TotalCost, C.Id as CurrencyId, C.Name as CurrencyName, C.Symbol as CurrencySymbol FROM trip T LEFT JOIN currency C ON C.Id = T.CurrencyId WHERE T.Id = :tripId AND T.UserId = :userId";
 		
-		$html = "<html><head><style>table, p { font-family: 'Arial', Helvetica, sans-serif; font-size: 0.8em; }
-		th, td { text-align: left; padding: 5px; }
-		th { font-weight: bold; border-bottom: 1px; }
-		tbody tr:nth-child(odd){ background-color:#f9f9f9; }
-		</style></head><body>";
+		$stmt[0] = $pdo->prepare($get_trip_sql);
+		$stmt[0]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		$stmt[0]->bindValue(':userId', $userId, PDO::PARAM_INT);
 		
-		$html .= "<p>Dear backpacker,</p><p>Thank you for planning your world travel experience with Thinkbackpacking.com!</p><table><thead><th>Stop</th>		      <th>Location</th><th>Nights</th><th>Daily Cost</th><th>Total Cost</th><th>Leave By</th></thead><tbody>";
+		$get_route_sql = "SELECT R.Id as RouteId, R.StopNumber, R.Nights, R.DailyCost, R.TotalCost,
+		L.Id, L.Place, L.Country, L.Full_Name, L.DailyCost as LocationDailyCost, L.Latitude, L.Longitude, L.IsAirport, T.Id as TransportId, T.Name as TransportName
+		FROM route R JOIN location L ON L.Id = R.LocationId JOIN transport T ON T.Id = R.TransportId WHERE R.TripId = :tripId ORDER BY StopNumber ASC";
+
+		$stmt[1] = $pdo->prepare($get_route_sql);
+		$stmt[1]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+					
+		$insert_access_token_sql = "INSERT INTO accesstoken (TripId, Token, ExpiryDate) VALUES (:tripId, :token, :expiryDate)";
 		
-		for ($x = 0; $x < $arrRouteLength; $x++) {
-			
-			$html .= "<tr>";
-			
-			foreach($arrRoute[$x] as $routeKey => $routeValue) {
+		$stmt[2] = $pdo->prepare($insert_access_token_sql);
+		$stmt[2]->bindValue(':tripId', $tripId, PDO::PARAM_INT);
+		$stmt[2]->bindValue(':token', $accessGUID, PDO::PARAM_STR);
+		$stmt[2]->bindValue(':expiryDate', date("Y-m-d H:i:s", strtotime('+48 hours')), PDO::PARAM_STR);	
 				
-				if ($routeKey == "location")
-				{
-					foreach($routeValue as $locationKey => $locationValue)
-					{
-						if ($locationKey == "Id")
-							$locationId = $locationValue;
-						if ($locationKey == "Full_Name")
-							$locationName = $locationValue;
-					}
-				}
-				else
-				{
-					if ($routeKey == "dailyCost")
-						$dailyCost = $routeValue;
-					if ($routeKey == "stop")
-						$stopNumber = $routeValue;
-					else if ($routeKey == "nights")
-						$nights = $routeValue;
-					else if ($routeKey == "totalCost")
-						$totalCost = $routeValue;
-					else if ($routeKey == "transportId")
-						$transportId = $routeValue;
-				}
+		$pdo->beginTransaction();
+
+		try
+		{
+			$stmt[0]->execute();
+			$tripData = $stmt[0]->fetchAll(PDO::FETCH_ASSOC);
+			
+			$stmt[1]->execute();
+			$routeData = $stmt[1]->fetchAll(PDO::FETCH_ASSOC);
+			
+			$stmt[2]->execute();  
+			
+			$pdo->commit();
+			
+			// create Text email
+
+			$text = "Dear " . $username . ",\r\n\r\nThank you for planning your world travel experience with Thinkbackpacking.com!\r\n\r\nHappy trails!\r\n\r\n";
+		
+			foreach ($tripData as $row)
+			{		
+				$tripName = $row['Name'];
+				$startDate = date('jS M Y', strtotime($row['StartDate']));
+				$endDate = date('jS M Y', strtotime($$row['EndDate']));
+				$currencySymbol = $row['CurrencySymbol'];
+				$totalCost = $row['TotalCost'];
 			}
 			
-			$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . ((empty($totalCost)) ? "0.00" : $totalCost) . "</td> 	<td>" . $transportData[$transportId-1]['Name'] . "</td>";
-			$html .= "</tr>";
-		}
+			if ($tripData->Name != null)
+				$text .= $tripData->Name . "\r\n\r\n";
 		
-		$html .= "</tbody></table><br/><p>Happy trails</p></body></html>";
-		
-		// Send Email
-		
-		$mail = new PHPMailer(); // create a new object
-		$mail->IsSMTP(); // enable SMTP
-		$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-		$mail->SMTPAuth = true; // authentication enabled
-		$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-		$mail->Port = 465; // or 587
-		$mail->IsHTML(true);
-		//$mail->Host = "smtp.gmail.com";
-		//$mail->Username = "alexjwilliams57@gmail.com";
-		//$mail->Password = "eae.b-hJ";
-		$mail->Host = "thinkbackpacking.com";
-		$mail->Username = "travel@thinkbackpacking.com";
-		$mail->Password = "Dinosaur89";
-		$mail->SetFrom("travel@thinkbackpacking.com", 'thinkbackpacking');
-		$mail->Subject = "Your trip";
-		$mail->Body = "$html";
-		$mail->AddAddress($emailAddress);
-		$mail->AddBCC($bccAddress);
-		
-		if(!$mail->Send())
-		{
-			echo "Mailer Error: " . $mail->ErrorInfo;
-		}
-		else
-		{
-			echo "Message has been sent";
-		}
-		
-		$response = $app->response();
-		$response->headers->set('Content-Type', 'application/json');
-		$response->headers->set('Access-Control-Allow-Origin', '*');
+			$text .= "Start Date: " . $startDate . "\r\nEnd Date: " . $endDate . "\r\nTotal Cost: " . $currencySymbol . $totalCost . "\r\n\r\n";
+				
+			//create HTML email
+			
+			$html = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=utf-8' /><style>* { font-family: 'Arial', Helvetica, sans-serif; }
+			h1 { font-size: 1.2em; padding: 5px; }
+			table, p { font-size: 0.8em; padding: 5px; }
+			th, td { text-align: left; padding: 5px; }
+			#tblRoute tr th { font-weight: bold; border-bottom: 1px; }
+			tbody tr:nth-child(odd){ background-color:#f9f9f9; }
+			img { margin: 20px; max-width: 80%; display:block; height: auto; }
+			#tblDetails tr td:nth-child(1) { font-weight: bold; }
+			#wrapper { background-color: #156688; }
+			.panel { background-color: #FFFFFF; margin: 20px; padding: 20px; }</style></head><body>";
+			
+			$html .= "<div id='wrapper'>";
+			$html .= "<img src='" . $env['SiteURL'] . "/wp-content/themes/devdmbootstrap3-child/images/title.png' />";
+			$html .= "<div class='panel'><p>Dear " . $username . ",</p><p>SO and so has given you access to the site for the next 48 hours. Click the link to view this trip. Thank you for planning your world travel experience with Thinkbackpacking.com!</p><p>Happy trails!</p>";
+			
+			if ($tripName != null)
+				$html .= "<p>To view " . $tripName. " in full please <a href='" . $env['SiteURL'] . "/planning/round-the-world-trip-planning-map?tripId=" . $tripId . "&token=" . $accessGUID . "'>click here</a></p><p>Happy trails!</p>";
+			
+			$html .= "</div>";
+			
+			$html .= "<div class='panel'>";
+			
+			if ($tripName != null)
+				$html .= "<h1>" . $tripName . "</h1>";
+			
+			$html .= "<table id='tblDetails'><tbody><tr><td>Start Date:</td><td>" . $startDate . "</td></tr><tr><td>End Date:</td><td>" . $endDate . "</td></tr><tr><td>Total Cost:</td><td>" . $currencySymbol . $totalCost . "</td></tr></tbody></table></div>";
+			
+			$html .= "<div class='panel'><table id='tblRoute'><thead><tr><th>Stop</th><th>Location</th><th>Nights</th><th>Daily Cost</th><th>Total Cost</th><th>Leave By</th></tr></thead><tbody>";
+			 
+			$routeLength = count($routeData);
 
-     }
-     catch (\Exception $e) {
-		$app->error($e);
-     }
+			for ($x = 0; $x < $routeLength; $x++) {
+					
+				$html .= "<tr>";
+				
+				foreach($routeData[$x] as $routeKey => $routeValue) {
+				
+					if ($routeKey == "Full_Name")
+						$locationName = $routeValue;
+					if ($routeKey == "DailyCost")
+						$dailyCost = $routeValue;
+					if ($routeKey == "StopNumber")
+						$stopNumber = $routeValue;
+					else if ($routeKey == "Nights")
+						$nights = $routeValue;
+					else if ($routeKey == "TotalCost")
+						$totalCost = $routeValue;
+					else if ($routeKey == "TransportName")
+						$TransportName = $routeValue;
+				}
+				
+				$html .= "<td>" . $stopNumber . "</td><td>" . $locationName . "</td><td>" . $nights . "</td><td>" . $dailyCost . "</td><td>" . ((empty($totalCost)) ? "0.00" : $totalCost) . "</td><td>" . $TransportName . "</td>";
+				$html .= "</tr>";
+				
+				$text .= "Stop: " . $stopNumber . ", Location: " . $locationName . ", Nights: " . $nights . ", Daily Cost: " . $dailyCost . ", Total Cost: " . ((empty($totalCost)) ? "0.00" : $totalCost) . ", Leave By: " . $TransportName . "\r\n\r\n";			
+			}
+			
+			// Send Email
+			
+			$mail = new PHPMailer(); // create a new object
+			$mail->IsSMTP(); // enable SMTP
+			$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+			$mail->SMTPAuth = true; // authentication enabled
+			$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
+			$mail->Port = 465; // or 587
+			$mail->IsHTML(true);
+			//$mail->Host = "smtp.gmail.com";
+			//$mail->Username = "alexjwilliams57@gmail.com";
+			//$mail->Password = "eae.b-hJ";
+			$mail->Host = "thinkbackpacking.com";
+			$mail->Username = "travel@thinkbackpacking.com";
+			$mail->Password = "Dinosaur89";
+			$mail->SetFrom("travel@thinkbackpacking.com", 'thinkbackpacking');
+			$mail->Subject = "Your trip";
+			$mail->Body = "$html";
+			$mail->AddAddress($emailAddress);
+			$mail->AddBCC($bccAddress);
+			$mail->AltBody = $text;
+			
+			if(!$mail->Send())
+			{
+				echo "Mailer Error: " . $mail->ErrorInfo;
+			}
+			else
+			{
+				echo "Message has been sent";
+			}
+			
+			$response = $app->response();
+			$response->headers->set('Content-Type', 'application/json');
+			$response->headers->set('Access-Control-Allow-Origin', '*');
+				
+			
+		}
+		catch(PDOException $e)
+		{
+			$pdo->rollBack();
+			$app->error($e);
+		}    
     }
 ); 
 
@@ -694,6 +752,18 @@ $app->post(
 	    }
     }
 ); 
+
+
+function getGUID(){
+    if (function_exists('com_create_guid') === true)
+        return trim(com_create_guid(), '{}');
+
+    $data = openssl_random_pseudo_bytes(16);
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+	
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+}
 
 
 /**

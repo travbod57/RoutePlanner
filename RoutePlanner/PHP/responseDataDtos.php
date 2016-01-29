@@ -12,6 +12,7 @@ class Trip {
 		$this->TotalCost = $tripData['TotalCost'];
 		$this->CurrencyId = $tripData['CurrencyId'];
 		$this->CurrencyName = $tripData['CurrencyName'];
+		$this->Token = $tripData['Token'];
 	}
 
 	public $Id;
@@ -23,6 +24,7 @@ class Trip {
     public $TotalCost;
 	public $CurrencyId;
 	public $CurrencyName;
+	public $Token;
 }
 
 class TripResult {
@@ -64,6 +66,7 @@ class Route {
 		$this->dailyCost = $routeData['DailyCost'];
 		$this->totalCost = $routeData['TotalCost'];
 		$this->transportId = $routeData['TransportId'];
+		$this->transportName = $routeData['TransportName'];
 		$this->options = new Options($routeData);
 		$this->style = new Style();
 	}
@@ -76,6 +79,7 @@ class Route {
 	public $dailyCost;
 	public $totalCost;
 	public $transportId;
+	public $transportName;
 	public $options;
 	public $style;
 }

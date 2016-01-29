@@ -114,11 +114,12 @@
             return $http.get(CONFIG.GET_MY_TRIPS_URL);
         };
 
-        var _getTrip = function (tripId) {
+        var _getTrip = function (tripId, token) {
 
             return $http.get(CONFIG.GET_TRIP_URL, {
                 params: {
-                    tripId: tripId
+                    tripId: tripId,
+                    token: token
                 }
             });
         };
@@ -132,20 +133,13 @@
             });
         };
 
-        var _sendEmail = function (emailAddress, route) {
+        var _sendEmail = function (emailAddress, tripId) {
 
             return jQuery.ajax({
                 url: CONFIG.EMAIL_ROUTE_URL,
                 type: "POST",
                 dataType: "text",
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                transformRequest: function (obj) {
-                    var str = [];
-                    for (var p in obj)
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: { address: emailAddress, routeData: angular.toJson(route) }
+                data: { address: emailAddress, tripId: tripId }
             });
         }
 
@@ -238,7 +232,7 @@
             return modalInstance;
         }
 
-        var _email = function (size, route) {
+        var _email = function (size, tripId) {
 
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -248,8 +242,8 @@
                 keyboard: false,
                 size: size,
                 resolve: {
-                    route: function () {
-                        return route;
+                    tripId: function () {
+                        return tripId;
                     }
                 }
             });

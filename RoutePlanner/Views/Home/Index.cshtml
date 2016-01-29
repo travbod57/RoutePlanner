@@ -156,7 +156,7 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="Email('lg')" ng-disabled="Route.length == 0 || IsReadOnly">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="Email('lg')" ng-disabled="Route.length == 0" ng-if="IsAuthenticated">
         <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Email Route
     </button>
 
@@ -168,7 +168,7 @@
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save Trip
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Trip
     </button>
 

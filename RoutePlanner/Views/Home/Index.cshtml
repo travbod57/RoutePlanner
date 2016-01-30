@@ -39,7 +39,7 @@
                 </ul>
             </div>
 
-            <div class="alert alert-danger" role="alert" ng-show="<?php echo !is_user_logged_in(); ?>">
+            <div class="alert alert-danger" role="alert" ng-if="<?php echo !is_user_logged_in(); ?>">
                 Remember, you must <a href="<?php echo home_url() . '/login'; ?>">login</a> or <a href="<?php echo home_url() . '/register'; ?>">register</a> to save your trip
             </div>
 

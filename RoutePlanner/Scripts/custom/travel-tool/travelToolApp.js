@@ -218,6 +218,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         _trip.Id = utilService.getQueryStringParameterByName('tripId');
         _token = utilService.getQueryStringParameterByName('token');
 
+        if (_token != undefined)
+            $scope.IsReadOnly = true;
+
         // TODO: use AJAX call here
         $scope.CurrencyDropdownValues = [{ id: 1, label: 'POUND', symbol: '£' }, { id: 2, label: 'DOLLAR', symbol: '$' }, { id: 3, label: 'EURO', symbol: '€' }, { id: 4, label: "YEN", symbol: '¥' }];
 
@@ -227,9 +230,6 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         var promise = dataService.getTrip(_trip.Id);
         
         promise.then(function (response) {
-
-            if (_token != undefined)
-                $scope.IsReadOnly = true;
 
             // IF AUTHENTICATED retrieve from database
             _trip = response.data.Trip;

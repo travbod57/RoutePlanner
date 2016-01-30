@@ -133,13 +133,13 @@
             });
         };
 
-        var _sendEmail = function (emailAddress, tripId) {
+        var _shareRoute = function (recipientDetails, tripId) {
 
             return jQuery.ajax({
-                url: CONFIG.EMAIL_ROUTE_URL,
+                url: CONFIG.SHARE_ROUTE_URL,
                 type: "POST",
                 dataType: "text",
-                data: { address: emailAddress, tripId: tripId }
+                data: { address: recipientDetails.Email, name: recipientDetails.Name, tripId: tripId }
             });
         }
 
@@ -149,7 +149,7 @@
             myTrips: _myTrips,
             getTrip: _getTrip,
             getLocationsByTerm: _getLocationsByTerm,
-            sendEmail: _sendEmail
+            shareRoute: _shareRoute
         }
 
     };
@@ -232,12 +232,12 @@
             return modalInstance;
         }
 
-        var _email = function (size, tripId) {
+        var _shareRoute = function (size, tripId) {
 
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'sendEmailModal.html',
-                controller: 'SendEmailModalCtrl',
+                templateUrl: 'shareRouteModal.html',
+                controller: 'ShareRouteModalCtrl',
                 backdrop: 'static',
                 keyboard: false,
                 size: size,
@@ -316,7 +316,7 @@
             saveTrip: _saveTrip,
             deleteTrip: _deleteTrip,
             loginModal: _loginModal,
-            email:_email,
+            shareRoute: _shareRoute,
             reset: _reset,
             loginOrRegister: _loginOrRegister,
             routeLengthExceededModal: _routeLengthExceededModal,

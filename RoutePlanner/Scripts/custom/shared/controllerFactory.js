@@ -145,18 +145,18 @@
         };
     };
 
-    controllers.sendEmailModalCtrl = function ($scope, $uibModalInstance, dataService, trip) {
+    controllers.shareRouteModalCtrl = function ($scope, $uibModalInstance, dataService, trip) {
 
         var progressBarTypes = ['danger', 'info', 'warning', 'success'];
 
-        $scope.ContactDetails = { details: { Email: "" } };
+        $scope.ContactDetails = { details: { Email: "", Name: "" } };
 
         $scope.ok = function () {
 
             $scope.DisableSend = true;
             $scope.showProgressBar = true;
 
-            var promise = dataService.sendEmail($scope.ContactDetails.details.Email, trip);
+            var promise = dataService.shareRoute($scope.ContactDetails.details, trip);
 
             promise.done(function () {
                 $scope.$apply(function () {

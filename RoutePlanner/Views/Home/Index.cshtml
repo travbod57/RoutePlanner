@@ -156,19 +156,19 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="Email('lg')" ng-disabled="Route.length == 0" ng-if="IsAuthenticated">
-        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Email Route
+    <button type="button" class="btn btn-primary btn-sm" ng-click="ShareRoute('lg')" ng-disabled="Route.length == 0" ng-if="IsAuthenticated">
+        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Share Route
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="Reset()" ng-disabled="Route.length == 0 || IsReadOnly">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="Reset()" ng-disabled="Route.length == 0" ng-if="!IsReadOnly">
         <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Reset Route
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="SaveTrip('lg')" ng-disabled="Route.length == 0 || routeForm.$invalid || IsReadOnly">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="SaveTrip('lg')" ng-disabled="Route.length == 0 || routeForm.$invalid" ng-if="!IsReadOnly">
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save Trip
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Trip
     </button>
 
@@ -215,30 +215,46 @@
         </div>
     </script>
 
-    <script type="text/ng-template" id="sendEmailModal.html">
+    <script type="text/ng-template" id="shareRouteModal.html">
         <div class="modal-header">
-            <h3 class="modal-title">Email Route</h3>
+            <h3 class="modal-title">Share Route</h3>
         </div>
         <div class="modal-body">
-            <p>Please provide an email address</p>
-            <form id="emailRouteForm" name="emailRouteForm">
-                <div class="form-group" ng-class="{'has-error': !emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-success': emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty, 'has-feedback': (!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty || emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty)}">
 
-                    <input type="text" name="Email" placeholder="enter your email" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
-                    <div class="text-danger margin-top-10" ng-show="emailRouteForm.Email.$error.required && emailRouteForm.Email.$dirty">Please enter your email address</div>
-                    <div class="text-danger margin-top-10" ng-show="emailRouteForm.Email.$error.pattern && emailRouteForm.Email.$dirty">Please enter a valid email address</div>
+            <div class="alert alert-warning">
+                <p>The following recipient will be given access to your trip for the next 48 hours, but they will not be able to make any changes.</p>
+            </div>
+
+            <form id="shareRouteForm" name="shareRouteForm">
+
+                <div class="form-group" ng-class="{'has-error': !shareRouteForm.Name.$valid && shareRouteForm.Name.$dirty, 'has-success': shareRouteForm.Name.$valid && shareRouteForm.Name.$dirty, 'has-feedback': (!shareRouteForm.Name.$valid && shareRouteForm.Name.$dirty || shareRouteForm.Name.$valid && shareRouteForm.Name.$dirty)}">
+
+                    <input type="text" name="Name" placeholder="enter the recipient's name" ng-model="ContactDetails.details.Name" class="form-control" required />
+                    <div class="text-danger margin-top-10" ng-show="shareRouteForm.Name.$error.required && shareRouteForm.Name.$dirty">Please enter the recipient's name</div>
+
+                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!shareRouteForm.Name.$valid && shareRouteForm.Name.$dirty"></span>
+                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="shareRouteForm.Name.$valid && shareRouteForm.Name.$dirty"></span>
+                </div>
+
+                <div class="form-group" ng-class="{'has-error': !shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty, 'has-success': shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty, 'has-feedback': (!shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty || shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty)}">
+
+                    <input type="text" name="Email" placeholder="enter a valid email address" ng-model="ContactDetails.details.Email" ng-pattern="/^[a-zA-Z0-9'._%--]+@@[a-zA-Z0-9-][a-zA-Z0-9.-]*\.[a-zA-Z]{2,9}$/" class="form-control" required />
+                    <div class="text-danger margin-top-10" ng-show="shareRouteForm.Email.$error.required && shareRouteForm.Email.$dirty">Please enter your email address</div>
+                    <div class="text-danger margin-top-10" ng-show="shareRouteForm.Email.$error.pattern && shareRouteForm.Email.$dirty">Please enter a valid email address</div>
 
                     <div ng-show="showEmailError" class="margin-top-10"><p>You're email failed to send. Please try again later</p></div>
                     <uib-progressbar class="progress-striped active margin-top-10" ng-show="showProgressBar" value="dynamic" type="{{type}}">sending...</uib-progressbar>
 
-                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
-                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="emailRouteForm.Email.$valid && emailRouteForm.Email.$dirty"></span>
+                    <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty"></span>
+                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty"></span>
                 </div>
             </form>
 
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="emailRouteForm.$invalid || DisableSend">Send</button>
+            <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="shareRouteForm.$invalid || DisableSend">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Share
+            </button>
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>

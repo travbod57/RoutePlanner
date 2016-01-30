@@ -5,7 +5,6 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "NUMBER_MARKER_ICON": "http://localhost:81/wp_thinkbackpacking/wp-content/themes/devdmbootstrap3-child/images/travel-tool/map-marker-icon-blue-darker.png",
     "END_MARKER_ICON": "http://localhost:81/wp_thinkbackpacking/wp-content/themes/devdmbootstrap3-child/images/travel-tool/map-marker-icon-red.png",
     "GET_LOCATIONS_BY_TERM_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getLocationsByTerm",
-    "SEND_EMAIL_URL": "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail",
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
     "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
     "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
@@ -15,7 +14,7 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "LOGIN_URL": "http://localhost:81/wp_thinkbackpacking/login",
     "REGISTER_URL": "http://localhost:81/wp_thinkbackpacking/register",
     "MY_TRIPS_URL": "http://localhost:81/RoutePlanner/MyTrips",
-    "EMAIL_ROUTE_URL": "http://localhost:81/wp_thinkbackpacking/Slim/sendEmail"
+    "SHARE_ROUTE_URL": "http://localhost:81/wp_thinkbackpacking/Slim/shareRoute"
 })
 .config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
@@ -491,10 +490,10 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
 
     /* MODAL */
 
-    $scope.Email = function (size) {
+    $scope.ShareRoute = function (size) {
 
         _buildTripForTransfer();
-        modalsService.email(size, _trip.Id);
+        modalsService.shareRoute(size, _trip.Id);
     };
 
     $scope.Reset = function (size) {
@@ -573,8 +572,8 @@ travelToolApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTr
 travelTool.shared.controllers.saveTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'authenticationService', 'dataService', 'trip'];
 travelToolApp.controller('SaveTripModalCtrl', travelTool.shared.controllers.saveTripModalCtrl);
 
-travelTool.shared.controllers.sendEmailModalCtrl.$inject = ['$scope', '$uibModalInstance', 'dataService', 'tripId'];
-travelToolApp.controller('SendEmailModalCtrl', travelTool.shared.controllers.sendEmailModalCtrl);
+travelTool.shared.controllers.shareRouteModalCtrl.$inject = ['$scope', '$uibModalInstance', 'dataService', 'tripId'];
+travelToolApp.controller('ShareRouteModalCtrl', travelTool.shared.controllers.shareRouteModalCtrl);
 
 travelTool.shared.controllers.resetModalCtrl.$inject = ['$scope', '$uibModalInstance'];
 travelToolApp.controller('ResetModalCtrl', travelTool.shared.controllers.resetModalCtrl);

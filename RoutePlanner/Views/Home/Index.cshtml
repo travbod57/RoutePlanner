@@ -156,7 +156,7 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="ShareRoute('lg')" ng-disabled="Route.length == 0" ng-if="IsAuthenticated">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="ShareRoute('lg')" ng-disabled="Route.length == 0" ng-if="IsAuthenticated && !IsReadOnly">
         <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Share Route
     </button>
 
@@ -168,7 +168,7 @@
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save Trip
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated && !IsReadOnly">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Trip
     </button>
 
@@ -243,7 +243,7 @@
                     <div class="text-danger margin-top-10" ng-show="shareRouteForm.Email.$error.pattern && shareRouteForm.Email.$dirty">Please enter a valid email address</div>
 
                     <div ng-show="showEmailError" class="margin-top-10"><p>You're email failed to send. Please try again later</p></div>
-                    <uib-progressbar class="progress-striped active margin-top-10" ng-show="showProgressBar" value="dynamic" type="{{type}}">sending...</uib-progressbar>
+                    <uib-progressbar class="progress-striped active margin-top-10" ng-show="showProgressBar" value="dynamic" type="{{type}}">notifying recipient...</uib-progressbar>
 
                     <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty"></span>
                     <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="shareRouteForm.Email.$valid && shareRouteForm.Email.$dirty"></span>

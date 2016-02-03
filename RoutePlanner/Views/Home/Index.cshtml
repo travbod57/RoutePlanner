@@ -83,7 +83,7 @@
                 <label class="travel-tool">Start Date</label>
                 @*<input datepicker id="startDate" class="form-control margin-5" type="text" placeholder="enter a start date ..." ng-model="startDate" />*@
                 <p class="input-group">
-                    <input id="startDate" type="text" class="form-control margin-5" uib-datepicker-popup="{{format}}" placeholder="enter a start date ..." ng-model="StartDate" is-open="status.opened" datepicker-options="dateOptions" close-text="Close" on-open-focus="false" />
+                    <input id="startDate" type="text" class="form-control margin-5" uib-datepicker-popup="{{format}}" placeholder="enter a start date ..." ng-model="StartDate" is-open="status.opened" datepicker-options="dateOptions" close-text="Close" on-open-focus="false" ng-disabled="IsReadOnly" />
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default margin-5" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -93,7 +93,7 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label>Currency</label>
-                <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue"></select>
+                <select id="currencyDropDown" class="form-control" ng-options="item.label for item in CurrencyDropdownValues track by item.id" ng-model="SelectedCurrencyDropdownValue" ng-disabled="IsReadOnly"></select>
             </div>
         </div>
     </div>
@@ -168,7 +168,7 @@
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save Trip
     </button>
 
-    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated && !IsReadOnly">
+    <button type="button" class="btn btn-primary btn-sm" ng-click="NewTrip('lg', true)" ng-if="IsAuthenticated">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Trip
     </button>
 

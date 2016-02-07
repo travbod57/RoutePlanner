@@ -34,13 +34,18 @@
             <div class="alert alert-warning">
                 <strong>tips:</strong>
                 <ul>
-                    <li>You can drag and drop the locations to reorder your route</li>
+                    <li ng-if="!IsReadOnly">You can drag and drop the locations to reorder your route</li>
                     <li>Hover over the markers to see more information</li>
                 </ul>
             </div>
 
             <div class="alert alert-danger" role="alert" ng-if="<?php echo !is_user_logged_in(); ?>">
-                Remember, you must <a href="<?php echo home_url() . '/login'; ?>">login</a> or <a href="<?php echo home_url() . '/register'; ?>">register</a> to save your trip
+                <div ng-if="!IsReadOnly">
+                    Remember, you must <a href="<?php echo home_url() . '/login'; ?>">login</a> or <a href="<?php echo home_url() . '/register'; ?>">register</a> to save your trip
+                </div>
+                <div ng-if="IsReadOnly">
+                    You are viewing this trip as a guest and have access for 48 hours from the time you received your email. You do not have permission to amend or save this trip.
+                </div>
             </div>
 
             <h1 id="tripName" class="inset">{{ TripName }}</h1>

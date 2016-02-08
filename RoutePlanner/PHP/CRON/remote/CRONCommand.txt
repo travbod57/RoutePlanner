@@ -1,0 +1,1 @@
+﻿/usr/bin/php -q /home1/codepool/public_html/CRON/deleteAccessTokens.php

@@ -1,0 +1,14 @@
+﻿CREATE TABLE IF NOT EXISTS `accesstoken` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `TripId` int(11) NOT NULL,
+  `Token` char(36) NOT NULL,
+  `ExpiryDate` datetime NOT NULL,
+  PRIMARY KEY (`Id`),
+  KEY `TripId` (`TripId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Constraints for table `accesstoken`
+--
+ALTER TABLE `accesstoken`
+  ADD CONSTRAINT `accesstoken_ibfk_1` FOREIGN KEY (`TripId`) REFERENCES `trip` (`Id`);

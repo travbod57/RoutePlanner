@@ -52,6 +52,7 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
     var _token;
 
     $scope.TripName;
+    $scope.TripOwnerName;
     $scope.ChosenLocation;
     $scope.SelectedRouteStop;
     $scope.StartDate;
@@ -234,7 +235,8 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
             // IF AUTHENTICATED retrieve from database
             _trip = response.data.Trip;
             $scope.TripName = _trip.Name;
-            
+            $scope.TripOwnerName = _trip.TripOwnerName;
+
             // set a default if not retrieved
             $scope.SelectedCurrencyDropdownValue = _.findWhere($scope.CurrencyDropdownValues, { id: parseInt(_trip.CurrencyId) || 1 });
             $scope.StartDate = _trip.StartDate;

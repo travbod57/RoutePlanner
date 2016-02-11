@@ -209,6 +209,10 @@
         display: block;
     }
 
+    .infoWindowContent span.inline {
+        display: inline-block;
+    }
+
     input.inputDailyCost.ng-invalid, input.inputDays.ng-invalid {
         border-color: red;
     }

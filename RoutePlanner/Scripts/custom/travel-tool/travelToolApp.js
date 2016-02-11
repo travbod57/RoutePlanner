@@ -503,6 +503,9 @@ travelToolApp.controller("routePlannerCtrl", function ($scope, $filter, $http, $
         resetModalInstance.result.then(function () {
             $scope.Route = [];
             $scope.PolyLines = [];
+            $scope.StartDate = null;
+
+            delete $scope.$storage['trip'];
         });
     };
 

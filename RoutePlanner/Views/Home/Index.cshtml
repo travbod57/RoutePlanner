@@ -58,11 +58,11 @@
                 <ui-gmap-google-map center='map.center' zoom='map.zoom' options="map.options">
                     <ui-gmap-markers models='Route' idkey='id' coords="'coords'" options="'options'" icon="'icon'" events="markersEvents">
                         <ui-gmap-windows show="show">
-                            <div class="infoWindowContent" ng-non-bindable>
-                                <span><strong>{{location.Full_Name}}</strong></span>
-                                <span>{{ stop }}</span>
-                                <span>{{nights}} nights</span>
-                                <span>Leave by {{ transportName }}</span>
+                            <div class="infoWindowContent">
+                                <span ng-non-bindable><strong>{{ location.Full_Name }}</strong></span>
+                                <span ng-non-bindable>{{ nights }} nights</span>
+                                <span class="inline">{{ SelectedCurrencyDropdownValue.symbol }}</span><span class="inline" ng-non-bindable>{{ dailyCost }} per day</span>
+                                <span ng-non-bindable>Leave by {{ transportName }}</span>
                             </div>
                         </ui-gmap-windows>
                     </ui-gmap-markers>

@@ -244,6 +244,8 @@
     {
         color: #953b39; 
         font-size: 1.2em;
+        border: solid 1px #953b39;
+        padding: 3px;
     }
     
     div.trip-list ul li div.trip-header-created

@@ -230,4 +230,30 @@
         };
     };
 
+    controllers.renameTripModalCtrl = function ($scope, $uibModalInstance, $http, dataService, CONFIG, tripId) {
+
+        $scope.TripName;
+        $scope.DisableOk = false;
+        $scope.Instruction = "Rename Trip";
+
+        $scope.ok = function () {
+
+            $scope.DisableOk = true;
+
+            var promise = dataService.renameTrip(tripId, $scope.TripName);
+
+            promise.done(function successCallback(response) {
+
+                $uibModalInstance.close($scope.TripName);
+
+            }).fail(function () {
+                $scope.DisableOk = false;
+            });
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
 })(travelTool.shared.controllers)

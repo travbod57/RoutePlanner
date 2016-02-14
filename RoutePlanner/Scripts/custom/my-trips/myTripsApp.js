@@ -5,7 +5,8 @@
     "DELETE_TRIP": "http://localhost:81/wp_thinkbackpacking/Slim/deleteTrip",
     "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/newTripModal.html",
     "SAVE_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/saveTrip",
-    "TRIP_URL": "/RoutePlanner/Home/Index?tripId="
+    "TRIP_URL": "/RoutePlanner/Home/Index?tripId=",
+    "RENAME_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/renameTrip?tripId="
 });
 
 // Register Services
@@ -35,7 +36,7 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
         var trip = $scope.$storage['trip'];
         
         if (trip != undefined) {
-            response.data.splice(0, 0, { Id: trip.id, Name: "", StartDate: trip.StartDate, EndDate: trip.EndDate, TotalCost: trip.TotalCost, NumberOfStops: trip.NumberOfStops, Symbol: trip.SelectedCurrencyDropdownValue.symbol });
+            response.data.splice(0, 0, { Id: trip.id, Name: "", StartDate: trip.StartDate, EndDate: trip.EndDate, TotalCost: trip.TotalCost, NumberOfStops: trip.NumberOfStops, Symbol: trip.SelectedCurrencyDropdownValue.symbol, IsSaved: 0 });
         }    
 
         $scope.MyTrips = response.data;
@@ -68,6 +69,17 @@ myTripsApp.controller("myTripsCtrl", function ($scope, $http, $uibModal, $contro
         
         modalsService.newTrip(size, saveTripOnOk, trip, saveTripFromStorage);
     };
+
+    $scope.RenameTrip = function (size, tripId) {
+
+        var renameTripModalInstance = modalsService.renameTrip(size, tripId);
+
+        renameTripModalInstance.result.then(function (newTripName) {
+
+            var trip = _.findWhere($scope.MyTrips, { Id: tripId });
+            trip.Name = newTripName;
+        });
+    };
 });
 
 travelTool.shared.controllers.newTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', '$localStorage', 'dataService', 'CONFIG', 'saveTripOnOk', 'trip', 'saveTripFromStorage'];
@@ -75,6 +87,9 @@ myTripsApp.controller('NewTripModalCtrl', travelTool.shared.controllers.newTripM
 
 travelTool.shared.controllers.deleteTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$localStorage', 'dataService', 'CONFIG', 'tripId'];
 myTripsApp.controller('DeleteTripModalCtrl', travelTool.shared.controllers.deleteTripModalCtrl);
+
+travelTool.shared.controllers.renameTripModalCtrl.$inject = ['$scope', '$uibModalInstance', '$http', 'dataService', 'CONFIG', 'tripId'];
+myTripsApp.controller('RenameTripModalCtrl', travelTool.shared.controllers.renameTripModalCtrl);
 
 // Register Directives
 

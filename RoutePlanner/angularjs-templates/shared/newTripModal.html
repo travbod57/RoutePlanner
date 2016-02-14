@@ -10,7 +10,7 @@
 
             <div class="text-danger" ng-show="newTripFrm.tripName.$error.required && newTripFrm.tripName.$dirty">Please enter a Trip Name</div>
             <div class="text-danger" ng-show="newTripFrm.tripName.$error.minlength && newTripFrm.tripName.$dirty">Your Trip Name must exceed 5 characters</div>
-            <div class="text-danger" ng-show="newTripFrm.tripName.$error.unique && newTripFrm.tripName.$dirty">This trip name has already been used!</div>
+            <div class="text-danger" ng-show="newTripFrm.tripName.$error.unique && newTripFrm.tripName.$dirty">This trip name is already in use!</div>
 
             <span class="glyphicon glyphicon-remove form-control-feedback" ng-show="!newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty && !newTripFrm.tripName.$pending"></span>
             <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="newTripFrm.tripName.$valid && newTripFrm.tripName.$dirty && !newTripFrm.tripName.$pending"></span>

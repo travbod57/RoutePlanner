@@ -69,7 +69,7 @@
 
         var _saveTripRemotely = function (trip) {
 
-            var dateTimeNowInMilli = new Date().getTime() / 1000;
+            var dateTimeNowInMilli = getDateTimeNowInMilli();
 
             trip.CreatedDate = trip.Id == undefined ? dateTimeNowInMilli : null;
             trip.ModifiedDate = dateTimeNowInMilli;
@@ -98,7 +98,7 @@
             }
             else {
 
-                var dateTimeNowInMilli = new Date().getTime() / 1000;
+                var dateTimeNowInMilli = getDateTimeNowInMilli();
 
                 return jQuery.ajax({
                     url: CONFIG.DELETE_TRIP,
@@ -143,13 +143,31 @@
             });
         }
 
+        var _renameTrip = function (tripId, tripName) {
+
+            var dateTimeNowInMilli = getDateTimeNowInMilli();
+
+            return jQuery.ajax({
+                url: CONFIG.RENAME_TRIP_URL,
+                type: "POST",
+                dataType: "text",
+                data: { tripId: tripId, tripName: tripName, modifiedDate: dateTimeNowInMilli }
+            });
+        }
+
+        function getDateTimeNowInMilli() {
+
+            return new Date().getTime() / 1000;
+        }
+
         return {
             saveTripRemotely: _saveTripRemotely,
             deleteTrip: _deleteTrip,
             myTrips: _myTrips,
             getTrip: _getTrip,
             getLocationsByTerm: _getLocationsByTerm,
-            shareRoute: _shareRoute
+            shareRoute: _shareRoute,
+            renameTrip: _renameTrip
         }
 
     };
@@ -159,7 +177,7 @@
         var _newTrip = function (size, saveTripOnOk, trip, saveTripFromStorage) {
 
                 var modalInstance = $uibModal.open({
-                    animation: true,
+                    animation: true, 
                     templateUrl: CONFIG.TMP_NEW_TRIP,
                     controller: 'NewTripModalCtrl',
                     backdrop: 'static',
@@ -311,6 +329,25 @@
             return modalInstance;
         }
 
+        var _renameTrip = function (size, tripId) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: CONFIG.TMP_NEW_TRIP,
+                controller: 'RenameTripModalCtrl',
+                backdrop: 'static',
+                keyboard: false,
+                size: size,
+                resolve: {
+                    tripId: function () {
+                        return tripId;
+                    }
+                }
+            });
+
+            return modalInstance;
+        };
+
         return {
             newTrip: _newTrip,
             saveTrip: _saveTrip,
@@ -320,7 +357,8 @@
             reset: _reset,
             loginOrRegister: _loginOrRegister,
             routeLengthExceededModal: _routeLengthExceededModal,
-            tripUnauthorisedModal: _tripUnauthorisedModal
+            tripUnauthorisedModal: _tripUnauthorisedModal,
+            renameTrip: _renameTrip
         }
     };
 

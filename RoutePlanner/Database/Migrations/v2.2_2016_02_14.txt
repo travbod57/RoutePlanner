@@ -1,4 +1,4 @@
-﻿ALTER TABLE route MODIFY DailyCost decimal(10,2);
-ALTER TABLE route MODIFY TotalCost decimal(10,2);
+﻿ALTER TABLE route MODIFY DailyCost decimal(8,2);
+ALTER TABLE route MODIFY TotalCost decimal(8,2);
 
-ALTER TABLE trip MODIFY TotalCost decimal(10,2);
+ALTER TABLE trip MODIFY TotalCost decimal(8,2);

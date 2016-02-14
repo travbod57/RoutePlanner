@@ -2,24 +2,25 @@
 
     controllers.newTripModalCtrl = function ($scope, $uibModalInstance, $http, $localStorage, dataService, CONFIG, saveTripOnOk, trip, saveTripFromStorage) {
 
-        var nameTrip = "Name Trip";
+        var createTrip = "Create Trip"
         var newTrip = "New Trip";
 
         $scope.$storage = $localStorage;
         $scope.TripName;
         $scope.DisableOk = false;
-        $scope.Instruction;
+        $scope.Title;
+        $scope.Instruction = "Please enter a name for this trip";
 
         // locally stored trip needs to ask for a name rather than state new trip
         if (trip.SessionStorage != undefined) {
 
             if (trip.SessionStorage == 1)
-                $scope.Instruction = nameTrip;
+                $scope.Title = createTrip;
             else
-                $scope.Instruction = newTrip;
+                $scope.Title = newTrip;
         }
         else
-            $scope.Instruction = newTrip;
+            $scope.Title = newTrip;
 
         $scope.ok = function () {
             
@@ -234,7 +235,8 @@
 
         $scope.TripName;
         $scope.DisableOk = false;
-        $scope.Instruction = "Rename Trip";
+        $scope.Instruction = "Please enter another name for this trip";
+        $scope.Title = "Rename Trip";
 
         $scope.ok = function () {
 

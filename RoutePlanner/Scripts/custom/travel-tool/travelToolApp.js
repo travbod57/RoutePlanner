@@ -9,7 +9,7 @@ var travelToolApp = angular.module('routePlanner', ['ui.bootstrap', 'uiGmapgoogl
     "GET_TRIP_URL": "http://localhost:81/wp_thinkbackpacking/Slim/getTrip",
     "IS_AUTHENTICATED_URL": "http://localhost:81/wp_thinkbackpacking/Slim/isAuthenticated",
     "GET_TRIP_NAME_ALREADY_EXISTS": "http://localhost:81/wp_thinkbackpacking/Slim/tripNameAlreadyExists?tripName=",
-    "TMP_NEW_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/newTripModal.html",
+    "NAME_TRIP": "http://localhost/RoutePlanner/angularjs-templates/shared/nameTripModal.html",
     "TRIP_URL": "/RoutePlanner/Home/Index?tripId=",
     "LOGIN_URL": "http://localhost:81/wp_thinkbackpacking/login",
     "REGISTER_URL": "http://localhost:81/wp_thinkbackpacking/register",

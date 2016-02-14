@@ -221,7 +221,7 @@
     <Content Include="Scripts\custom\shared\controllerFactory.js" />
     <Content Include="Scripts\custom\my-trips\myTripsApp.js" />
     <Content Include="Scripts\custom\travel-tool\polyPathService.js" />
-    <Content Include="angularjs-templates\shared\newTripModal.html" />
+    <Content Include="angularjs-templates\shared\nameTripModal.html" />
     <Content Include="Scripts\custom\shared\serviceFactory.js" />
     <Content Include="Scripts\custom\angular-thinkbackpacking.js" />
     <Content Include="Scripts\custom\ui-bootstrap-custom-tpls-0.14.3.min.js" />

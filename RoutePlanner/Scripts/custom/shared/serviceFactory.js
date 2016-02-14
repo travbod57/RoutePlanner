@@ -178,7 +178,7 @@
 
                 var modalInstance = $uibModal.open({
                     animation: true, 
-                    templateUrl: CONFIG.TMP_NEW_TRIP,
+                    templateUrl: CONFIG.NAME_TRIP,
                     controller: 'NewTripModalCtrl',
                     backdrop: 'static',
                     keyboard: false,
@@ -333,7 +333,7 @@
 
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: CONFIG.TMP_NEW_TRIP,
+                templateUrl: CONFIG.NAME_TRIP,
                 controller: 'RenameTripModalCtrl',
                 backdrop: 'static',
                 keyboard: false,

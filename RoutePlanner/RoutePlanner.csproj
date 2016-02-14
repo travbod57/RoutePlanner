@@ -181,6 +181,7 @@
     <Content Include="Content\images\markers\map-marker-icon-red.png" />
     <Content Include="Content\travel-tool.css" />
     <Content Include="Database\Migrations\v2.1_2016_02_07.txt" />
+    <Content Include="Database\Migrations\v2.2_2016_02_14.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

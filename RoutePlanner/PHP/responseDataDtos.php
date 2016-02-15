@@ -13,6 +13,7 @@ class Trip {
 		$this->CurrencyId = $tripData['CurrencyId'];
 		$this->CurrencyName = $tripData['CurrencyName'];
 		$this->Token = $tripData['Token'];
+		$this->TripOwnerName = $tripData['TripOwnerName'];
 	}
 
 	public $Id;
@@ -25,6 +26,7 @@ class Trip {
 	public $CurrencyId;
 	public $CurrencyName;
 	public $Token;
+	public $TripOwnerName;
 }
 
 class TripResult {
